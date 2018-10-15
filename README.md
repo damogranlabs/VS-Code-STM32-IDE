@@ -8,6 +8,8 @@ This project transform VS Code to a great IDE that can be used with STM32CubeMX 
 
 Debug capabilities are somehow limited, but can be good enough for most simple projects - see below.
 
+[![VS Code as STM32 IDE](http://img.youtube.com/vi/rWjb43kLHdQ/0.jpg)](https://www.youtube.com/watch?v=rWjb43kLHdQ)
+
 ## How does it work?
 Scripts generate all necessary VS Code workspace files ('c_cpp_properties.json', 'tasks.json' and 'launch.json') that IDE needs for autocomplete and compile/build/debug/download actions. New 'Makefile' is generated from CubeMX and user data on each update. All user settings are stored and can be changed in one file: 'c_cpp_properties.json'.  
   
@@ -34,7 +36,8 @@ This is needed for debug purposes and workspace file generation scripts.
 This file is (recommended by ST) downloaded from [Keil official page](https://www.keil.com/dd2/pack/). Just search for your chosen STM32 CPU family (ex.: STM32F0...), download and unpack with any archive software.  
 I recommend to unpack it in the same directory as other GNU Eclipse tools (eg: *%userprofile%\AppData\Roaming\GNU MCU Eclipse*) so everything is neatly organised in one place and files can be reused in other projects (this files will not be changed).  
 
-At the end, folder structure should look like this: TODO IMAGE
+At the end, folder structure should look like this:  
+![Folder structure](https://github.com/damogranlabs/VS-Code-STM32-IDE/blob/master/_images/folderStructure.PNG)
 
 # First steps
 Once all prerequisites are installed, work flow is very simple.
@@ -64,8 +67,9 @@ Scripts generate following tasks, which should work out of the box.
 * Reset and run CPU (do not download code, execute reset and run CPU without attaching debugger)
 * Stop CPU
 * Run CPU
+  
+![Tasks](https://github.com/damogranlabs/VS-Code-STM32-IDE/blob/master/_images/tasks.PNG)  
 
-TODO IMAGE
   
 ## Debug 
 Two launch (debug) configurations are currently implemented automatically in 'launch.json': debug embedded project and selected python
@@ -80,11 +84,10 @@ Debug capabilities are currently slightly limited (*Cortex-Debug* extension), bu
 * more than available breakpoints can be set (OpenOCD shows number of available BPs at the beginning)
 * after reset, location is not refreshed.
   
-Anyway, any non-beginner shouldn't have much problems with this limitations. 
-
-TODO IMAGE
+Anyway, any non-beginner shouldn't have much problems with this limitations.  
+![Launch configurations](https://github.com/damogranlabs/VS-Code-STM32-IDE/blob/master/_images/launchConfigurations.PNG)
 
 
 ## Even more?
-Need to know more details? see 'README_DETAILS.md'.  
-Suggestions, details, ideas, bugs? Use Issues tab.  
+Need to know more details? see [README_DETAILS.md](https://github.com/damogranlabs/VS-Code-STM32-IDE/blob/master/README_DETAILS.md).  
+Suggestions, details, ideas, bugs? Use [Issues tab](https://github.com/damogranlabs/VS-Code-STM32-IDE/issues).  
