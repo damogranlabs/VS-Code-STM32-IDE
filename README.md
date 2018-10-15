@@ -52,6 +52,8 @@ Need to re-generate CubeMX project? Do it, than run 'Update workspace' task and 
 Need to add user specific files/folders? Edit 'c_cpp_properties.json' file and update again.
   
 Note: on first 'update.py' script run, user must specify absolute paths to few files (tool paths). This are than stored in 'buildData.json' and update is not neccessary as long as the same 'buildData.json' file exists and paths are valid. Alternatively paths can be updated by running 'updatePaths.py' script.
+
+![Example folder structure](https://github.com/damogranlabs/VS-Code-STM32-IDE/blob/master/_images/exampleFolderStructure.PNG)
  
 # Coding and running code on CPU
 Once all files are generated, autocomplete and all includes/definitions should be accessible with VS Code.  
