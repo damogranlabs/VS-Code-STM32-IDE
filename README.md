@@ -1,5 +1,5 @@
 # VS Code STM32 IDE
-Source: [Damogran Labs: https://damogranlabs.com/](https://damogranlabs.com/)  
+Source: [Damogran Labs: https://damogranlabs.com/](https://damogranlabs.com/2018/10/vs-code-stm32-ide/)  
 Date: 15.10.2018  
 Version: 1.0  
 
