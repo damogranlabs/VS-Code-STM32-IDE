@@ -23,8 +23,8 @@ class UpdatePaths():
             (self.bStr.gccExePath, "arm-none-eabi-gcc.exe"),
             (self.bStr.buildToolsPath, "make.exe"),
             (self.bStr.openOCDPath, "openocd.exe"),
-            (self.bStr.openOCDTargetPath, "STM target '*.cfg' file (example: stm32f0x.cfg)"),
-            (self.bStr.stm32svdPath, "STM target '*.svd' file (example: STM32F0x8.svd)")
+            (self.bStr.openOCDTargetPath, "STM target '*.cfg' file (example: ...scripts/target/stm32f0x.cfg)"),
+            (self.bStr.stm32svdPath, "STM target '*.svd' file (example: .../Keil*/CMSIS/SVD/STM32F0x8.svd)")
         ]
 
     def forceUpdatePaths(self, buildData):

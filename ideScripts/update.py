@@ -18,6 +18,7 @@ import updateMakefile as mkf
 import updateBuildData as build
 import updateTasks as tasks
 import updateLaunchConfig as launch
+import updateWorkspaceFile as workspaceFile
 
 
 __version__ = utils.__version__
@@ -79,3 +80,10 @@ if __name__ == "__main__":
     launchData = launch.getLaunchData()
     launchData = launch.addAllLaunchConfigurations(launchData)
     launch.overwriteLaunchFile(launchData)
+
+    # update workspace file with "cortex-debug" specifics
+    wksFile = workspaceFile.UpdateWorkspaceFile()
+    wksFile.checkWorkspaceFile()
+    wksData = wksFile.getWorkspaceFileData()
+    wksData = wksFile.addBuildDataToWorkspaceFile(wksData, buildData)
+    wksFile.overwriteWorkspaceFile(wksData)

@@ -16,6 +16,9 @@ If any of files/paths are missing or invalid, new ones are created (and backup f
 
 File adds 'print-variable' function to 'Makefile', while creating a backup 'Makefile'. Function is needed for fetching data from 'Makefile' with (example) 'make print-CFLAGS' call.
 
+## updateWorkspaceFile.py
+This file adds "cortex-debug" keys to '*.code-workspace' file. It is needed for Cortex-Debug extension and should not be modified by user. Instead, this fields are fetched from 'buildData.json' file.
+
 ## updateMakefile.py
 This script generate new 'Makefile' from old 'Makefile' and user data. User data specified in 'c_cpp_properties.json' is merged with existing data from 'Makefile' and stored into 'buildData.json'. New 'Makefile' is created by making a copy and appending specific strings (c/asm sources, includes and defines) with proper multi-line escaping ( '\\' ).
 
