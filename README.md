@@ -91,5 +91,5 @@ Anyway, any non-beginner shouldn't have much problems with this limitations.
 
 
 ## Even more?
-Need to know more details? see [README_DETAILS.md](https://github.com/damogranlabs/VS-Code-STM32-IDE/blob/master/README_DETAILS.md).  
+Need to know more details (and FAQ)? see [README_DETAILS.md](https://github.com/damogranlabs/VS-Code-STM32-IDE/blob/master/README_DETAILS.md).  
 Suggestions, details, ideas, bugs? Use [Issues tab](https://github.com/damogranlabs/VS-Code-STM32-IDE/issues).  

@@ -57,11 +57,20 @@ User should not modify this file, since it will be overwritten or tasks/launch c
 
 ## templateStrings.py
 This file content is used from other 'update*.py' scripts as a template to generate other '*.json' fields. User can modify default strings as long as it sticks to a valid .json format.
-  
+
+-----
+## How it actually works?
+First, all scripts check if file/folder structure is as expected ('\*.ioc' file in the same folder as '\*.code-workspace' file). Existing tools paths are checked and updated, and 'buildData.json' is created with this data.  
+'Makefile' is checked to see if it was already altered with previous 'update' actions. If this is not the original 'Makefile', original is restored from 'Makefile.backup' file. 'print-variable' function is added to enable fetching internal 'Makefile' variables (sources and compiler flags) and 'c_cpp_properties.json' file is created/merged with existing one. Data in 'c_cpp_properties.json' from 'Makefile' is stored in 'cubemx_*' fields and is needed for *compile* task later on.  
+On update, new 'Makefile' is generated with merged data from old 'Makefile' and *user_* fields from 'c_cpp_properties.json'. 'buildData.json' is updated with new 'Makefile' variables.  
+Tasks and Launch configurations are generated with paths and data from existing 'buildData.json'. Syntax is VS Code predefined and is hard-coded into '.py' files, but can be changed.  
+At the end, 'cortex-debug' settings are applied to '\*.code-workspace' file.
+
+-----
 
 # FAQ:
 * **What files can I modify?**  
-  Basically, user should modify only 'c_cpp_properties.json' 'user_*' fields. Other paths should be updated either with CubeMX or 'updatePaths.py' script.  
+  Basically, user should modify only 'c_cpp_properties.json' file, specifically 'user_*' fields. Other paths should be updated either with CubeMX or 'updatePaths.py' script.  
 
 * **Can I add my custom tasks and launch configurations?**  
   Yes. See **updateTasks.py** description above. Also, see *#TODO USER* markings in 'update*.py' code for specific how-to's.
