@@ -8,7 +8,7 @@ This project transform VS Code to a great IDE that can be used with STM32CubeMX 
 
 Debug capabilities are somehow limited, but can be good enough for most simple projects - see below.
 
-[![VS Code as STM32 IDE](http://img.youtube.com/vi/rWjb43kLHdQ/0.jpg)](https://www.youtube.com/watch?v=rWjb43kLHdQ)
+[![VS Code as STM32 IDE](https://github.com/damogranlabs/VS-Code-STM32-IDE/blob/master/_images/videoThumbnail.PNG)](https://www.youtube.com/watch?v=rWjb43kLHdQ)
 
 ## How does it work?
 Scripts generate all necessary VS Code workspace files ('c_cpp_properties.json', 'tasks.json' and 'launch.json') that IDE needs for autocomplete and compile/build/debug/download actions. New 'Makefile' is generated from CubeMX and user data on each update. All user settings are stored and can be changed in one file: 'c_cpp_properties.json'.  
