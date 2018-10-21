@@ -87,5 +87,8 @@ At the end, 'cortex-debug' settings are applied to '\*.code-workspace' file.
 * **How do I compile specific file?**  
   Run 'Compile' task. Currently only C source files are supported by this task (assembler flags are not added to compile command).
 
+* **Can I add custom compiler flags/switches?**  
+  Yes. 'user_cFlags' and 'user_asmFlags' fields in 'c_cpp_properties.json' fields are meant for this purpose and are added to new 'Makefile' once *Update workspace* task is executed.
+
 * **Where can I see when the workspace files were updated the last time?**  
   *Version* and *last run timestamp* are updated on every run of 'update.py' script and can be seen in 'Makefile' and 'buildData.json'.
