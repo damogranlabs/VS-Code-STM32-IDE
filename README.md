@@ -1,7 +1,7 @@
 # VS Code STM32 IDE
 Source: [Damogran Labs: https://damogranlabs.com/](https://damogranlabs.com/2018/10/vs-code-stm32-ide/)  
-Date: 15.10.2018  
-Version: 1.0  
+Date: 28.10.2018  
+Version: 1.1  
 
 ## About
 This project transform VS Code to a great IDE that can be used with STM32CubeMX tool to create a projects without any limitations and code size restrictions, without any bloatware and fast user setup (once all prerequisites are installed). Project is based on python scripts and is therefore fully customizable. OpenOCD tool and Cortex-Debug VS Code plugin is used for debug purposes.  
