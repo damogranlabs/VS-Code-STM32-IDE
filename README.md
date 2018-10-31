@@ -74,8 +74,10 @@ Scripts generate following tasks, which should work out of the box.
 
   
 ## Debug 
-Two launch (debug) configurations are currently implemented automatically in 'launch.json': debug embedded project and selected python
-Press F5 and debug code (download code, reset and stop CPU is performed). This functions are currently supported:  
+Two launch (debug) configurations are currently automatically implemented in 'launch.json': *debug embedded project* and *debug selected python file*.  
+Just press F5 and debug code (download code, reset and stop CPU is performed on *debug embedded project*).  
+  
+This debug features are currently supported:  
 * run/stop
 * step
 * set/delete breakpoints (only in STOP state)
