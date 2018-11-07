@@ -1,5 +1,34 @@
 # Readme (details)
-This file explains inner working and details of specific 'update*.py' scripts. For general guide and FAQ, see README.md in this folder.
+This file answers some of the frequently asked questions and explains inner working and details of specific 'update*.py' scripts. Also, see README.md in this folder.
+
+## FAQ:
+* **What files can I modify?**  
+  Basically, user should modify only 'c_cpp_properties.json' file, specifically 'user_*' fields. Other paths should be updated either with CubeMX or 'updatePaths.py' script.  
+
+* **Can workspace files/folders paths contain spaces?**  
+  No. This is a common issue and must be avoided - all user defined source folders and files must be without spaces, since GNU Make does not handle any paths with spaces. Anyway, paths to GCC/GNU/OPENOCD executables CAN include spaces because they are not used in the same manner as workspace sources.  
+
+* **Can I add my custom tasks and launch configurations?**  
+  Yes. See **updateTasks.py** description above. Also, see *#TODO USER* markings in 'update*.py' code for specific how-to's.
+
+* **Will user fields be overwritten when any of 'update\*.py' script is called?**  
+  No. If '.json' files are a valid files, data is merged eg.: tasks are added to existing ones (only the same labeled tasks are overwritten). If '.json' files are not valid, '.backup' file is created and new valid file is created from template. User fields in 'c_cpp_properties.json' must be properly added, see example.
+
+* **What is .SVD file needed for?**  
+  SVD file is a CPU-specific register description file. It is needed for Cortex-Debug plugin to correctly display core/system registers and for OpenOCD to properly interface with chosen CPU. This files can be found from [Keil MDK Software Pack](https://www.keil.com/dd2/pack/).
+
+* **Where do compiler flags in 'buildData.json' come from?**  
+  This flags are fetched from current 'Makefile' with 'print-VARIABLE' function, which is added specifically for this purpose. Once project is updated with 'update.py' script, 'buildData.json' shows merged user and CubeMX compiler settings, while new 'Makefile' has added user settings to original 'Makefile'.
+
+* **How do I compile specific file?**  
+  Run 'Compile' task. Currently only C source files are supported by this task (assembler flags are not added to compile command).
+
+* **Can I add custom compiler flags/switches?**  
+  Yes. 'user_cFlags' and 'user_asmFlags' fields in 'c_cpp_properties.json' fields are meant for this purpose and are added to new 'Makefile' once *Update workspace* task is executed.
+
+* **Where can I see when the workspace files were updated the last time?**  
+  *Version* and *last run timestamp* are updated on every run of 'update.py' script and can be seen in 'Makefile' and 'buildData.json'.
+  
 
 # update.py
 This is a parent script of all 'update*.py' scripts. It is the only file that needs to be called if 'Makefile' was modified with STM32CubeMX tool or if user modified 'c_cpp_properties.json'.  
@@ -56,39 +85,12 @@ This file (re)generate 'buildData.json' file inside '.vscode' workspace subfolde
 User should not modify this file, since it will be overwritten or tasks/launch confgurations will be invalid. Instead, user should set CubeMX options, update paths with 'updatePaths.py' and correctly set data in 'c_cpp_properties.json' file.
 
 ## templateStrings.py
-This file content is used from other 'update*.py' scripts as a template to generate other '*.json' fields. User can modify default strings as long as it sticks to a valid .json format.
+This file content is used from other 'update*.py' scripts as a template to generate other '*.json' fields. User can modify default strings as long as it sticks to a valid .json format.  
 
------
+--------
 ## How it actually works?
 First, all scripts check if file/folder structure is as expected ('\*.ioc' file in the same folder as '\*.code-workspace' file). Existing tools paths are checked and updated, and 'buildData.json' is created with this data.  
 'Makefile' is checked to see if it was already altered with previous 'update' actions. If this is not the original 'Makefile', original is restored from 'Makefile.backup' file. 'print-variable' function is added to enable fetching internal 'Makefile' variables (sources and compiler flags) and 'c_cpp_properties.json' file is created/merged with existing one. Data in 'c_cpp_properties.json' from 'Makefile' is stored in 'cubemx_*' fields and is needed for *compile* task later on.  
 On update, new 'Makefile' is generated with merged data from old 'Makefile' and *user_* fields from 'c_cpp_properties.json'. 'buildData.json' is updated with new 'Makefile' variables.  
 Tasks and Launch configurations are generated with paths and data from existing 'buildData.json'. Syntax is VS Code predefined and is hard-coded into '.py' files, but can be changed.  
 At the end, 'cortex-debug' settings are applied to '\*.code-workspace' file.
-
------
-
-# FAQ:
-* **What files can I modify?**  
-  Basically, user should modify only 'c_cpp_properties.json' file, specifically 'user_*' fields. Other paths should be updated either with CubeMX or 'updatePaths.py' script.  
-
-* **Can I add my custom tasks and launch configurations?**  
-  Yes. See **updateTasks.py** description above. Also, see *#TODO USER* markings in 'update*.py' code for specific how-to's.
-
-* **Will user fields be overwritten when any of 'update\*.py' script is called?**  
-  No. If '.json' files are a valid files, data is merged eg.: tasks are added to existing ones (only the same labeled tasks are overwritten). If '.json' files are not valid, '.backup' file is created and new valid file is created from template. User fields in 'c_cpp_properties.json' must be properly added, see example.
-
-* **What is .SVD file needed for?**  
-  SVD file is a CPU-specific register description file. It is needed for Cortex-Debug plugin to correctly display core/system registers and for OpenOCD to properly interface with chosen CPU. This files can be found from [Keil MDK Software Pack](https://www.keil.com/dd2/pack/).
-
-* **Where do compiler flags in 'buildData.json' come from?**  
-  This flags are fetched from current 'Makefile' with 'print-VARIABLE' function, which is added specifically for this purpose. Once project is updated with 'update.py' script, 'buildData.json' shows merged user and CubeMX compiler settings, while new 'Makefile' has added user settings to original 'Makefile'.
-
-* **How do I compile specific file?**  
-  Run 'Compile' task. Currently only C source files are supported by this task (assembler flags are not added to compile command).
-
-* **Can I add custom compiler flags/switches?**  
-  Yes. 'user_cFlags' and 'user_asmFlags' fields in 'c_cpp_properties.json' fields are meant for this purpose and are added to new 'Makefile' once *Update workspace* task is executed.
-
-* **Where can I see when the workspace files were updated the last time?**  
-  *Version* and *last run timestamp* are updated on every run of 'update.py' script and can be seen in 'Makefile' and 'buildData.json'.
