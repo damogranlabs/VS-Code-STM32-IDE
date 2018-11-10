@@ -123,68 +123,57 @@ class Tasks():
         '''
         Merge and return all combined tasks data.
         '''
+
         # building and compiling project tasks
-        tasksData = self.addBuildTask(tasksData)
-        tasksData = self.addCompileTask(tasksData)
-        # tasksData = self.addCleanBuildFolderTask(tasksData) # TODO is this really needed?
-        tasksData = self.addDeleteBuildFolderTask(tasksData)
+        task = self.getBuildTask()
+        tasksData = self.addOrReplaceTask(tasksData, task)
+
+        task = self.getCompileTask()
+        tasksData = self.addOrReplaceTask(tasksData, task)
+
+        task = self.getDeleteBuildFolderTask()
+        tasksData = self.addOrReplaceTask(tasksData, task)
 
         # debugging and target control tasts
-        tasksData = self.addDownloadAndRunTask(tasksData)
-        tasksData = self.addResetAndRunTask(tasksData)
-        tasksData = self.addHaltTask(tasksData)
-        tasksData = self.addRunTask(tasksData)
+        task = self.getBuildDownloadAndRunTask()
+        tasksData = self.addOrReplaceTask(tasksData, task)
 
-        # other tasks
-        tasksData = self.addRunCurrentPythonFileTask(tasksData)  # common "run python file" task
-        tasksData = self.addUpdateTask(tasksData)   # update all files for VS Code so it can be used as IDE
+        task = self.getDownloadAndRunTask()
+        tasksData = self.addOrReplaceTask(tasksData, task)
 
-        # TODO USER should add its own tasks here
+        task = self.getResetAndRunTask()
+        tasksData = self.addOrReplaceTask(tasksData, task)
+
+        task = self.getHaltTask()
+        tasksData = self.addOrReplaceTask(tasksData, task)
+
+        task = self.getRunTask()
+        tasksData = self.addOrReplaceTask(tasksData, task)
+
+        # update IDE workspace tasks
+        task = self.getRunCurrentPythonFileTask()  # common "run python file" task
+        tasksData = self.addOrReplaceTask(tasksData, task)
+
+        task = self.getUpdateTask()   # update all files for VS Code so it can be used as IDE
+        tasksData = self.addOrReplaceTask(tasksData, task)
+
+        # TODO USER: User can add other custom tasks here
+        # - copy any of getXTask() functions below, edit
+        # - add this function here as other tasks above
 
         return tasksData
 
     ########################################################################################################################
-    # User can add other common tasks here
-    # TODO USER:
-    #   - copy any of tasks below
-    #   - edit (add, remove),  taskTemplateFields
-    #   - add your new task function to addAllTasks() function
+    # Build, compile and clean tasks
     ########################################################################################################################
-    def addRunCurrentPythonFileTask(self, tasksData):
-        '''
-        Create/repair 'Run Python file' task, which runs current active file.
-        '''
-        # User edit BEGIN
 
-        taskData = """
-        {
-            "label": "Run Python file",
-            "type": "shell",
-            "command": "python",
-            "args": [
-                "${file}"
-            ],
-            "presentation": {
-                "focus": true
-            },
-            "problemMatcher": []
-        }
-        """
-        jsonTaskData = json.loads(taskData)
-
-        # User edit END
-        tasksData = self.addOrReplaceTask(tasksData, jsonTaskData)
-        return tasksData
-
-    def addBuildTask(self, tasksData):
+    def getBuildTask(self):
         '''
         Add build task (execute 'make' command).
         '''
-        # User edit BEGIN
-
         taskData = """
         {
-            "label": "Build project",
+            "label": "will be replaced with templateStrings string",
             "type": "shell",
             "command": "specified below",
             "args": ["specified below"],
@@ -206,81 +195,22 @@ class Tasks():
         jsonTaskData = json.loads(taskData)
 
         buildData = build.BuildData().getBuildData()
+        jsonTaskData["label"] = tmpStr.taskName_build
         jsonTaskData["command"] = buildData[self.bStr.buildToolsPath]
 
         gccFolderPath = os.path.dirname(buildData[self.bStr.gccExePath])
         gccFolderPath = utils.pathWithForwardSlashes(gccFolderPath)
         jsonTaskData["args"] = ["GCC_PATH=" + gccFolderPath]   # specify compiler path to make command
 
-        # User edit END
-        tasksData = self.addOrReplaceTask(tasksData, jsonTaskData)
-        return tasksData
+        return jsonTaskData
 
-    def addCleanBuildFolderTask(self, tasksData):
+    def getCompileTask(self):
         '''
-        Add clean task (execute 'make clean-build-dir' command).
-
-        Note: Currenly disabled (also in Makefile).
+        Create compile current file task (execute gcc compile command).
         '''
-        # User edit BEGIN
-
         taskData = """
         {
-            "label": "Clean build folder",
-            "type": "shell",
-            "command": "specified below",
-            "args": ["specified below"],
-            "problemMatcher": [],
-            "presentation": {
-                "focus": false
-            }
-        }
-        """
-        jsonTaskData = json.loads(taskData)
-
-        buildData = build.BuildData().getBuildData()
-        jsonTaskData["command"] = buildData[self.bStr.buildToolsPath]
-        jsonTaskData["args"] = [tmpStr.cleanBuildDirFunctionName]
-
-        # User edit END
-        tasksData = self.addOrReplaceTask(tasksData, jsonTaskData)
-        return tasksData
-
-    def addDeleteBuildFolderTask(self, tasksData):
-        '''
-        Add delte task (execute 'make clean' command).
-        '''
-        # User edit BEGIN
-        taskData = """
-        {
-            "label": "Delete build folder",
-            "type": "shell",
-            "command": "specified below",
-            "args": ["clean"],
-            "problemMatcher": [],
-            "presentation": {
-                "focus": false
-            }
-        }
-        """
-        jsonTaskData = json.loads(taskData)
-
-        buildData = build.BuildData().getBuildData()
-        jsonTaskData["command"] = buildData[self.bStr.buildToolsPath]
-
-        # User edit END
-        tasksData = self.addOrReplaceTask(tasksData, jsonTaskData)
-        return tasksData
-
-    def addCompileTask(self, tasksData):
-        '''
-        Add compile current file task (execute 'make clean' command).
-        '''
-        # User edit BEGIN
-
-        taskData = """
-        {
-            "label": "Compile current file",
+            "label": "will be replaced with templateStrings string",
             "type": "shell",
             "command": "will be replaced with GCC path below",
             "args": ["will be replaced with path from buildData.json"],
@@ -303,6 +233,7 @@ class Tasks():
 
         # get compiler C flags, defines, includes, ... from 'buildData.json'
         buildData = build.BuildData().getBuildData()
+        jsonTaskData["label"] = tmpStr.taskName_compile
 
         # defines
         cDefines = buildData[self.bStr.cDefines]
@@ -340,21 +271,55 @@ class Tasks():
         jsonTaskData["args"].extend(fileString)
         jsonTaskData["args"].extend(outputFile)
 
-        # User edit END
-        tasksData = self.addOrReplaceTask(tasksData, jsonTaskData)
-        return tasksData
+        return jsonTaskData
+
+    def getDeleteBuildFolderTask(self):
+        '''
+        Create delete task (execute 'make clean' command).
+        '''
+        taskData = """
+        {
+            "label": "will be replaced with templateStrings string",
+            "type": "shell",
+            "command": "specified below",
+            "args": ["clean"],
+            "problemMatcher": [],
+            "presentation": {
+                "focus": false
+            }
+        }
+        """
+        jsonTaskData = json.loads(taskData)
+
+        buildData = build.BuildData().getBuildData()
+        jsonTaskData["label"] = tmpStr.taskName_clean
+        jsonTaskData["command"] = buildData[self.bStr.buildToolsPath]
+
+        return jsonTaskData
 
     ########################################################################################################################
     # Debugging and target control tasks
     ########################################################################################################################
-    def addDownloadAndRunTask(self, tasksData):
+    def getBuildDownloadAndRunTask(self):
         '''
-        Create/repair 'CPU: Download and run' task.
+        Create Build + Download and run task. Use 'dependsOn' feature to avoid doubling code.
+        Note: If multiple 'dependOn' tasks are defined, these tasks are launched simultaneously,
+            not chained one after another.
         '''
-        # User edit BEGIN
+        jsonTaskData = self.getDownloadAndRunTask()
+
+        jsonTaskData["label"] = tmpStr.taskName_CPU_buildDownloadRun
+        jsonTaskData["dependsOn"] = tmpStr.taskName_build
+
+        return jsonTaskData
+
+    def getDownloadAndRunTask(self):
+        '''
+        Create Download and run task.
+        '''
         taskData = """
         {
-            "label": "CPU: Download and run",
+            "label": "will be replaced with templateStrings string",
             "type": "shell",
             "command": "specified below",
             "args": ["specified below"],
@@ -364,6 +329,7 @@ class Tasks():
         jsonTaskData = json.loads(taskData)
 
         buildData = build.BuildData().getBuildData()
+        jsonTaskData["label"] = tmpStr.taskName_CPU_downloadRun
         jsonTaskData["command"] = buildData[self.bStr.openOCDPath]
         jsonTaskData["args"] = []
         jsonTaskData["args"].append("-f")
@@ -382,18 +348,15 @@ class Tasks():
         programString = "program " + relativeTargetExecutablePath + " verify reset exit"
         jsonTaskData["args"].append(programString)
 
-        # User edit END
-        tasksData = self.addOrReplaceTask(tasksData, jsonTaskData)
-        return tasksData
+        return jsonTaskData
 
-    def addResetAndRunTask(self, tasksData):
+    def getResetAndRunTask(self):
         '''
-        Create/repair 'CPU: Reset and run' task.
+        Create CPU: Reset and run task.
         '''
-        # User edit BEGIN
         taskData = """
         {
-            "label": "CPU: Reset and run",
+            "label": "will be replaced with templateStrings string",
             "type": "shell",
             "command": "specified below",
             "args": ["specified below"],
@@ -403,6 +366,7 @@ class Tasks():
         jsonTaskData = json.loads(taskData)
 
         buildData = build.BuildData().getBuildData()
+        jsonTaskData["label"] = tmpStr.taskName_CPU_resetRun
         jsonTaskData["command"] = buildData[self.bStr.openOCDPath]
         jsonTaskData["args"] = []
         jsonTaskData["args"].append("-f")
@@ -414,18 +378,15 @@ class Tasks():
         jsonTaskData["args"].append("-c reset")
         jsonTaskData["args"].append("-c exit")
 
-        # User edit END
-        tasksData = self.addOrReplaceTask(tasksData, jsonTaskData)
-        return tasksData
+        return jsonTaskData
 
-    def addHaltTask(self, tasksData):
+    def getHaltTask(self):
         '''
-        Create/repair 'CPU: Halt' task.
+        Create Halt/stop task.
         '''
-        # User edit BEGIN
         taskData = """
         {
-            "label": "CPU: Halt",
+            "label": "will be replaced with templateStrings string",
             "type": "shell",
             "command": "specified below",
             "args": ["specified below"],
@@ -435,6 +396,7 @@ class Tasks():
         jsonTaskData = json.loads(taskData)
 
         buildData = build.BuildData().getBuildData()
+        jsonTaskData["label"] = tmpStr.taskName_CPU_halt
         jsonTaskData["command"] = buildData[self.bStr.openOCDPath]
         jsonTaskData["args"] = []
         jsonTaskData["args"].append("-f")
@@ -446,18 +408,15 @@ class Tasks():
         jsonTaskData["args"].append("-c halt")
         jsonTaskData["args"].append("-c exit")
 
-        # User edit END
-        tasksData = self.addOrReplaceTask(tasksData, jsonTaskData)
-        return tasksData
+        return jsonTaskData
 
-    def addRunTask(self, tasksData):
+    def getRunTask(self):
         '''
-        Create/repair 'CPU: Run' task.
+        Create Run task.
         '''
-        # User edit BEGIN
         taskData = """
         {
-            "label": "CPU: Run",
+            "label": "will be replaced with templateStrings string",
             "type": "shell",
             "command": "specified below",
             "args": ["specified below"],
@@ -467,6 +426,7 @@ class Tasks():
         jsonTaskData = json.loads(taskData)
 
         buildData = build.BuildData().getBuildData()
+        jsonTaskData["label"] = tmpStr.taskName_CPU_run
         jsonTaskData["command"] = buildData[self.bStr.openOCDPath]
         jsonTaskData["args"] = []
         jsonTaskData["args"].append("-f")
@@ -478,23 +438,41 @@ class Tasks():
         jsonTaskData["args"].append("-c resume  ")
         jsonTaskData["args"].append("-c exit")
 
-        # User edit END
-        tasksData = self.addOrReplaceTask(tasksData, jsonTaskData)
-        return tasksData
+        return jsonTaskData
 
     ########################################################################################################################
     # Other tasks
     ########################################################################################################################
-
-    def addUpdateTask(self, tasksData):
+    def getRunCurrentPythonFileTask(self):
         '''
-        Create/repair 'Update workspace' task, which runs update.py script.
+        Create Run Python file task, which runs current active Python file.
         '''
-        # User edit BEGIN
-
         taskData = """
         {
-            "label": "Update workspace",
+            "label": "will be replaced with templateStrings string",
+            "type": "shell",
+            "command": "python",
+            "args": [
+                "${file}"
+            ],
+            "presentation": {
+                "focus": true
+            },
+            "problemMatcher": []
+        }
+        """
+        jsonTaskData = json.loads(taskData)
+        jsonTaskData["label"] = tmpStr.taskName_Python
+
+        return jsonTaskData
+
+    def getUpdateTask(self):
+        '''
+        Create Update workspace task, which runs update.py script.
+        '''
+        taskData = """
+        {
+            "label": "will be replaced with templateStrings string",
             "type": "shell",
             "command": "python",
             "args": [
@@ -507,10 +485,9 @@ class Tasks():
         }
         """
         jsonTaskData = json.loads(taskData)
+        jsonTaskData["label"] = tmpStr.taskName_updateWorkspace
 
-        # User edit END
-        tasksData = self.addOrReplaceTask(tasksData, jsonTaskData)
-        return tasksData
+        return jsonTaskData
 
 
 ########################################################################################################################

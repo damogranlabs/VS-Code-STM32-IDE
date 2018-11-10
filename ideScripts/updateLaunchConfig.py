@@ -114,60 +114,56 @@ class LaunchConfigurations():
         '''
         Merge and return all combined launch configuration data.
         '''
-        # building and compiling project launch
-        launchData = self.addDebugLaunchConfig(launchData)
-        launchData = self.addRunPythonLaunchConfig(launchData)
+        launchCfg = self.getDebugLaunchConfig()
+        launchData = self.addOrReplaceLaunchConfiguration(launchData, launchCfg)
 
-        # TODO USER should add its own launch configs here
+        launchCfg = self.getRunPythonLaunchConfig()
+        launchData = self.addOrReplaceLaunchConfiguration(launchData, launchCfg)
+
+        # TODO USER: User can add other launch configurations here
+        # - copy any of getXLaunchConfig() functions below, edit
+        # - add this function here as other launch configurations above
 
         return launchData
 
     ########################################################################################################################
-    # User can add other common launch here
-    # TODO USER:
-    #   - copy any of launch below
-    #   - edit (add, remove),  taskTemplateFields
-    #   - add your new task function to addAllLaunch() function
+
     ########################################################################################################################
-    def addDebugLaunchConfig(self, launchData):
+    def getDebugLaunchConfig(self):
         '''
         Create/repair 'Cortex debug' launch configuration.
         '''
-        # User edit BEGIN
-
         configurationData = """
         {
-            "name": "Cortex debug",
+            "name": "will be replaced with templateStrings string",
             "type": "cortex-debug",
             "request": "launch",
             "servertype": "openocd",
             "cwd": "${workspaceFolder}",
             "executable": "will be replaced with path from buildData.json",
             "svdFile": "will be replaced with path from buildData.json",
-            "configFiles": ["will be replaced with path from buildData.json"]
+            "configFiles": ["will be replaced with path from buildData.json"],
+            "preLaunchTask": "will be replaced with templateStrings string"
         }
         """
         jsonConfigurationData = json.loads(configurationData)
 
-        # get data from 'buildData.json'
         buildData = build.BuildData().getBuildData()
 
+        jsonConfigurationData["name"] = tmpStr.launchName_Debug
         jsonConfigurationData["executable"] = buildData[self.bStr.targetExecutablePath]
         jsonConfigurationData["svdFile"] = buildData[self.bStr.stm32svdPath]
         jsonConfigurationData["configFiles"] = []
         jsonConfigurationData["configFiles"].append(buildData[self.bStr.openOCDInterfacePath])
         jsonConfigurationData["configFiles"].append(buildData[self.bStr.openOCDTargetPath])
+        jsonConfigurationData["preLaunchTask"] = tmpStr.taskName_build
 
-        # User edit END
-        launchData = self.addOrReplaceLaunchConfiguration(launchData, jsonConfigurationData)
-        return launchData
+        return jsonConfigurationData
 
-    def addRunPythonLaunchConfig(self, launchData):
+    def getRunPythonLaunchConfig(self):
         '''
-        Create/repair 'Debug current Python file' launch configuration.
+        Create 'Debug current Python file' launch configuration.
         '''
-        # User edit BEGIN
-
         configurationData = """
         {
             "name": "Debug current Python file",
@@ -180,9 +176,7 @@ class LaunchConfigurations():
         """
         jsonConfigurationData = json.loads(configurationData)
 
-        # User edit END
-        launchData = self.addOrReplaceLaunchConfiguration(launchData, jsonConfigurationData)
-        return launchData
+        return jsonConfigurationData
 
 
 ########################################################################################################################

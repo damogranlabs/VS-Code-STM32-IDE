@@ -53,8 +53,8 @@ class CProperties():
                 with open(utils.cPropertiesPath, 'r') as cPropertiesFile:
                     json.load(cPropertiesFile)
 
-                    print("Existing 'c_cpp_properties.json' file found.")
-                    return
+                print("Existing 'c_cpp_properties.json' file found.")
+                return
 
             except Exception as err:
                 errorMsg = "Invalid 'c_cpp_properties.json' file. Creating backup and new one.\n"

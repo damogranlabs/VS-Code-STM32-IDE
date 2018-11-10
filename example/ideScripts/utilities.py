@@ -9,7 +9,7 @@ import os
 import shutil
 import sys
 
-__version__ = '1.0'  # this is inherited by all 'update*.py' scripts
+__version__ = '1.2'  # this is inherited by all 'update*.py' scripts
 
 ########################################################################################################################
 # Global utilities and paths

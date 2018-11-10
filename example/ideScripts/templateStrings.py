@@ -6,6 +6,23 @@ Template scripts for generating workspace files:
     - buildData.json
 """
 
+launchName_Debug = "Cortex debug"
+launchName_Python = "Debug current Python file"
+
+taskName_build = "Build project"
+taskName_compile = "Compile current file"
+taskName_clean = "Delete build folder"
+
+taskName_CPU_buildDownloadRun = "CPU: Build, Download and run"
+taskName_CPU_downloadRun = "CPU: Download and run"
+taskName_CPU_resetRun = "CPU: Reset and run"
+taskName_CPU_halt = "CPU: Halt"
+taskName_CPU_run = "CPU: Run"
+
+taskName_Python = "Run Python file"
+taskName_updateWorkspace = "Update workspace"
+
+#########################################################################################################
 c_cpp_template = """{
     "env" : {
         "____________________USER_FIELDS_CAN_BE_MODIFIED____________________": "",

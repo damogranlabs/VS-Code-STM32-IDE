@@ -6,13 +6,13 @@ This file answers some of the frequently asked questions and explains inner work
   Basically, user should modify only 'c_cpp_properties.json' file, specifically 'user_*' fields. Other paths should be updated either with CubeMX or 'updatePaths.py' script.  
 
 * **Can workspace files/folders paths contain spaces?**  
-  No. This is a common issue and must be avoided - all user defined source folders and files must be without spaces, since GNU Make does not handle any paths with spaces. Anyway, paths to GCC/GNU/OPENOCD executables CAN include spaces because they are not used in the same manner as workspace sources.  
+  No. This is a common issue and must be avoided - all user defined source folders and files must be without spaces, since GNU Make does not handle any paths with spaces. Anyway, paths to GCC/GNU/OpenOCD executables can include spaces because they are not used in the same manner as workspace sources, but generally it is a good idea to use non-spaced paths.  
 
 * **Can I add my custom tasks and launch configurations?**  
-  Yes. See **updateTasks.py** description. Also, see *#TODO USER* markings in 'update*.py' code for specific how-to's.
+  Yes. See **updateTasks.py** description. Also, see *#TODO USER* markings in 'update*.py' code for specific how-to.
 
 * **Will user fields be overwritten when any of 'update\*.py' script is called?**  
-  No. If '.json' files are a valid files, data is merged eg.: tasks are added to existing ones (only the same labeled tasks are overwritten). If '.json' files are not valid, '.backup' file is created and new valid file is created from template. User fields in 'c_cpp_properties.json' must be properly added, see example.
+  No. If '.json' files are a valid files, data is merged eg.: custom tasks are added to existing ones (only the same labeled tasks are overwritten). If '.json' files are not valid, '.backup' file is created and new valid file is created from template. User fields in 'c_cpp_properties.json' must be properly added, see example.
 
 * **What is .SVD file needed for?**  
   SVD file is a CPU-specific register description file. It is needed for Cortex-Debug plugin to correctly display core/system registers and for OpenOCD to properly interface with chosen CPU. This files can be found from [Keil MDK Software Pack](https://www.keil.com/dd2/pack/).
@@ -32,14 +32,14 @@ This file answers some of the frequently asked questions and explains inner work
 
 # update.py
 This is a parent script of all 'update*.py' scripts. It is the only file that needs to be called if 'Makefile' was modified with STM32CubeMX tool or if user modified 'c_cpp_properties.json'.  
-Script calls other 'update*.py' scripts and generate all the necessary files for VS Code. See other scripts descirptions below for details.
+Script calls other 'update*.py' scripts and generate all the necessary files for VS Code. See other scripts descriptions below for details.
 
 ## updatePaths.py
-This script checks and update paths to all neccessary files/folders: GCC compiler, Make tool, OpenOCD, target configuration file, SVD description file. Script automatically fills data in 'buildData.json' which is later needed for other scripts.
+This script checks and update paths to all necessary files/folders: GCC compiler, Make tool, OpenOCD, target configuration file, SVD description file. Script automatically fills data in 'buildData.json' which is later needed for other scripts.
 
 ## updateWorkspaceSources.py
 This script (re)generate 'c_cpp_properties.json' file from existing 'Makefile' and 'c_cpp_properties.json' file. User can modify (add paths to sources/folders and defines) only fields marked with "user_*", otherwise fields will be overwritten with next update procedure.
-Data fetched from 'Makefile' and user fields are storred in 'buildData.json' at the end.  
+Data fetched from 'Makefile' and user fields are stored in 'buildData.json' at the end.  
   
 If any of files/paths are missing or invalid, new ones are created (and backup file is generated if available), and data is restored to default (see 'templateStrings.py' and 'updateWorkspaceSources.py' file).  
 
@@ -60,6 +60,7 @@ This script (re)generate 'tasks.json' file in '.vscode' workspace subfolder. Tas
 * Clean build folder (delete)
   
 **Target control tasks:**
+* Build, Download code and run CPU (executes 'Build' task before 'Download code and run CPU' task)
 * Download code and run CPU (program .elf output file and run CPU without attaching debugger)
 * Reset and run CPU (do not download code, execute reset and run CPU without attaching debugger)
 * Stop CPU
@@ -69,20 +70,20 @@ This script (re)generate 'tasks.json' file in '.vscode' workspace subfolder. Tas
 * Update (calls 'update.py' script and update all workspace sources)
   
 User can add custom tasks in two ways: add task to 'updateTasks.py' file (added always even if 'tasks.json' previously does not exist) or add task directly to 'tasks.json' file.  
-If 'tasks.json' file already exists when 'updateTasks.py' script is called, data is merged and task will not be overwritten. But, if existing 'tasks.json' file is not valid (faulty json format), backup is created and new clean 'tasks.json' file is generated, overwitting user added task (could be found in .backup file).  
+If 'tasks.json' file already exists when 'updateTasks.py' script is called, data is merged and task will not be overwritten. But, if existing 'tasks.json' file is not valid (faulty json format), backup is created and new clean 'tasks.json' file is generated, overwriting user added task (could be found in .backup file).  
 See *#TODO USER* markings inside file for how to add custom tasks.
 
 ## updateLaunchConfig.py
 This script (re)generate 'launch.json' file inside '.vscode' workspace subfolder. Two tasks are currently implemented:
-* Debug (download code to the target, attach debugger and stop asap)
+* Debug (runs build task, download code to the target, attach debugger and stop asap)
 * Run current python file (run currently opened .py file)
   
-Data for Debug Launch configuration is fetched from 'buildData.json' and should not be modified by user. Insteadm user shoud correctly specify target .cfg and .svd file with 'updatePaths.py'.  
-Other launch configurations can be added in the simmilar way as tasks, see *updateTasks.py* description.
+Data for Debug Launch configuration is fetched from 'buildData.json' and should not be modified by user. Instead user should correctly specify target .cfg and .svd file with 'updatePaths.py'.  
+Other launch configurations can be added in the similar way as tasks, see *updateTasks.py* description.
 
 ## updateBuildData.py
-This file (re)generate 'buildData.json' file inside '.vscode' workspace subfolder. This file contains all workspace paths, sorces, defines and compiler settings combined from 'Makefile', 'c_cpp_properties.json' file and user defined tools paths. File is used by 'update*.py' scripts and can be used for user to inspect what settings are used/generated by CubeMX.  
-User should not modify this file, since it will be overwritten or tasks/launch confgurations will be invalid. Instead, user should set CubeMX options, update paths with 'updatePaths.py' and correctly set data in 'c_cpp_properties.json' file.
+This file (re)generate 'buildData.json' file inside '.vscode' workspace subfolder. This file contains all workspace paths, sources, defines and compiler settings combined from 'Makefile', 'c_cpp_properties.json' file and user defined tools paths. File is used by 'update*.py' scripts and can be used for user to inspect what settings are used/generated by CubeMX.  
+User should not modify this file, since it will be overwritten or tasks/launch configurations will be invalid. Instead, user should set CubeMX options, update paths with 'updatePaths.py' and correctly set data in 'c_cpp_properties.json' file.
 
 ## templateStrings.py
 This file content is used from other 'update*.py' scripts as a template to generate other '*.json' fields. User can modify default strings as long as it sticks to a valid .json format.  
@@ -92,5 +93,5 @@ This file content is used from other 'update*.py' scripts as a template to gener
 First, all scripts check if file/folder structure is as expected ('\*.ioc' file in the same folder as '\*.code-workspace' file). Existing tools paths are checked and updated, and 'buildData.json' is created with this data.  
 'Makefile' is checked to see if it was already altered with previous 'update' actions. If this is not the original 'Makefile', original is restored from 'Makefile.backup' file. 'print-variable' function is added to enable fetching internal 'Makefile' variables (sources and compiler flags) and 'c_cpp_properties.json' file is created/merged with existing one. Data in 'c_cpp_properties.json' from 'Makefile' is stored in 'cubemx_*' fields and is needed for *compile* task later on.  
 On update, new 'Makefile' is generated with merged data from old 'Makefile' and *user_* fields from 'c_cpp_properties.json'. 'buildData.json' is updated with new 'Makefile' variables.  
-Tasks and Launch configurations are generated with paths and data from existing 'buildData.json'. Syntax is VS Code predefined and is hard-coded into '.py' files, but can be changed.  
+Tasks and Launch configurations are generated with paths and data from existing 'buildData.json'. 
 At the end, 'cortex-debug' settings are applied to '\*.code-workspace' file.

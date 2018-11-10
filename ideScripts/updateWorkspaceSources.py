@@ -97,7 +97,7 @@ class CProperties():
         with open(utils.cPropertiesPath, 'r') as cPropertiesFile:
             data = json.load(cPropertiesFile)
 
-        return data
+            return data
 
     def addMakefileDataToCPropertiesFile(self, cPropertiesData, makefileData):
         '''

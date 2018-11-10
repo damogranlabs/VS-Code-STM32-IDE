@@ -1,7 +1,7 @@
 # VS Code STM32 IDE
 Source: [Damogran Labs: https://damogranlabs.com/](https://damogranlabs.com/2018/10/vs-code-stm32-ide/)  
-Date: 28.10.2018  
-Version: 1.1  
+Date: 10.11.2018  
+Version: 1.2  
 
 ## About
 This project transform VS Code to a great IDE that can be used with STM32CubeMX tool to create a projects without any limitations and code size restrictions, without any bloatware and fast user setup (once all prerequisites are installed). Project is based on python scripts and is therefore fully customizable. OpenOCD tool and Cortex-Debug VS Code plugin is used for debug purposes.  
@@ -27,14 +27,14 @@ There are many posts how to install python. This project needs a valid *python* 
 * [GNU Eclipse Windows Build Tools](https://github.com/gnu-mcu-eclipse/windows-build-tools/releases)
 * [GNU MCU Eclipse OpenOCD](https://github.com/gnu-mcu-eclipse/openocd/releases)  
   
-After download, extract all directiories in [recommended](https://gnu-mcu-eclipse.github.io/toolchain/arm/install/#manual-install) path: *%userprofile%\AppData\Roaming\GNU MCU Eclipse*.  
+After download, extract all directories in [recommended](https://gnu-mcu-eclipse.github.io/toolchain/arm/install/#manual-install) path: *%userprofile%\AppData\Roaming\GNU MCU Eclipse*.  
 
 **Install Cortex-Debug and Python plugin from VS Code extension marketplace**  
 This is needed for debug purposes and workspace file generation scripts.
 
-**Dowload CPU specific SVD file (System Viewer Description)**  
+**Download CPU specific SVD file (System Viewer Description)**  
 This file is (recommended by ST) downloaded from [Keil official page](https://www.keil.com/dd2/pack/). Just search for your chosen STM32 CPU family (ex.: STM32F0...), download and unpack with any archive software.  
-I recommend to unpack it in the same directory as other GNU Eclipse tools (eg: *%userprofile%\AppData\Roaming\GNU MCU Eclipse*) so everything is neatly organised in one place and files can be reused in other projects (this files will not be changed).  
+I recommend to unpack it in the same directory as other GNU Eclipse tools (eg: *%userprofile%\AppData\Roaming\GNU MCU Eclipse*) so everything is neatly organized in one place and files can be reused in other projects (this files will not be changed).  
 
 At the end, folder structure should look like this:  
 ![Folder structure](https://github.com/damogranlabs/VS-Code-STM32-IDE/blob/master/_images/folderStructure.PNG)
@@ -51,7 +51,7 @@ Once all prerequisites are installed, work flow is very simple.
 Need to re-generate CubeMX project? Do it, than run 'Update workspace' task and continue with work. User settings will remain intact as long as the are in a valid json format. Anyway, backup files are created in case of mistake/error.  
 Need to add user specific files/folders? Edit 'c_cpp_properties.json' file and update again.
   
-Note: on first 'update.py' script run, user must specify absolute paths to few files (tool paths). This are than stored in 'buildData.json' and update is not neccessary as long as the same 'buildData.json' file exists and paths are valid. Alternatively paths can be updated by running 'updatePaths.py' script.
+Note: on first 'update.py' script run, user must specify absolute paths to few files (tool paths). This are than stored in 'buildData.json' and update is not necessary as long as the same 'buildData.json' file exists and paths are valid. Alternatively paths can be updated by running 'updatePaths.py' script.
 
 ![Example folder structure](https://github.com/damogranlabs/VS-Code-STM32-IDE/blob/master/_images/exampleFolderStructure.PNG)
  
@@ -65,6 +65,7 @@ Scripts generate following tasks, which should work out of the box.
 * Clean (delete) build folder
   
 ## Target control tasks:
+* Build task + Download code and run CPU task
 * Download code and run CPU (program .elf output file and run CPU without attaching debugger)
 * Reset and run CPU (do not download code, execute reset and run CPU without attaching debugger)
 * Stop CPU
