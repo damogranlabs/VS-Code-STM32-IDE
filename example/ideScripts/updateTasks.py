@@ -169,11 +169,15 @@ class Tasks():
 
     def getBuildTask(self):
         '''
-        Add build task (execute 'make' command).
+        Add build task (execute 'make' command). Also the VS Code default 'build' task.
         '''
         taskData = """
         {
             "label": "will be replaced with templateStrings string",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
             "type": "shell",
             "command": "specified below",
             "args": ["specified below"],

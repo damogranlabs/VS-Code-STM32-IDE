@@ -3,6 +3,10 @@
     "tasks": [
         {
             "label": "Build project",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
             "type": "shell",
             "command": "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/Build Tools/2.11-20180428-1604/bin/make.exe",
             "args": [
