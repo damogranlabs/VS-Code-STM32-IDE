@@ -6,7 +6,7 @@ This file answers some of the frequently asked questions and explains inner work
   Basically, user should modify only 'c_cpp_properties.json' file, specifically 'user_*' fields. Other paths should be updated either with CubeMX or 'updatePaths.py' script.  
 
 * **Can workspace files/folders paths contain spaces?**  
-  No. This is a common issue and must be avoided - all user defined source folders and files must be without spaces, since GNU Make does not handle any paths with spaces. Anyway, paths to GCC/GNU/OpenOCD executables can include spaces because they are not used in the same manner as workspace sources, but generally it is a good idea to use non-spaced paths.  
+  No. This is a common issue and must be avoided - all user defined source folders and files must be without spaces, since GNU Make does not handle any paths with spaces. Although paths to GCC/GNU/OpenOCD executables can include spaces in default VS Code terminal configuration, it is still advised to avoid them. Generally it is a good idea to use non-spaced paths and avoid uneccessary problems. [See this issue.](https://github.com/damogranlabs/VS-Code-STM32-IDE/issues/1)  
 
 * **Can I add my custom tasks and launch configurations?**  
   Yes. See **updateTasks.py** description. Also, see *#TODO USER* markings in 'update*.py' code for specific how-to.

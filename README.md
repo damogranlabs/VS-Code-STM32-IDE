@@ -17,7 +17,8 @@ Additionally, 'buildData.json' file is created for user inspection of all paths/
 
 # Setup
 Install procedure is simple since all needed files can be downloaded online and setup shouldn't take no more than 5 minutes. It is strongly advised to stick to default recommended paths while installing following tools.  
-Tools needed: Python, GNU Eclipse ARM Embedded GCC, GNU Eclipse Windows Build Tools, GNU MCU Eclipse OpenOCD and CPU-specific files. 
+Tools needed: Python, GNU Eclipse ARM Embedded GCC, GNU Eclipse Windows Build Tools, GNU MCU Eclipse OpenOCD and CPU-specific files.  
+It is strongly advised to **use non-spaced paths** and avoid unwanted problems. [See this issue.](https://github.com/damogranlabs/VS-Code-STM32-IDE/issues/1).  
 
 **Python**  
 There are many posts how to install python. This project needs a valid *python* terminal command to execute tasks and set up files.
