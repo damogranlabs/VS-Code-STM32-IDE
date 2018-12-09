@@ -206,6 +206,11 @@ class Tasks():
         gccFolderPath = utils.pathWithForwardSlashes(gccFolderPath)
         jsonTaskData["args"] = ["GCC_PATH=" + gccFolderPath]   # specify compiler path to make command
 
+        numOfCores = os.cpu_count()
+        parallelJobsNumber = int(numOfCores * 1.5)  # https://stackoverflow.com/questions/15289250/make-j4-or-j8/15295032
+        parallelJobsStr = "-j" + str(parallelJobsNumber)
+        jsonTaskData["args"].append(parallelJobsStr)  # set 'make' parallel job execution
+
         return jsonTaskData
 
     def getCompileTask(self):

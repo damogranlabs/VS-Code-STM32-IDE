@@ -26,6 +26,10 @@ This file answers some of the frequently asked questions and explains inner work
 * **Can I add custom compiler flags/switches?**  
   Yes. 'user_cFlags' and 'user_asmFlags' fields in 'c_cpp_properties.json' fields are meant for this purpose and are added to new 'Makefile' once *Update workspace* task is executed.
 
+* **What and why is '-j' switch in 'Build' task?**  
+  This switch manages number of 'make' parallel jobs, which could speed up build time. It was added upon [#FeatureRequest](https://github.com/damogranlabs/VS-Code-STM32-IDE/issues/5) and is calculated: NUMBER OF CORES * 1.5, as it is advised on many forums.
+  It will be removed if users will report unwanted behaviour or unsuccesfull builds. Anyway, it has no impact on the compiled code.
+
 * **Where can I see when the workspace files were updated the last time?**  
   *Version* and *last run timestamp* are updated on every run of 'update.py' script and can be seen in 'Makefile' and 'buildData.json'.
   
