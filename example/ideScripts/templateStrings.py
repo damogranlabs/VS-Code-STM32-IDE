@@ -20,6 +20,7 @@ taskName_CPU_halt = "CPU: Halt"
 taskName_CPU_run = "CPU: Run"
 
 taskName_Python = "Run Python file"
+taskName_OpenCubeMX = "Open CubeMX project"
 taskName_updateWorkspace = "Update workspace"
 
 #########################################################################################################

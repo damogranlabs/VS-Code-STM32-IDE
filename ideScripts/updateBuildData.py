@@ -42,6 +42,8 @@ class BuildDataStrings():
 
     stm32svdPath = 'stm32svdPath'
 
+    cubeMxProjectPath = 'cubeMxProjectPath'
+
 
 class BuildData():
     def __init__(self):
@@ -148,6 +150,14 @@ class BuildData():
 
         return buildData
 
+    def addCubeMxProjectPathToBuildData(self, buildData):
+        '''
+        If utils.cubeMxProjectFilePath is not None, add/update 'cubeMxProjectPath' field to 'buildData.json'.
+        '''
+        if utils.cubeMxProjectFilePath is not None:
+            buildData[self.bStr.cubeMxProjectPath] = utils.cubeMxProjectFilePath
+        return buildData
+
     def overwriteBuildDataFile(self, data):
         '''
         Overwrite existing 'buildData.json' file with new data.
@@ -168,7 +178,6 @@ class BuildData():
             errorMsg = "Exception error overwriting 'buildData.json' file:\n"
             errorMsg += str(err)
             utils.printAndQuit(errorMsg)
-
 
 
 ########################################################################################################################
@@ -192,6 +201,9 @@ if __name__ == "__main__":
 
     # data from current Makefile
     makefileData = makefile.getMakefileData(makeExePath, gccExePath)
+
+    # try to add CubeMX project file path
+    buildData = bData.addCubeMxProjectPathToBuildData(buildData)
 
     buildData = bData.addMakefileDataToBuildDataFile(buildData, makefileData)
     bData.overwriteBuildDataFile(buildData)

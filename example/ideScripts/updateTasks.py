@@ -154,6 +154,10 @@ class Tasks():
         task = self.getRunCurrentPythonFileTask()  # common "run python file" task
         tasksData = self.addOrReplaceTask(tasksData, task)
 
+        if utils.cubeMxProjectFilePath is not None:
+            task = self.getOpenCubeMXTask()   # open CubeMX project
+            tasksData = self.addOrReplaceTask(tasksData, task)
+
         task = self.getUpdateTask()   # update all files for VS Code so it can be used as IDE
         tasksData = self.addOrReplaceTask(tasksData, task)
 
@@ -472,6 +476,29 @@ class Tasks():
         """
         jsonTaskData = json.loads(taskData)
         jsonTaskData["label"] = tmpStr.taskName_Python
+
+        return jsonTaskData
+
+    def getOpenCubeMXTask(self):
+        '''
+        Create Open CubeMX project task. Starts with default program.
+        '''
+        taskData = """
+        {
+            "label": "will be replaced with templateStrings string",
+            "type": "shell",
+            "command": "start",
+            "args": ["specified below"],
+            "presentation": {
+                "focus": false
+            },
+            "problemMatcher": []
+        }
+        """
+        jsonTaskData = json.loads(taskData)
+        jsonTaskData["label"] = tmpStr.taskName_OpenCubeMX
+        jsonTaskData["args"] = [""]  # name
+        jsonTaskData["args"].append(utils.cubeMxProjectFilePath)  # opens with default program
 
         return jsonTaskData
 

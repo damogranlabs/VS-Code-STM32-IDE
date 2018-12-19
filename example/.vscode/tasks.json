@@ -177,6 +177,19 @@
             "problemMatcher": []
         },
         {
+            "label": "Open CubeMX project",
+            "type": "shell",
+            "command": "start",
+            "args": [
+                "",
+                "D:/Stromarija/GIT/VS_Code_STM32_IDE/example/example.ioc"
+            ],
+            "presentation": {
+                "focus": false
+            },
+            "problemMatcher": []
+        },
+        {
             "label": "Update workspace",
             "type": "shell",
             "command": "python",

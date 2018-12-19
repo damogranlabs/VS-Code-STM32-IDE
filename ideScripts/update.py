@@ -63,6 +63,7 @@ if __name__ == "__main__":
 
     # update buildData.json
     buildData = bData.addMakefileDataToBuildDataFile(buildData, makefileData)
+    buildData = bData.addCubeMxProjectPathToBuildData(buildData)
     bData.overwriteBuildDataFile(buildData)
 
     # create build folder

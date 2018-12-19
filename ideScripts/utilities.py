@@ -17,6 +17,7 @@ __version__ = '1.2'  # this is inherited by all 'update*.py' scripts
 
 workspacePath = None  # absolute path to workspace folder
 workspaceFilePath = None  # absolute file path to '*.code-workspace' file
+cubeMxProjectFilePath = None  # absolute path to *.ioc CubeMX workspace file
 ideScriptsPath = None  # absolute path to 'ideScripts' folder
 
 makefilePath = None
@@ -122,6 +123,8 @@ def verifyFolderStructure():
                 launchPath = os.path.join(workspacePath, '.vscode', 'launch.json')
                 launchPath = pathWithForwardSlashes(launchPath)
                 launchBackupPath = launchPath + ".backup"
+
+                getCubeMXProjectFile()
                 return
 
             errorMsg = "'ideScripts' folder not found in the same folder as '*.code-workspace' file.\n"
@@ -137,6 +140,8 @@ def verifyFolderStructure():
 def printWorkspacePaths():
     print("\nWorkspace root folder: " + workspacePath)
     print("VS Code workspace file: " + workspaceFilePath)
+    if cubeMxProjectFilePath is not None:
+        print("CubeMX project file: " + cubeMxProjectFilePath)
     print("'ideScripts' folder: " + ideScriptsPath)
     print("\n'Makefile': " + makefilePath)
     print("'Makefile.backup': " + makefileBackupPath)
@@ -148,6 +153,38 @@ def printWorkspacePaths():
     print("\n'launch.json': " + launchPath)
     print("'launch.json.backup': " + launchBackupPath)
     print()
+
+
+def getCubeMXProjectFile():
+    '''
+    Try to get .ioc CubeMX project from workspace directory.
+
+    If there is only one .ioc file, this file is selected.
+    If there is more than one .ioc files, the one that has the same name as .code-workspace is selected.
+        If there is no same-named file, no .ioc file is selected.
+    '''
+    global cubeMxProjectFilePath
+
+    iocFiles = []
+    for item in os.listdir(workspacePath):
+        if item.endswith('.ioc'):
+            iocFiles.append(item)
+
+    if len(iocFiles) == 1:
+        iocFilePath = os.path.join(workspacePath, iocFiles[0])
+        cubeMxProjectFilePath = pathWithForwardSlashes(iocFilePath)
+        return
+
+    elif iocFiles:
+        workspaceFileName, _ = os.path.splitext(os.path.basename(workspaceFilePath))
+
+        for iocFile in iocFiles:
+            iocFileName, _ = os.path.splitext(iocFile)
+
+            if iocFileName == workspaceFileName:
+                iocFilePath = os.path.join(workspacePath, iocFile)
+                cubeMxProjectFilePath = pathWithForwardSlashes(iocFilePath)
+                return
 
 
 def createBuildFolder(folderName='build'):

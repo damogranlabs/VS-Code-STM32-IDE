@@ -30,6 +30,11 @@ This file answers some of the frequently asked questions and explains inner work
   This switch manages number of 'make' parallel jobs, which could speed up build time. It was added upon [#FeatureRequest](https://github.com/damogranlabs/VS-Code-STM32-IDE/issues/5) and is calculated: NUMBER OF CORES * 1.5, as it is advised on many forums.
   It will be removed if users will report unwanted behaviour or unsuccesfull builds. Anyway, it has no impact on the compiled code.
 
+* **I don't have 'Open CubeMX project' task!?!**  
+  If workspace directory contain no '\*.ioc' files, this task is not generated.  
+  If there is more than one '\*.ioc' file, at least one such file name must match with the name of VS Code workspace file.  
+  If only one '\*.ioc' file is found, this file is chosen for this task.
+
 * **Where can I see when the workspace files were updated the last time?**  
   *Version* and *last run timestamp* are updated on every run of 'update.py' script and can be seen in 'Makefile' and 'buildData.json'.
   
@@ -72,6 +77,7 @@ This script (re)generate 'tasks.json' file in '.vscode' workspace subfolder. Tas
   
 **Python/IDE tasks:**
 * Update (calls 'update.py' script and update all workspace sources)
+* Open CubeMX project (Opens STM32CubeMX project if appropriate '*.ioc' file is found in workspace folder)
   
 User can add custom tasks in two ways: add task to 'updateTasks.py' file (added always even if 'tasks.json' previously does not exist) or add task directly to 'tasks.json' file.  
 If 'tasks.json' file already exists when 'updateTasks.py' script is called, data is merged and task will not be overwritten. But, if existing 'tasks.json' file is not valid (faulty json format), backup is created and new clean 'tasks.json' file is generated, overwriting user added task (could be found in .backup file).  
