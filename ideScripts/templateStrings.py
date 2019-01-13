@@ -168,3 +168,7 @@ launchFileTemplate = """{
     ]
 }
 """
+
+#########################################################################################################
+cubeMxTmpFolderName = '_tmpCubeMx'
+cubeMxTmpFileName = 'tmpCubeMx.txt'

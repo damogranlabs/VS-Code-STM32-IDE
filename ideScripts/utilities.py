@@ -8,8 +8,9 @@ paths.
 import os
 import shutil
 import sys
+import traceback
 
-__version__ = '1.2'  # this is inherited by all 'update*.py' scripts
+__version__ = '1.3'  # this is inherited by all 'update*.py' scripts
 
 ########################################################################################################################
 # Global utilities and paths
@@ -17,7 +18,7 @@ __version__ = '1.2'  # this is inherited by all 'update*.py' scripts
 
 workspacePath = None  # absolute path to workspace folder
 workspaceFilePath = None  # absolute file path to '*.code-workspace' file
-cubeMxProjectFilePath = None  # absolute path to *.ioc CubeMX workspace file
+cubeMxProjectFilePath = None  # absolute path to *.ioc STM32CubeMX workspace file
 ideScriptsPath = None  # absolute path to 'ideScripts' folder
 
 makefilePath = None
@@ -35,8 +36,13 @@ def printAndQuit(msg):
     '''
     Unrecoverable error, print and quit with system
     '''
-    msg = "\n**** ERROR (unrecoverable) ****\n\t" + str(msg)
-    sys.exit(msg)
+    msg = "\n**** ERROR (unrecoverable) ****\n" + str(msg)
+    print(msg)
+
+    if sys.exc_info()[2]:  # was exception raised?
+        print("\nTraceback:")
+        traceback.print_exc()
+    sys.exit(1)
 
 
 def fileFolderExists(path):
@@ -61,11 +67,20 @@ def copyAndRename(filePath, newName):
 
 def verifyFolderStructure():
     '''
-    Verify if 'ideScript' folder is in the same folder as '*.code-workspace' file.
-    If it is, update project relevant paths.
+    Verify if folder structure is correct.
+    'ideScript' folder must be placed in the root of the project, where:
+        - exactly one '*.code-workspace' file must exist (this is also Workspace name)
+        - '.vscode' folder is present (it is created if it doesn't exist jet)
+
+    If this requirements are met, all paths are built - but not checked (they are checked in their respective .py files).
+        - build, launch, tasks, cpp properties files
+        - Makefile
+        - STM32CubeMX '.ioc'
+        - backup file paths
     '''
     global workspacePath
     global workspaceFilePath
+    global cubeMxProjectFilePath
     global ideScriptsPath
 
     global makefilePath
@@ -78,63 +93,60 @@ def verifyFolderStructure():
     global launchPath
     global launchBackupPath
 
-    thisFolderPath = os.path.dirname(__file__)
+    thisFolderPath = os.path.dirname(sys.argv[0])
+    workspacePath = pathWithForwardSlashes(os.path.dirname(thisFolderPath))
+    ideScriptsPath = pathWithForwardSlashes(os.path.join(workspacePath, 'ideScripts'))
 
-    workspacePath = os.path.dirname(thisFolderPath)
-    workspacePath = pathWithForwardSlashes(workspacePath)
+    codeWorkspaces = getCodeWorkspaces()
+    if len(codeWorkspaces) == 1:
+        # '*.code-workspace' file found
+        workspaceFilePath = codeWorkspaces[0]  # file existance is previously checked in getCodeWorkspaces()
+    else:
+        errorMsg = "Invalid folder/file structure:\n"
+        errorMsg += "Exactly one VS Code workspace ('*.code-workspace') file must exist "
+        errorMsg += "in the root folder where 'ideScripts' folder is placed.\n"
+        errorMsg += "Expecting one '*.code-workspace' file in: " + workspacePath
+        printAndQuit(errorMsg)
 
-    vscodeWorkspaceFolder = os.path.join(workspacePath, ".vscode")
-    if not fileFolderExists(vscodeWorkspaceFolder):
+    vscodeFolder = pathWithForwardSlashes(os.path.join(workspacePath, ".vscode"))
+    if not fileFolderExists(vscodeFolder):
         try:
-            print("Creating '.vscode' subfolder.")
-            os.mkdir(vscodeWorkspaceFolder)
+            os.mkdir(vscodeFolder)
+            print("'.vscode' folder created.")
         except Exception as err:
-            errorMsg = "Exception error creating '.vscode' subfolder:\n"
-            errorMsg += str(err)
-            printAndQuit(errorMsg)
-
-    ideScriptsPath = os.path.join(workspacePath, 'ideScripts')
-    ideScriptsPath = pathWithForwardSlashes(ideScriptsPath)
-
-    for item in os.listdir(workspacePath):
-        if item.endswith('.code-workspace'):
-            # workspace '*.code-workspace' file found
-            workspaceFilePath = os.path.join(workspacePath, item)
-            workspaceFilePath = pathWithForwardSlashes(workspaceFilePath)
-
-            if fileFolderExists(ideScriptsPath):
-                # 'ideScripts' folder found in the same folder as '*.code-workspace' file. Structure seems OK.
-                cPropertiesPath = os.path.join(workspacePath, '.vscode', 'c_cpp_properties.json')
-                cPropertiesPath = pathWithForwardSlashes(cPropertiesPath)
-                cPropertiesBackupPath = cPropertiesPath + ".backup"
-
-                makefilePath = os.path.join(workspacePath, 'Makefile')
-                makefilePath = pathWithForwardSlashes(makefilePath)
-                makefileBackupPath = makefilePath + ".backup"
-
-                buildDataPath = os.path.join(workspacePath, '.vscode', 'buildData.json')
-                buildDataPath = pathWithForwardSlashes(buildDataPath)
-                # does not have backup file, always regenerated
-
-                tasksPath = os.path.join(workspacePath, '.vscode', 'tasks.json')
-                tasksPath = pathWithForwardSlashes(tasksPath)
-                tasksBackupPath = tasksPath + ".backup"
-
-                launchPath = os.path.join(workspacePath, '.vscode', 'launch.json')
-                launchPath = pathWithForwardSlashes(launchPath)
-                launchBackupPath = launchPath + ".backup"
-
-                getCubeMXProjectFile()
-                return
-
-            errorMsg = "'ideScripts' folder not found in the same folder as '*.code-workspace' file.\n"
-            errorMsg += "Did you rename it?"
+            errorMsg = "Exception error creating '.vscode' subfolder:\n" + str(err)
             printAndQuit(errorMsg)
     else:
-        errorMsg = "Invalid file/folder structure!"
-        errorMsg += "'ideScripts' folder should be in the same folder as '*.code-workspace' file.\n"
-        errorMsg += "All other '*.py' files should be inside 'ideScripts' folder. Do not rename any files or folders."
-        printAndQuit(errorMsg)
+        print("Existing '.vscode' folder used.")
+
+    # 'ideScripts' folder found in the same folder as '*.code-workspace' file. Structure seems OK.
+    cPropertiesPath = os.path.join(workspacePath, '.vscode', 'c_cpp_properties.json')
+    cPropertiesPath = pathWithForwardSlashes(cPropertiesPath)
+    cPropertiesBackupPath = cPropertiesPath + ".backup"
+
+    makefilePath = os.path.join(workspacePath, 'Makefile')
+    makefilePath = pathWithForwardSlashes(makefilePath)
+    makefileBackupPath = makefilePath + ".backup"
+
+    buildDataPath = os.path.join(workspacePath, '.vscode', 'buildData.json')
+    buildDataPath = pathWithForwardSlashes(buildDataPath)
+    # does not have backup file, always regenerated
+
+    tasksPath = os.path.join(workspacePath, '.vscode', 'tasks.json')
+    tasksPath = pathWithForwardSlashes(tasksPath)
+    tasksBackupPath = tasksPath + ".backup"
+
+    launchPath = os.path.join(workspacePath, '.vscode', 'launch.json')
+    launchPath = pathWithForwardSlashes(launchPath)
+    launchBackupPath = launchPath + ".backup"
+
+    cubeMxFiles = getCubeMXProjectFiles()
+    if len(cubeMxFiles) == 1:
+        cubeMxProjectFilePath = cubeMxFiles[0]
+        print("One STM32CubeMX file found: " + cubeMxProjectFilePath)
+    else:  # more iocFiles:
+        cubeMxProjectFilePath = None
+        print("WARNING: None or more than one STM32CubeMX files found. None or one expected.")
 
 
 def printWorkspacePaths():
@@ -155,36 +167,17 @@ def printWorkspacePaths():
     print()
 
 
-def getCubeMXProjectFile():
+def getCubeMXProjectFiles():
     '''
-    Try to get .ioc CubeMX project from workspace directory.
-
-    If there is only one .ioc file, this file is selected.
-    If there is more than one .ioc files, the one that has the same name as .code-workspace is selected.
-        If there is no same-named file, no .ioc file is selected.
+    Returns list of all STM32CubeMX '.ioc' files in root directory.
     '''
-    global cubeMxProjectFilePath
-
     iocFiles = []
-    for item in os.listdir(workspacePath):
-        if item.endswith('.ioc'):
-            iocFiles.append(item)
+    for theFile in os.listdir(workspacePath):
+        if theFile.endswith('.ioc'):
+            filePath = pathWithForwardSlashes(os.path.join(workspacePath, theFile))
+            iocFiles.append(filePath)
 
-    if len(iocFiles) == 1:
-        iocFilePath = os.path.join(workspacePath, iocFiles[0])
-        cubeMxProjectFilePath = pathWithForwardSlashes(iocFilePath)
-        return
-
-    elif iocFiles:
-        workspaceFileName, _ = os.path.splitext(os.path.basename(workspaceFilePath))
-
-        for iocFile in iocFiles:
-            iocFileName, _ = os.path.splitext(iocFile)
-
-            if iocFileName == workspaceFileName:
-                iocFilePath = os.path.join(workspacePath, iocFile)
-                cubeMxProjectFilePath = pathWithForwardSlashes(iocFilePath)
-                return
+    return iocFiles
 
 
 def createBuildFolder(folderName='build'):
@@ -199,19 +192,49 @@ def createBuildFolder(folderName='build'):
         print("Build folder already exist: '" + buildFolderPath + "'")
 
 
-def getWorkspaceName():
+def getCubeWorkspaces():
+    '''
+    Search workspacePath for files that ends with '.ioc' (STM32CubeMX projects).
+    Returns list of all available STM32CubeMX workspace paths.
+
+    Only root directory is searched.
+    '''
     iocFiles = []
 
-    for f in os.listdir(workspacePath):
-        if f.endswith(".ioc"):
-            iocFiles.append(f)
+    for theFile in os.listdir(workspacePath):
+        if theFile.endswith(".ioc"):
+            theFilePath = os.path.join(workspacePath, theFile)
+            iocFiles.append(pathWithForwardSlashes(theFile))
 
-    if len(iocFiles) > 1:
-        errorMsg = "More than one .ioc file in workspace directory. Only one is allowed."
-        printAndQuit(errorMsg)
+    return iocFiles
 
-    name = iocFiles[0].rstrip('.ioc')
-    return name
+
+def getCodeWorkspaces():
+    '''
+    Search workspacePath for files that ends with '.code-workspace' (VS Code workspaces).
+    Returns list of all available VS Code workspace paths.
+
+    Only root directory is searched.
+    '''
+    codeFiles = []
+
+    for theFile in os.listdir(workspacePath):
+        if theFile.endswith(".code-workspace"):
+            theFilePath = os.path.join(workspacePath, theFile)
+            codeFiles.append(pathWithForwardSlashes(theFilePath))
+
+    return codeFiles
+
+
+def getWorkspaceName():
+    '''
+    Return name (without extension) for this project '.code-workspace' file.
+
+    Return first available file name without extension.
+    '''
+    _, fileNameExt = os.path.split(workspaceFilePath)
+    fileName, _ = os.path.splitext(fileNameExt)
+    return fileName
 
 
 def stripStartOfString(dataList, stringToStrip):
@@ -235,6 +258,19 @@ def preappendString(data, stringToAppend):
         data = stringToAppend + data
 
     return data
+
+
+def stringToList(string, separator):
+    '''
+    Get list of unparsed string items into list. Strip any redundant spaces.
+    '''
+    allItems = []
+    items = string.split(separator)
+    for item in items:
+        item = item.strip()
+        allItems.append(item)
+
+    return allItems
 
 
 def askUserForPathUpdate(pathName):
@@ -335,9 +371,24 @@ def getBuildElfFilePath(buildDirPath, projectName):
     return buildFileName
 
 
+def getAllFilesInFolderTree(pathToFolder):
+    '''
+    Get the list of all files in directory tree at given path
+    '''
+    allFiles = []
+    if os.path.exists(pathToFolder):
+        for (dirPath, dirNames, fileNames) in os.walk(pathToFolder):
+            for theFile in fileNames:
+                filePath = os.path.join(dirPath, theFile)
+                filePath = pathWithForwardSlashes(filePath)
+                allFiles.append(filePath)
+
+    return allFiles
+
+
 ########################################################################################################################
 if __name__ == "__main__":
-    verifyFolderStructure()
-
     print("Workspace generation script version: " + __version__)
+    verifyFolderStructure()
+    print("This workspace name:", getWorkspaceName())
     printWorkspacePaths()

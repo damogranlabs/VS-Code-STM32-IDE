@@ -74,7 +74,6 @@ class BuildData():
 
         else:  # 'buildData.json' file does not exist jet, create it according to template string
             self.createBuildDataFile()
-            print("New 'buildData.json' file created.")
 
     def createBuildDataFile(self):
         '''

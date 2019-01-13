@@ -273,6 +273,46 @@ class Makefile():
         errorMsg = "String item " + str(searchString) + " not found!"
         utils.printAndQuit(errorMsg)
 
+    def searchAndCleanData(self, data, searchString):
+        '''
+        Search for string in 'data' list and clear all belonging data according to Makefile syntax.
+        '''
+        NOT_FOUND = -1
+
+        for lineIndex, line in enumerate(data):
+            line = line.rstrip('\n')  # strip string of '\n'
+
+            if line.find(searchString) != NOT_FOUND:  # search for start string
+                if line[0] == '#':  # this is a comment
+                    continue
+                if line.find("\\") == NOT_FOUND:
+                    # keep searchString and equaliy sign, append '\n'
+                    equalitySignCharIndex = line.find('=')
+                    data[lineIndex] = data[lineIndex][: equalitySignCharIndex+1] + ' \n'
+                    return data
+
+                else:  # multi-liner, get last line index and delete this lines
+                    lastLineIndex = lineIndex + 1
+                    while data[lastLineIndex].rstrip('\n') != '':
+                        lastLineIndex = lastLineIndex + 1
+                        if lastLineIndex >= len(data):
+                            errorMsg = "Unable to find end of multi-line Makefile item (" + searchString + "). "
+                            errorMsg += "Was Makefile manually modified?"
+                            utils.printAndQuit(errorMsg)
+                    # delete this lines
+                    delLineIndex = lineIndex + 1
+                    constLineIndex = lineIndex + 1  # this line will be deleted until an empty line is present
+                    while delLineIndex != lastLineIndex:
+                        del data[constLineIndex]
+                        delLineIndex = delLineIndex + 1
+                    # keep searchString and equaliy sign, append '\n'
+                    equalitySignCharIndex = line.find('=')
+                    data[lineIndex] = line[: equalitySignCharIndex+1] + ' \n'
+                    return data
+
+        errorMsg = "String item " + str(searchString) + " not found!"
+        utils.printAndQuit(errorMsg)
+
     ########################################################################################################################
 
     def getMakefileVariable(self, makeExePath, gccExePath, variableName):
@@ -391,7 +431,6 @@ class Makefile():
             makefileDataLines = makefile.readlines()
 
             makefileDataLines = self.addPrintVariableFunction(makefileDataLines)
-            # makefileDataLines = self.addCleanBuildDirFunction(makefileDataLines) # TODO is this really needed?
 
             makefile.seek(0)
             makefile.truncate()
@@ -408,27 +447,6 @@ class Makefile():
             makefileDataLines.append(line)
 
         print("Makefile 'print-variable' function OK.")
-        return makefileDataLines
-
-    def addCleanBuildDirFunction(self, makefileDataLines):
-        '''
-        Add 'clean-build-dir' Makefile function Makefile.
-        This function is called only from 'addPrintVariableFunction()'. It is intentionally added to the end of the file, 
-        for easier searching (it is used to check if this Makefile was already modified).
-
-        Note: Currenly disabled.
-        '''
-        for lineIndex, line in enumerate(makefileDataLines):
-            if line.find(tmpStr.cleanFunctionNameSearchString) != -1:
-                lineIndex = lineIndex + 2  # current line, function line, blank line.
-                makefileDataLines.insert(lineIndex, "\n")  # space before new 'clean-build-dir' function
-                lineIndex = lineIndex + 1
-
-                for cleanFunctionLine in reversed(tmpStr.cleanBuildDirFunction.splitlines()):
-                    cleanFunctionLine = cleanFunctionLine + "\n"
-                    makefileDataLines.insert(lineIndex, cleanFunctionLine)
-
-        print("Makefile 'clean-build-dir' function OK.")
         return makefileDataLines
 
 

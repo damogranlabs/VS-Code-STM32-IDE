@@ -1,5 +1,5 @@
 '''
-Update existing workspace file with debug paths in "settings":
+Update existing VS Code workspace file with debug paths in "settings":
     - "cortex-debug.armToolchainPath"
     - "cortex-debug.openocdPath"
 '''
@@ -23,20 +23,23 @@ class UpdateWorkspaceFile():
         Check if workspace '*.code-workspace' file exists. If it does, check if it is a valid JSON file.
         If it doesn't exist report error and quit.
         '''
-        workspaceFileName = utils.getWorkspaceName()
-        if utils.fileFolderExists(utils.workspaceFilePath):
-            # file exists, check if it loads OK
-            try:
-                with open(utils.workspaceFilePath, 'r') as workspaceFile:
-                    workspaceFileData = json.load(workspaceFile)
+        workspaceFiles = utils.getCodeWorkspaces()
+        if len(workspaceFiles) == 1:
+            _, fileName = os.path.split(workspaceFiles[0])
+            workspaceFileName, _ = os.path.splitext(fileName)
+            if utils.fileFolderExists(utils.workspaceFilePath):
+                # file exists, check if it loads OK
+                try:
+                    with open(utils.workspaceFilePath, 'r') as workspaceFile:
+                        workspaceFileData = json.load(workspaceFile)
 
-                    print("Existing " + workspaceFileName + " file found.")
+                        print("Existing " + workspaceFileName + " file found.")
 
-            except Exception as err:
-                errorMsg = "Invalid " + workspaceFileName + " file.\n"
-                errorMsg += "Possible cause: invalid json format or comments (not supported by this scripts). Error:\n"
-                errorMsg += str(err)
-                print(errorMsg)
+                except Exception as err:
+                    errorMsg = "Invalid " + workspaceFileName + " file.\n"
+                    errorMsg += "Possible cause: invalid json format or comments (not supported by this scripts). Error:\n"
+                    errorMsg += str(err)
+                    print(errorMsg)
 
         # else: verified in 'utils.verifyFolderStructure()'
 
@@ -80,7 +83,6 @@ class UpdateWorkspaceFile():
             errorMsg = "Exception error overwriting '*.code-workspace' file:\n"
             errorMsg += str(err)
             utils.printAndQuit(errorMsg)
-
 
 
 ########################################################################################################################
