@@ -536,14 +536,8 @@ if __name__ == "__main__":
     makefile = mkf.Makefile()
     tasks = Tasks()
 
-    # check if 'buildData.json' exists. Create it or/and get tool paths
-    bData.checkBuildDataFile()
-    buildData = bData.getBuildData()
-    if not paths.verifyExistingPaths(buildData):
-        buildData = paths.forceUpdatePaths(buildData)
-        bData.overwriteBuildDataFile(buildData)
-    makeExePath = buildData[bData.bStr.buildToolsPath]
-    gccExePath = buildData[bData.bStr.gccExePath]
+    # build data (update tools paths if neccessary)
+    buildData = bData.prepareBuildData()
 
     # create taks file
     tasks.checkTasksFile()

@@ -4,6 +4,4 @@
 **.pyc
 **__pycache__/
 
-.ropeproject
-.vscode
-.code-workspace
+*.ropeproject

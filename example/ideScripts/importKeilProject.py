@@ -55,42 +55,11 @@ class KeilProjectData:
         self.linkerSettings = []
 
 
-def findExecutablePath(extension, raiseException=False):
-    '''
-    Find default associated path of a given file extension, for example 'pdf'.
-    '''
-    arguments = "for /f \"delims== tokens=2\" %a in (\'assoc "
-    arguments += "." + extension
-    arguments += "\') do @ftype %a"
-
-    errorMsg = "Unable to get associated program for ." + extension + "."
-    try:
-        proc = subprocess.run(arguments, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
-        if proc.returncode == 0:
-            returnString = str(proc.stdout)
-            path = returnString.split('=')[1]
-            path = path.split('\"')[0]
-            path = path.strip()
-            path = os.path.normpath(path)
-            if os.path.exists(path):
-                return path
-        else:
-            print(errorMsg)
-
-    except Exception as err:
-        errorMsg += "Exception:\n" + str(err)
-
-    if raiseException:
-        raise Exception(errorMsg)
-    else:
-        return None
-
-
 def getCubeMxExePath():
     '''
     Get absolute path to STM32CubeMX.exe either by windows default associated program or user input.
     '''
-    cubeMxPath = findExecutablePath('ioc', raiseException=False)
+    cubeMxPath = utils.findExecutablePath('ioc', raiseException=False)
     if cubeMxPath is not None:
         if os.path.exists(cubeMxPath):
             cubeMxPath = utils.pathWithForwardSlashes(cubeMxPath)
@@ -125,7 +94,8 @@ def getKeilProjectPath(paths: Paths):
 
     if len(keilProjectFiles) == 0:
         errorMsg = "Unable to find any Keil project files ending with " + KEIL_PROJECT_FILE_EXTENSION + ". "
-        errorMsg += "Is folder structure correct?"
+        errorMsg += "Is folder structure correct?\n\t"
+        errorMsg += "Searched files in folder tree: " + paths.rootFolder
         raise Exception(errorMsg)
 
     elif len(keilProjectFiles) == 1:
@@ -470,7 +440,6 @@ def createNewMakefile(paths: Paths, keilProjData: KeilProjectData, newMakefileDa
         if keilProjData.linkerSettings:
             print("WARNING: Linker settings not imported (user must handle manualy):", str(keilProjData.linkerSettings))
 
-
         with open(paths.outputMakefile, 'w+') as newMakefileHandler:
             newMakefileHandler.writelines(data)
 
@@ -683,7 +652,8 @@ def createVSCodeWorkspace(paths: Paths, keilProjData: KeilProjectData):
 
 if __name__ == "__main__":
     paths = Paths()
-    paths.rootFolder = os.path.dirname(os.path.dirname(sys.argv[0]))
+    thisFileAbsPath = os.path.abspath(sys.argv[0])
+    paths.rootFolder = os.path.dirname(os.path.dirname(thisFileAbsPath))
     paths.rootFolder = utils.pathWithForwardSlashes(paths.rootFolder)
 
     paths.cubeMxExe = getCubeMxExePath()

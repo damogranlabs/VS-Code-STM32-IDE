@@ -157,7 +157,8 @@ buildDataTemplate = """{
     "buildToolsPath": "",
     "openOCDPath": "",
     "openOCDInterfacePath":"",
-    "openOCDTargetPath": ""
+    "openOCDTargetPath": "",
+    "stm32svdPath": ""
 }
 """
 

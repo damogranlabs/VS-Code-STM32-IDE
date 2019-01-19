@@ -53,7 +53,8 @@ Once all prerequisites are installed, work flow is very simple.
 Need to re-generate CubeMX project? Do it, than run 'Update workspace' task and continue with work. User settings will remain intact as long as the are in a valid json format. Anyway, backup files are created in case of mistake/error.  
 Need to add user specific files/folders? Edit 'c_cpp_properties.json' file and update again.
   
-Note: on first 'update.py' script run, user must specify absolute paths to few files (tool paths). This are than stored in 'buildData.json' and update is not necessary as long as the same 'buildData.json' file exists and paths are valid. Alternatively paths can be updated by running 'updatePaths.py' script.
+Note: on first 'update.py' script run, user must specify absolute paths to few files (tool paths). This are than stored in 'buildData.json' and update is not necessary as long as the same 'buildData.json' file exists and paths are valid. Common tools paths (like GCC and OpenOCD) paths are also cached in 'toolsPaths.json' in VS Code user appdata, so there is less work when creating new workspaces.  
+Alternatively paths can be updated by running 'updatePaths.py' script.
 
 ![Example folder structure](https://github.com/damogranlabs/VS-Code-STM32-IDE/blob/master/_images/exampleFolderStructure.PNG)
  

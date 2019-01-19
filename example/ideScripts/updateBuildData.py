@@ -2,6 +2,7 @@
 Update/generate 'buildData.json' file in '.vscode' subfolder from new Makefile.
 New Makefile is not updated by this script - it is updated with 'updateMakefile.py' or 'updateWorkspaceSources.py'
 '''
+import os
 import json
 import datetime
 
@@ -51,6 +52,24 @@ class BuildData():
         self.cPStr = wks.CPropertiesStrings()
         self.bStr = BuildDataStrings()
 
+    def prepareBuildData(self):
+        '''
+        This function is used in all 'update*.py' scripts and makes sure, that buildData with
+        a valid tools paths exist. It also updates 'toolsPaths.json' file.
+
+        Returns available, valid build data.
+        '''
+        paths = pth.UpdatePaths()
+
+        self.checkBuildDataFile()
+        buildData = self.getBuildData()
+        if self.checkToolsPathFile():  # toolsPaths.json exists
+            buildData = self.addToolsPathsData(buildData)
+        buildData = paths.verifyExistingPaths(buildData)
+        self.createUserToolsFile(buildData)
+
+        return buildData
+
     def checkBuildDataFile(self):
         '''
         Check if 'buildData.json' file exists. If it does, check if it is a valid JSON file.
@@ -75,25 +94,88 @@ class BuildData():
         else:  # 'buildData.json' file does not exist jet, create it according to template string
             self.createBuildDataFile()
 
+    def checkToolsPathFile(self):
+        '''
+        Returns True if 'toolsPaths.json' file exists and is a valid JSON file.
+        If it doesn't exist, delete it and return False.
+        '''
+        if utils.fileFolderExists(utils.toolsPaths):
+            # file exists, check if it loads OK
+            try:
+                with open(utils.toolsPaths, 'r') as toolsFileHandler:
+                    data = json.load(toolsFileHandler)
+                    print("Valid 'toolsPaths.json' file found.")
+                return True
+
+            except Exception as err:
+                errorMsg = "Invalid 'toolsPaths.json' file. Error:\n" + str(err)
+                print(errorMsg)
+
+                try:
+                    os.remove(utils.toolsPaths)
+                    errorMsg = "\tDeleted. New 'toolsPaths.json' will be created on first valid user paths update."
+                    print(errorMsg)
+                except Exception as err:
+                    errorMsg = "\tError deleting 'toolsPaths.json'. Error:\n" + str(err)
+                    print(errorMsg)
+                return False
+
+        else:  # toolsPaths.json does not exist
+            return False
+
+    def createUserToolsFile(self, buildData):
+        '''
+        Create 'toolsPaths.json' file with current tools absolute paths. 
+        '''
+        data = {}
+        try:
+            data["ABOUT1"] = "Common tools paths that are automatically filled in buildData.json."
+            data["ABOUT2"] = "Delete/correct this file if paths change on system."
+            data[self.bStr.gccExePath] = buildData[self.bStr.gccExePath]
+            data[self.bStr.gccInludePath] = buildData[self.bStr.gccInludePath]
+            data[self.bStr.buildToolsPath] = buildData[self.bStr.buildToolsPath]
+            data[self.bStr.openOCDInterfacePath] = buildData[self.bStr.openOCDInterfacePath]
+            data[self.bStr.openOCDPath] = buildData[self.bStr.openOCDPath]
+
+            # dataToWrite = json.dump(data, indent=4, sort_keys=False) # TODO HERE
+
+            with open(utils.toolsPaths, 'w+') as toolsPathsFile:
+                json.dump(data, toolsPathsFile, indent=4, sort_keys=False)
+
+            print("'toolsPaths.json' file updated!")
+
+        except Exception as err:
+            errorMsg = "Exception error overwriting 'toolsPaths.json' file:\n"
+            errorMsg += str(err)
+            print("WARNING:", errorMsg)
+
     def createBuildDataFile(self):
         '''
-        Create fresh 'buildData.json' file.
+        Create fresh 'buildData.json' file. 
         '''
         try:
-            with open(utils.buildDataPath, 'w') as buildDataFile:
-                data = json.loads(tmpStr.buildDataTemplate)
-                dataToWrite = json.dumps(data, indent=4, sort_keys=False)
+            data = json.loads(tmpStr.buildDataTemplate)
+            dataToWrite = json.dumps(data, indent=4, sort_keys=False)
 
-                buildDataFile.seek(0)
+            with open(utils.buildDataPath, 'w+') as buildDataFile:
                 buildDataFile.truncate()
                 buildDataFile.write(dataToWrite)
 
-                print("New 'buildData.json' file created.")
-
+            print("New 'buildData.json' file created.")
         except Exception as err:
             errorMsg = "Exception error creating new 'buildData.json' file:\n"
             errorMsg += str(err)
             utils.printAndQuit(errorMsg)
+
+    def getToolsPathsData(self):
+        '''
+        Get data from current 'toolsPaths.json' file.
+        File existance is previoulsy checked in 'checkToolsPathFile()'.
+        '''
+        with open(utils.toolsPaths, 'r') as toolsPathsFile:
+            data = json.load(toolsPathsFile)
+
+        return data
 
     def getBuildData(self):
         '''
@@ -104,6 +186,20 @@ class BuildData():
             data = json.load(buildDataFile)
 
         return data
+
+    def addToolsPathsData(self, buildData):
+        '''
+        If available, add data from 'toolsPaths.json' to buildData
+        Returns new data.
+        '''
+        toolsPathsData = self.getToolsPathsData()
+        buildData[self.bStr.gccExePath] = toolsPathsData[self.bStr.gccExePath]
+        buildData[self.bStr.gccInludePath] = toolsPathsData[self.bStr.gccInludePath]
+        buildData[self.bStr.buildToolsPath] = toolsPathsData[self.bStr.buildToolsPath]
+        buildData[self.bStr.openOCDInterfacePath] = toolsPathsData[self.bStr.openOCDInterfacePath]
+        buildData[self.bStr.openOCDPath] = toolsPathsData[self.bStr.openOCDPath]
+
+        return buildData
 
     def addMakefileDataToBuildDataFile(self, buildData, makefileData):
         '''
@@ -187,22 +283,20 @@ if __name__ == "__main__":
     makefile = mkf.Makefile()
     bData = BuildData()
 
-    # Makefile must exist
-    makefile.checkMakefileFile()  # no point in continuing if Makefile does not exist
+    # Makefile must exist - # point in continuing if Makefile does not exist
+    makefile.checkMakefileFile()
 
     # build data (update tools paths if neccessary)
-    bData.checkBuildDataFile()
-    buildData = bData.getBuildData()
-    if not paths.verifyExistingPaths(buildData):
-        buildData = paths.forceUpdatePaths(buildData)
-    makeExePath = buildData[bData.bStr.buildToolsPath]
-    gccExePath = buildData[bData.bStr.gccExePath]
+    buildData = bData.prepareBuildData()
 
     # data from current Makefile
+    makeExePath = buildData[bData.bStr.buildToolsPath]
+    gccExePath = buildData[bData.bStr.gccExePath]
     makefileData = makefile.getMakefileData(makeExePath, gccExePath)
 
     # try to add CubeMX project file path
     buildData = bData.addCubeMxProjectPathToBuildData(buildData)
 
     buildData = bData.addMakefileDataToBuildDataFile(buildData, makefileData)
+
     bData.overwriteBuildDataFile(buildData)

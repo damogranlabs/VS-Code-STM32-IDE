@@ -1,0 +1,30 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug current Python file",
+            "type": "python",
+            "request": "launch",
+            "cwd": "${file}",
+            "program": "${file}",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Update Example workspace",
+            "type": "python",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/example",
+            "program": "${workspaceFolder}/example/ideScripts/update.py",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Import Keil Project",
+            "type": "python",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/example/ideScripts",
+            "program": "${workspaceFolder}/example/ideScripts/importKeilProject.py",
+            "console": "integratedTerminal"
+        }
+
+    ]
+}

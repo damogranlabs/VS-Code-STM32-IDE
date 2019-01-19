@@ -175,16 +175,12 @@ if __name__ == "__main__":
     makefile.checkMakefileFile()  # no point in continuing if Makefile does not exist
     makefile.restoreOriginalMakefile()
 
-    # check if 'buildData.json' exists. Create it or/and get tool paths
-    bData.checkBuildDataFile()
-    buildData = bData.getBuildData()
-    if not paths.verifyExistingPaths(buildData):
-        buildData = paths.forceUpdatePaths(buildData)
-        bData.overwriteBuildDataFile(buildData)
-    makeExePath = buildData[bData.bStr.buildToolsPath]
-    gccExePath = buildData[bData.bStr.gccExePath]
+    # build data (update tools paths if neccessary)
+    buildData = bData.prepareBuildData()
 
     # data from original makefile
+    makeExePath = buildData[bData.bStr.buildToolsPath]
+    gccExePath = buildData[bData.bStr.gccExePath]
     makefileData = makefile.getMakefileData(makeExePath, gccExePath)
 
     # create 'c_cpp_properties.json' file

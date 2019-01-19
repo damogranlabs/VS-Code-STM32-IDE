@@ -94,11 +94,7 @@ if __name__ == "__main__":
     wksFile = UpdateWorkspaceFile()
 
     # build data (update tools paths if neccessary)
-    bData.checkBuildDataFile()
-    buildData = bData.getBuildData()
-    if not paths.verifyExistingPaths(buildData):
-        buildData = paths.forceUpdatePaths(buildData)
-        bData.overwriteBuildDataFile(buildData)
+    buildData = bData.prepareBuildData()
 
     wksFile.checkWorkspaceFile()
     wksData = wksFile.getWorkspaceFileData()

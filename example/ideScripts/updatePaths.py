@@ -31,8 +31,8 @@ class UpdatePaths():
         '''
         This function is called when there are no valid paths found in existing 'buildData.json' file.
         '''
-        for (path, pathName) in self.toolsList:
-            while(True):
+        for path, pathName in self.toolsList:
+            while True:
                 newPath = utils.getUserPath(pathName)
                 if utils.fileFolderExists(newPath):
                     buildData[path] = newPath
@@ -44,34 +44,58 @@ class UpdatePaths():
                     msg = "\tPath to '" + pathName + "' not valid:\n\t" + str(newPath)
                     print(msg)
 
+        print("Tools paths updated.\n")
+        return buildData
+
+    def askToUpdate(self, buildData):
+        '''
+        Ask/force user to update tools paths. 
+        If there is no valid path, user is forced to update path.
+        If there is a valid path, user is asked if he wish to update path.
+        Returns updated paths (buildData).
+        '''
+        for path, pathName in self.toolsList:
+            if buildData[path] != '':
+                if not utils.fileFolderExists(buildData[path]):
+                    # buildData path is not empty, but path is not valid. Force update.
+                    buildData[path] = utils.getUserPath(pathName)
+                else:
+                    # valid path, ask user for update
+                    if utils.askUserForPathUpdate(pathName, currentPath=buildData[path]):
+                        buildData[path] = utils.getUserPath(pathName)
+            else:
+                # no path currently available specified, force update.
+                buildData[path] = utils.getUserPath(pathName)
+
+        print("Chosen paths updated.\n")
+        return buildData
+
+    def verifyExistingPaths(self, buildData):
+        '''
+        This function checks if paths specified in 'self.toolsList' exists in 'buildData.json'. 
+        If any path is not valid, user is asked for update.
+
+        Returns updated valid paths.
+        '''
+        for path, pathName in self.toolsList:
+            try:
+                pathToCheck = buildData[path]
+                if not utils.fileFolderExists(pathToCheck):
+                    # path not valid
+                    buildData[path] = utils.getUserPath(pathName)
+                else:
+                    # a valid path exists, ask user if he wish to update
+                    continue
+            except:
+                buildData = self.forceUpdatePaths(buildData)
+
         gccExePath = buildData[self.bStr.gccExePath]
         buildData[self.bStr.gccInludePath] = utils.getGccIncludePath(gccExePath)
 
         openOCDTargetPath = buildData[self.bStr.openOCDTargetPath]
         buildData[self.bStr.openOCDInterfacePath] = utils.getSTLinkPath(openOCDTargetPath)
 
-        print("Tools paths updated.\n")
         return buildData
-
-    def verifyExistingPaths(self, buildData):
-        '''
-        This function checks if paths specified in 'self.toolsList' exists in 'buildData.json' and check if paths are valid.
-
-        Return 'True' if paths are valid, 'False' otherwise.
-        '''
-
-        for path, _ in self.toolsList:
-            try:
-                pathToCheck = buildData[path]
-                if utils.fileFolderExists(pathToCheck):
-                    # a valid path exists, ask user if he wish to update
-                    continue
-                else:  # path not valid
-                    return False
-            except:
-                return False
-
-        return True
 
 
 ########################################################################################################################
@@ -80,8 +104,9 @@ if __name__ == "__main__":
 
     paths = UpdatePaths()
     bData = build.BuildData()
-    bData.checkBuildDataFile()
-    buildData = bData.getBuildData()
 
-    buildData = paths.forceUpdatePaths(buildData)
+    buildData = bData.prepareBuildData()
+    paths.askToUpdate(buildData)
+
     bData.overwriteBuildDataFile(buildData)
+    bData.createUserToolsFile(buildData)

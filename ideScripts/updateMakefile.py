@@ -464,13 +464,7 @@ if __name__ == "__main__":
     makefile.restoreOriginalMakefile()
 
     # build data (update tools paths if neccessary)
-    bData.checkBuildDataFile()
-    buildData = bData.getBuildData()
-    if not paths.verifyExistingPaths(buildData):
-        buildData = paths.forceUpdatePaths(buildData)
-        bData.overwriteBuildDataFile(buildData)
-    makeExePath = buildData[bData.bStr.buildToolsPath]
-    gccExePath = buildData[bData.bStr.gccExePath]
+    buildData = bData.prepareBuildData()
 
     # get data from 'c_cpp_properties.json' and create new Makefile
     cP.checkCPropertiesFile()

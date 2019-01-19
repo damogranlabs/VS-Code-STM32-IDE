@@ -2,8 +2,8 @@
     "ABOUT1": "This file holds combined user and CubeMX generated Makefile workspace dependecies.",
     "ABOUT2": "User should not edit this fields, instead it should edit 'c_cpp_properties.json'",
     "ABOUT3": "This file is regenerated on 'Update workspace' task.",
-    "VERSION": "1.2",
-    "LAST_RUN": "2018-12-19 23:57:27.072790",
+    "VERSION": "1.4",
+    "LAST_RUN": "2019-01-19 12:34:22.239494",
     "cSources": [
         "Src/main.c",
         "Src/gpio.c",
@@ -82,6 +82,6 @@
     "openOCDInterfacePath": "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/OpenOCD/0.10.0-8-20180512-1921/scripts/interface/stlink.cfg",
     "openOCDTargetPath": "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/OpenOCD/0.10.0-8-20180512-1921/scripts/target/stm32f0x.cfg",
     "stm32svdPath": "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/Keil.STM32F0xx_DFP.2.0.0/CMSIS/SVD/STM32F0x1.svd",
-    "targetExecutablePath": "d:/Stromarija/GIT/VS_Code_STM32_IDE/example/build/example.elf",
-    "cubeMxProjectPath": "d:/Stromarija/GIT/VS_Code_STM32_IDE/example/example.ioc"
+    "cubeMxProjectPath": "D:/Stromarija/GIT/VS_Code_STM32_IDE/example/example.ioc",
+    "targetExecutablePath": "D:/Stromarija/GIT/VS_Code_STM32_IDE/example/build/example.elf"
 }

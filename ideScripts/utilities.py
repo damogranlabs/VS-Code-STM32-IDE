@@ -7,10 +7,13 @@ paths.
 
 import os
 import shutil
+import subprocess
 import sys
 import traceback
 
-__version__ = '1.3'  # this is inherited by all 'update*.py' scripts
+import templateStrings as tmpStr
+
+__version__ = '1.4'  # this is inherited by all 'update*.py' scripts
 
 ########################################################################################################################
 # Global utilities and paths
@@ -26,6 +29,7 @@ makefileBackupPath = None
 cPropertiesPath = None
 cPropertiesBackupPath = None
 buildDataPath = None
+toolsPaths = None  # absolute path to toolsPaths.json with common user settings
 tasksPath = None
 tasksBackupPath = None
 launchPath = None
@@ -88,6 +92,7 @@ def verifyFolderStructure():
     global cPropertiesPath
     global cPropertiesBackupPath
     global buildDataPath
+    global toolsPaths
     global tasksPath
     global tasksBackupPath
     global launchPath
@@ -132,6 +137,10 @@ def verifyFolderStructure():
     buildDataPath = pathWithForwardSlashes(buildDataPath)
     # does not have backup file, always regenerated
 
+    vsCodeSettingsFolderPath = os.path.expandvars("%APPDATA%\\Code\\User\\")
+    toolsPaths = os.path.join(vsCodeSettingsFolderPath, 'toolsPaths.json')
+    toolsPaths = pathWithForwardSlashes(toolsPaths)
+
     tasksPath = os.path.join(workspacePath, '.vscode', 'tasks.json')
     tasksPath = pathWithForwardSlashes(tasksPath)
     tasksBackupPath = tasksPath + ".backup"
@@ -150,20 +159,25 @@ def verifyFolderStructure():
 
 
 def printWorkspacePaths():
-    print("\nWorkspace root folder: " + workspacePath)
-    print("VS Code workspace file: " + workspaceFilePath)
-    if cubeMxProjectFilePath is not None:
-        print("CubeMX project file: " + cubeMxProjectFilePath)
-    print("'ideScripts' folder: " + ideScriptsPath)
-    print("\n'Makefile': " + makefilePath)
-    print("'Makefile.backup': " + makefileBackupPath)
-    print("\n'c_cpp_properties.json': " + cPropertiesPath)
-    print("'c_cpp_properties.json.backup': " + cPropertiesBackupPath)
-    print("\n'buildData.json': " + buildDataPath)
-    print("\n'tasks.json': " + tasksPath)
-    print("'tasks.json.backup': " + tasksBackupPath)
-    print("\n'launch.json': " + launchPath)
-    print("'launch.json.backup': " + launchBackupPath)
+    print("\nWorkspace root folder:", workspacePath)
+    print("VS Code workspace file:", workspaceFilePath)
+    print("CubeMX project file:", cubeMxProjectFilePath)
+    print("'ideScripts' folder:", ideScriptsPath)
+
+    print("\n'Makefile':", makefilePath)
+    print("'Makefile.backup':", makefileBackupPath)
+
+    print("\n'c_cpp_properties.json':", cPropertiesPath)
+    print("'c_cpp_properties.json.backup':", cPropertiesBackupPath)
+
+    print("\n'buildData.json':", buildDataPath)
+    print("'toolsPaths.json':", toolsPaths)
+
+    print("\n'tasks.json':", tasksPath)
+    print("'tasks.json.backup':", tasksBackupPath)
+
+    print("\n'launch.json':", launchPath)
+    print("'launch.json.backup':", launchBackupPath)
     print()
 
 
@@ -273,22 +287,25 @@ def stringToList(string, separator):
     return allItems
 
 
-def askUserForPathUpdate(pathName):
+def askUserForPathUpdate(pathName, currentPath=None):
     '''
     Ask if user will update compiler path by entering path in terminal window.
+    If currentPath is not None, current path is printed before.
     Return True/False
     '''
     print("\n\n??? Do you wish to update path to '" + pathName + "'?")
+    if currentPath is not None:
+        print("\tCurrent path: " + currentPath)
+
     print("Type 'y' or 'n' and press Enter:")
     while(True):
-        userAnswer = input()
+        userAnswer = input().lower()
         if userAnswer not in ['y', 'n']:
             print("Type 'y' or 'n' and press Enter: ", end="")
         else:
             break
 
     if userAnswer == 'n':
-        print("\tDo not update path.")
         return False
     else:  # 'y'
         return True
@@ -297,12 +314,20 @@ def askUserForPathUpdate(pathName):
 def getUserPath(pathName):
     '''
     Get absolute path from user (by entering path in terminal window).
+    Repeated as long as user does not enter a valid path to file/folder.
     '''
-    msg = "\n\n??? Enter path to '" + pathName + "':\n\tPaste here and press Enter: "
-    path = input(msg)
-    path = path.replace('\"', '')  # remove " "
-    path = path.replace('\'', '')  # remove ' '
-    path = pathWithForwardSlashes(path)
+    while True:
+        msg = "\n\n??? Enter path to '" + pathName + "':\n\tPaste here and press Enter: "
+        path = input(msg)
+        path = path.replace('\"', '')  # remove " "
+        path = path.replace('\'', '')  # remove ' '
+        path = pathWithForwardSlashes(path)
+
+        if fileFolderExists(path):
+            break
+        else:
+            print("\tPath not valid:", path)
+
     return path
 
 
@@ -384,6 +409,37 @@ def getAllFilesInFolderTree(pathToFolder):
                 allFiles.append(filePath)
 
     return allFiles
+
+
+def findExecutablePath(extension, raiseException=False):
+    '''
+    Find default associated path of a given file extension, for example 'pdf'.
+    '''
+    arguments = "for /f \"delims== tokens=2\" %a in (\'assoc "
+    arguments += "." + extension
+    arguments += "\') do @ftype %a"
+
+    errorMsg = "Unable to get associated program for ." + extension + "."
+    try:
+        proc = subprocess.run(arguments, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+        if proc.returncode == 0:
+            returnString = str(proc.stdout)
+            path = returnString.split('=')[1]
+            path = path.split('\"')[0]
+            path = path.strip()
+            path = os.path.normpath(path)
+            if os.path.exists(path):
+                return path
+        else:
+            print(errorMsg)
+
+    except Exception as err:
+        errorMsg += "Exception:\n" + str(err)
+
+    if raiseException:
+        raise Exception(errorMsg)
+    else:
+        return None
 
 
 ########################################################################################################################
