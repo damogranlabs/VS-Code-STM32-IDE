@@ -285,17 +285,16 @@ def createMakefileTemplate(paths: Paths, keilProjData: KeilProjectData):
     _createCubeMxTmpScript(paths, keilProjData)
 
     # run CubeMX as subprocess with this script as a parameter
-    cmdStr = "java -jar \"" + paths.cubeMxExe + "\" "
-    cmdStr += "-s \"" + paths.tmpCubeMxScript + "\" "  # scrip path
+    cmd = ['java', '-jar', paths.cubeMxExe, '-s', paths.tmpCubeMxScript] # scrip path
     if _checkCubeMxFirmwarePackage(paths, keilProjData):
-        cmdStr += "-q"  # no-gui mode
+        cmd.append('-q')  # no-gui mode
         print("\tSTM32CubeMX GUI set to non-visible mode.")
     else:
         print("\tSTM32CubeMX GUI set to visible because of repository warning.")
 
     try:
         print("Generating template Makefile with STM32CubeMX...")
-        proc = subprocess.run(cmdStr, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+        proc = subprocess.run(cmd, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
         if proc.returncode == 0:
             print("\tSTM32CubeMX project generated.")
         else:
