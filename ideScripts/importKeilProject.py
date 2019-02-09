@@ -285,7 +285,7 @@ def createMakefileTemplate(paths: Paths, keilProjData: KeilProjectData):
     _createCubeMxTmpScript(paths, keilProjData)
 
     # run CubeMX as subprocess with this script as a parameter
-    cmd = ['java', '-jar', paths.cubeMxExe, '-s', paths.tmpCubeMxScript] # scrip path
+    cmd = ['java', '-jar', paths.cubeMxExe, '-s', paths.tmpCubeMxScript]
     if _checkCubeMxFirmwarePackage(paths, keilProjData):
         cmd.append('-q')  # no-gui mode
         print("\tSTM32CubeMX GUI set to non-visible mode.")
