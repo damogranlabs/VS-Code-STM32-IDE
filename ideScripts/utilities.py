@@ -369,15 +369,14 @@ def getGccIncludePath(gccExePath):
     gccFolderPath = os.path.dirname(gccExeFolderPath)
     searchPath = os.path.join(gccFolderPath, "lib", "gcc", "arm-none-eabi")
 
-    searchForFile = "stdint.h"
-    for root, dirs, files in os.walk(searchPath, topdown=False):
-        if searchForFile in files:
-            folderPath = pathWithForwardSlashes(root)
-            return folderPath
+    fileName = "stdint.h"
+    folderPath = findFileInFolderTree(searchPath, fileName)
+    if folderPath is None:
+        errorMsg = "Unable to find 'include' subfolder with " + fileName + " file on path:\n\t"
+        errorMsg += searchPath
+        printAndQuit(errorMsg)
 
-    errorMsg = "Unable to find 'include' subfolder with " + searchForFile + " file on path:\n\t"
-    errorMsg += searchPath
-    printAndQuit(errorMsg)
+    return folderPath
 
 def getPython3Path():
     '''
@@ -403,33 +402,35 @@ def getOpenOcdConfig(openOcdPath):
     Get openOCD configuration from user, eg. '-f interface/stlink.cfg -f target/stm32f0x.cfg'
     Returns the absolute path to these config files.
 
-    Default (official) folder structure:
-    /bin/
-        -/openocd (executable)
-    /share/
-        -/openocd/
-            - /scripts/
-                - /target/ (stm32f0x.cfg)
-                - /interface/ (stlink.cfg)
-                - etc
+    Searches openOcdRootPath for stlink.cfg to get the location of the scripts folder - which differs across systems.
     '''
     openOcdExePath = os.path.dirname(openOcdPath) # ../bin
     openOcdRootPath = os.path.dirname(openOcdExePath) # ../
-    openOcdScriptsPath = os.path.join(openOcdRootPath, "share", "openocd", "scripts") # ../share/openocd/scripts
+
+    # get OpenOcdScriptsPath from
+    fileName = "stlink.cfg"
+    openOcdScriptsInterfacePath = findFileInFolderTree(openOcdRootPath, fileName)
+    if openOcdScriptsInterfacePath is None:
+        errorMsg = "Unable to find 'scripts' subfolder with" + fileName + " file on path:\n\t"
+        errorMsg += openOcdRootPath
+        printAndQuit(errorMsg)
+    else:
+        openOcdScriptsPath = os.path.dirname(openOcdScriptsInterfacePath)
 
     while(True):
         msg = "\n\tEnter OpenOCD configuration files (eg: '-f interface/stlink.cfg -f target/stm32f0x.cfg):\n\tconfig files: "
         config = input(msg)
-        config = pathWithForwardSlashes(config)
 
-        # split config into list, seperating the arguments
+        # split config input into list, seperating the arguments
         config = config.split()
         configPaths = list()
         for arg in config:
-            if pathExists(openOcdScriptsPath + "/" + arg):
+            argPath = os.path.join(openOcdScriptsPath, arg)
+            argPath = pathWithForwardSlashes(argPath)
+            if pathExists(argPath):
                 msg = "\tConfiguration file '" + arg + "' detected successfully"
                 print(msg)
-                configPaths.append(openOcdScriptsPath + "/" + arg)
+                configPaths.append(argPath)
             elif arg.startswith("-"):
                 continue
             else:
@@ -488,6 +489,18 @@ def getAllFilesInFolderTree(pathToFolder):
 
     return allFiles
 
+def findFileInFolderTree(searchPath, fileName):
+    '''
+    Find a file in a folder or subfolders, and return the full file path if successful
+    Returns None if unsuccessful.
+    '''
+
+    for root, dirs, files in os.walk(searchPath, topdown=False):
+        if fileName in files:
+            filePath = pathWithForwardSlashes(root)
+            return filePath
+
+    return None
 
 def findExecutablePath(extension, raiseException=False):
     '''

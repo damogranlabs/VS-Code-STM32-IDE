@@ -45,7 +45,7 @@ class UpdatePaths():
                 else:
                     # path valid
                     if request: # if the user made the path verification request
-                        msg = "\n\nValid path to '" + pathName + "' detected at '" + path + "\n\tUpdate existing path? [y/n]: "
+                        msg = "\n\nValid path to '" + pathName + "' detected at '" + pathToCheck + "'\n\tUpdate existing path? [y/n]: "
                         if utils.getYesNoAnswer(msg):
                             buildData[path] = self.updatePath(path, pathName, default)
                             updated = True
