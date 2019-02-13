@@ -345,7 +345,9 @@ class Tasks():
         jsonTaskData["label"] = tmpStr.taskName_CPU_downloadRun
         jsonTaskData["command"] = buildData[self.bStr.openOcdPath]
         jsonTaskData["args"] = []
-        jsonTaskData["args"].append(self.bStr.openOcdConfig)
+        for arg in buildData[self.bStr.openOcdConfig]:
+            jsonTaskData["args"].append("-f")
+            jsonTaskData["args"].append(arg)
 
         # -c program filename [verify] [reset] [exit] [offset] ([] are optional arguments)
         # Note: due problems with VS Code OpenOCD Tasks in case of workspace path containing spaces, target executable is passed
@@ -379,7 +381,9 @@ class Tasks():
         jsonTaskData["label"] = tmpStr.taskName_CPU_resetRun
         jsonTaskData["command"] = buildData[self.bStr.openOcdPath]
         jsonTaskData["args"] = []
-        jsonTaskData["args"].append(buildData[self.bStr.openOcdConfig])
+        for arg in buildData[self.bStr.openOcdConfig]:
+            jsonTaskData["args"].append("-f")
+            jsonTaskData["args"].append(arg)
 
         jsonTaskData["args"].append("-c init")  # init must be executed before other commands!
         jsonTaskData["args"].append("-c reset")
@@ -406,7 +410,9 @@ class Tasks():
         jsonTaskData["label"] = tmpStr.taskName_CPU_halt
         jsonTaskData["command"] = buildData[self.bStr.openOcdPath]
         jsonTaskData["args"] = []
-        jsonTaskData["args"].append(buildData[self.bStr.openOcdConfig])
+        for arg in buildData[self.bStr.openOcdConfig]:
+            jsonTaskData["args"].append("-f")
+            jsonTaskData["args"].append(arg)
 
         jsonTaskData["args"].append("-c init")  # init must be executed before other commands!
         jsonTaskData["args"].append("-c halt")
@@ -433,7 +439,9 @@ class Tasks():
         jsonTaskData["label"] = tmpStr.taskName_CPU_run
         jsonTaskData["command"] = buildData[self.bStr.openOcdPath]
         jsonTaskData["args"] = []
-        jsonTaskData["args"].append(buildData[self.bStr.openOcdConfig])
+        for arg in buildData[self.bStr.openOcdConfig]:
+            jsonTaskData["args"].append("-f")
+            jsonTaskData["args"].append(arg)
 
         jsonTaskData["args"].append("-c init")  # init must be executed before other commands!
         jsonTaskData["args"].append("-c resume")
