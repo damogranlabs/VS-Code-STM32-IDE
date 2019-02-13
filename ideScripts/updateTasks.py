@@ -469,16 +469,18 @@ class Tasks():
 
         return jsonTaskData
 
-    # TODO make this compatible with unix
     def getOpenCubeMXTask(self):
         '''
         Create Open CubeMX project task. Starts with default program.
+
+        Method of starting CubeMX differs across systems. Note that on linux cubeMX does not associate itself with files by default.
+        Use a program like "Main Menu" for GNOME to add CubeMX to the applications list, and then it can be selected as the default program for .ioc files.
         '''
         taskData = """
         {
             "label": "will be replaced with templateStrings string",
             "type": "shell",
-            "command": "start",
+            "command": "specified below",
             "args": ["specified below"],
             "presentation": {
                 "focus": false
@@ -486,8 +488,15 @@ class Tasks():
             "problemMatcher": []
         }
         """
+        osIs = utils.detectOs()
+        if osIs == "unix":
+            openCubeCommand = "xdg-open"
+        else:
+            openCubeCommand = "start"
+
         jsonTaskData = json.loads(taskData)
         jsonTaskData["label"] = tmpStr.taskName_OpenCubeMX
+        jsonTaskData["command"] = openCubeCommand
         jsonTaskData["args"] = [""]  # name
         jsonTaskData["args"].append(utils.cubeMxProjectFilePath)  # opens with default program
 

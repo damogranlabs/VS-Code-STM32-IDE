@@ -62,7 +62,7 @@ def pathExists(path):
         return False
 
 
-def detectOS():
+def detectOs():
     '''
     This function detects the operating system that python is running in. We use this for OS specific operations
     '''
@@ -162,7 +162,7 @@ def verifyFolderStructure():
     # does not have backup file, always regenerated
 
     # TODO make this not hard-coded
-    osIs = detectOS()
+    osIs = detectOs()
     if osIs == "windows":
         vsCodeSettingsFolderPath = os.path.expandvars("%APPDATA%\\Code\\User\\")
     elif osIs == "unix":
@@ -383,7 +383,7 @@ def getPython3Path():
     '''
     Uses detectOs() to determine the correct python command to use for python related tasks
     '''
-    osIs = detectOS()
+    osIs = detectOs()
 
     if osIs == "unix" or osIs == "wsl": # detected unix based system
         pythonPath = "python3"
