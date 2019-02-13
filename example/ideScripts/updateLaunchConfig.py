@@ -21,7 +21,7 @@ class LaunchConfigurations():
         Check if 'launch.json' file exists. If it does, check if it is a valid JSON file.
         If it doesn't exist, create new according to template.
         '''
-        if utils.fileFolderExists(utils.launchPath):
+        if utils.pathExists(utils.launchPath):
             # file exists, check if it loads OK
             try:
                 with open(utils.launchPath, 'r') as launchFile:
@@ -152,10 +152,8 @@ class LaunchConfigurations():
 
         jsonConfigurationData["name"] = tmpStr.launchName_Debug
         jsonConfigurationData["executable"] = buildData[self.bStr.targetExecutablePath]
-        jsonConfigurationData["svdFile"] = buildData[self.bStr.stm32svdPath]
-        jsonConfigurationData["configFiles"] = []
-        jsonConfigurationData["configFiles"].append(buildData[self.bStr.openOCDInterfacePath])
-        jsonConfigurationData["configFiles"].append(buildData[self.bStr.openOCDTargetPath])
+        jsonConfigurationData["svdFile"] = buildData[self.bStr.stm32SvdPath] + "/" + buildData[self.bStr.stm32SvdFile]
+        jsonConfigurationData["configFiles"] = buildData[self.bStr.openOcdConfig]
         jsonConfigurationData["preLaunchTask"] = tmpStr.taskName_build
 
         return jsonConfigurationData

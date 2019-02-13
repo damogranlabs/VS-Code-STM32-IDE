@@ -27,7 +27,7 @@ class UpdateWorkspaceFile():
         if len(workspaceFiles) == 1:
             _, fileName = os.path.split(workspaceFiles[0])
             workspaceFileName, _ = os.path.splitext(fileName)
-            if utils.fileFolderExists(utils.workspaceFilePath):
+            if utils.pathExists(utils.workspaceFilePath):
                 # file exists, check if it loads OK
                 try:
                     with open(utils.workspaceFilePath, 'r') as workspaceFile:
@@ -62,7 +62,7 @@ class UpdateWorkspaceFile():
         armToolchainPath = utils.pathWithForwardSlashes(armToolchainPath)
 
         workspaceData["settings"]["cortex-debug.armToolchainPath"] = armToolchainPath
-        workspaceData["settings"]["cortex-debug.openocdPath"] = buildData[self.bStr.openOCDPath]
+        workspaceData["settings"]["cortex-debug.openocdPath"] = buildData[self.bStr.openOcdPath]
 
         return workspaceData
 
