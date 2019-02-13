@@ -17,12 +17,24 @@ Scripts generate all necessary VS Code workspace files ('c_cpp_properties.json',
 Additionally, 'buildData.json' file is created for user inspection of all paths/settings (this file is also used by all 'update*.py' scripts and should not be modified directly).
 
 # Setup
-Install procedure is simple since all needed files can be downloaded online and setup shouldn't take no more than 5 minutes. It is strongly advised to stick to default recommended paths while installing following tools.  
-Tools needed: Python, GNU Eclipse ARM Embedded GCC, GNU Eclipse Windows Build Tools, GNU MCU Eclipse OpenOCD and CPU-specific files.  
-It is strongly advised to **use non-spaced paths** and avoid unwanted problems. [See this issue.](https://github.com/damogranlabs/VS-Code-STM32-IDE/issues/1)  
+Install procedure is simple since all needed files can be downloaded online and setup shouldn't take no more than 5 minutes.
+It is strongly advised use the default recommended paths while installing the following tools and to **use non-spaced paths** - avoiding unwanted problems. [See this issue.](https://github.com/damogranlabs/VS-Code-STM32-IDE/issues/1) 
 
 **Python**  
-There are many posts how to install python. This project needs a valid *python* terminal command to execute tasks and set up files.
+There are many posts how to install python. This project needs a valid `python` or `python3` terminal command to execute tasks and set up files. Python version 3 or later is required.  
+
+**STM32CubeMX**  
+Download and install STM32CubeMX for your system from [ST's website.](https://www.st.com/content/st_com/en/products/development-tools/software-development-tools/stm32-software-development-tools/stm32-configurators-and-code-generators/stm32cubemx.html) Note that you will need to create an account (it's free) to access the download. Setup is as easy as running the installation executable for your system and following the prompts. Running CubeMX requires java on your system. Enter `java -version`  in your terminal to check it's installed.
+
+**Install Cortex-Debug and Python plugin from VS Code extension marketplace**  
+This is needed for debug purposes and workspace file generation scripts.
+
+**Download CPU specific SVD file (System Viewer Description)**  
+This file is (recommended by ST) downloaded from [Keil official page](https://www.keil.com/dd2/pack/). Just search for your chosen STM32 CPU family (ex.: STM32F0...), download and unpack with any archive software.  
+I recommend to unpack it in the same directory as the other tools (eg: *%userprofile%\AppData\Roaming\GNU MCU Eclipse* on windows, or somewhere like the home directory on linux) so everything is neatly organized in one place and files can be reused in other projects (these files will not be changed).  
+
+## Windows specific steps
+Tools needed: Python, GNU Eclipse ARM Embedded GCC, GNU Eclipse Windows Build Tools, GNU MCU Eclipse OpenOCD and CPU-specific files.  
 
 **Download GNU Eclipse tools:**
 * [GNU Eclipse ARM Embedded GCC](https://github.com/gnu-mcu-eclipse/arm-none-eabi-gcc/releases)
@@ -31,15 +43,29 @@ There are many posts how to install python. This project needs a valid *python* 
   
 After download, extract all directories in [recommended](https://gnu-mcu-eclipse.github.io/toolchain/arm/install/#manual-install) path: *%userprofile%\AppData\Roaming\GNU MCU Eclipse*.  
 
-**Install Cortex-Debug and Python plugin from VS Code extension marketplace**  
-This is needed for debug purposes and workspace file generation scripts.
-
-**Download CPU specific SVD file (System Viewer Description)**  
-This file is (recommended by ST) downloaded from [Keil official page](https://www.keil.com/dd2/pack/). Just search for your chosen STM32 CPU family (ex.: STM32F0...), download and unpack with any archive software.  
-I recommend to unpack it in the same directory as other GNU Eclipse tools (eg: *%userprofile%\AppData\Roaming\GNU MCU Eclipse*) so everything is neatly organized in one place and files can be reused in other projects (this files will not be changed).  
-
 At the end, folder structure should look like this:  
 ![Folder structure](https://github.com/damogranlabs/VS-Code-STM32-IDE/blob/master/_images/folderStructure.PNG)
+
+## Linux specific steps
+Note: the following steps were performed on Ubuntu and may need modification on other distributions.
+
+First, ensure you are up-to-date:  
+`sudo apt update && sudo apt upgrade`
+
+**Install build-essential**
+The build-essential package contains development tools like `make`,`g++` and `gcc` which we will need for compiling our projects.  
+`sudo apt install build-essential`
+
+**Install arm-gcc**  
+Download the latest [GNU Arm Embedded Toolchain](https://developer.arm.com/open-source/gnu-toolchain/gnu-rm/downloads) for Linux 64.  
+Navigate to the folder containing the downloaded file and extract as follows to install:  
+`sudo tar -C /usr/local -xjf gcc-arm-none-eabi-8-2018-q4-major-linux.tar.bz2 --strip-components 1`
+
+**Install OpenOCD**  
+From packages:  
+`sudo apt install openocd`  
+Or get the latest release from [The Official OpenOCD Github mirror.](https://github.com/ntfreak/openocd) (requires building from source)
+
 
 # First steps
 Once all prerequisites are installed, work flow is very simple.
