@@ -10,6 +10,7 @@ import shutil
 import subprocess
 import sys
 import traceback
+import platform
 
 import templateStrings as tmpStr
 
@@ -49,15 +50,38 @@ def printAndQuit(msg):
     sys.exit(1)
 
 
-def fileFolderExists(path):
+def pathExists(path):
     if path is not None:
-        return os.path.exists(path)
+        if os.path.exists(path):
+            return True
+        elif shutil.which(path): # This adds support for commands on PATH
+            return True
+        else:
+            return False
     else:
         return False
 
 
+def detectOS():
+    '''
+    This function detects the operating system that python is running in. We use this for OS specific operations
+    '''
+    if os.name == "nt":
+        osIs = "windows"
+    elif os.name == "java":
+        osIs = "java"
+    elif os.name == "posix":
+        release = platform.release() #get system release
+        release = release.lower()
+        if release.endswith("microsoft"): # Detect windows subsystem for linux (wsl)
+            osIs = "wsl"
+        else:
+            osIs = "unix"
+    return osIs
+
+
 def copyAndRename(filePath, newName):
-    if not fileFolderExists(filePath):
+    if not pathExists(filePath):
         errorMsg = "Can't copy and rename file " + str(filePath) + ", does not exist or other error."
         printAndQuit(errorMsg)
 
@@ -114,7 +138,7 @@ def verifyFolderStructure():
         printAndQuit(errorMsg)
 
     vscodeFolder = pathWithForwardSlashes(os.path.join(workspacePath, ".vscode"))
-    if not fileFolderExists(vscodeFolder):
+    if not pathExists(vscodeFolder):
         try:
             os.mkdir(vscodeFolder)
             print("'.vscode' folder created.")
@@ -137,7 +161,12 @@ def verifyFolderStructure():
     buildDataPath = pathWithForwardSlashes(buildDataPath)
     # does not have backup file, always regenerated
 
-    vsCodeSettingsFolderPath = os.path.expandvars("%APPDATA%\\Code\\User\\")
+    # TODO make this not hard-coded
+    osIs = detectOS()
+    if osIs == "windows":
+        vsCodeSettingsFolderPath = os.path.expandvars("%APPDATA%\\Code\\User\\")
+    elif osIs == "unix":
+        vsCodeSettingsFolderPath = os.path.expandvars("$HOME/.config/Code/User/")
     toolsPaths = os.path.join(vsCodeSettingsFolderPath, 'toolsPaths.json')
     toolsPaths = pathWithForwardSlashes(toolsPaths)
 
@@ -199,7 +228,7 @@ def createBuildFolder(folderName='build'):
     Create (if not already created) build folder with specified name where objects are stored when 'make' is executed. 
     '''
     buildFolderPath = os.path.join(workspacePath, folderName)
-    if not fileFolderExists(buildFolderPath):
+    if not pathExists(buildFolderPath):
         os.mkdir(buildFolderPath)
         print("Build folder created: " + buildFolderPath)
     else:
@@ -287,28 +316,19 @@ def stringToList(string, separator):
     return allItems
 
 
-def askUserForPathUpdate(pathName, currentPath=None):
+def getYesNoAnswer(msg):
     '''
-    Ask if user will update compiler path by entering path in terminal window.
-    If currentPath is not None, current path is printed before.
-    Return True/False
+    Asks the user a generic yes/no question.
+    Returns True for yes, False for no
     '''
-    print("\n\n??? Do you wish to update path to '" + pathName + "'?")
-    if currentPath is not None:
-        print("\tCurrent path: " + currentPath)
-
-    print("Type 'y' or 'n' and press Enter:")
     while(True):
-        userAnswer = input().lower()
-        if userAnswer not in ['y', 'n']:
-            print("Type 'y' or 'n' and press Enter: ", end="")
+        resp = input(msg).lower()
+        if resp == 'y':
+            return True
+        elif resp == 'n':
+            return False
         else:
-            break
-
-    if userAnswer == 'n':
-        return False
-    else:  # 'y'
-        return True
+            continue
 
 
 def getUserPath(pathName):
@@ -317,16 +337,16 @@ def getUserPath(pathName):
     Repeated as long as user does not enter a valid path to file/folder.
     '''
     while True:
-        msg = "\n\n??? Enter path to '" + pathName + "':\n\tPaste here and press Enter: "
+        msg = "\n\tEnter path to '" + pathName + "':\n\tPaste here and press Enter: "
         path = input(msg)
         path = path.replace('\"', '')  # remove " "
         path = path.replace('\'', '')  # remove ' '
         path = pathWithForwardSlashes(path)
 
-        if fileFolderExists(path):
+        if pathExists(path):
             break
         else:
-            print("\tPath not valid:", path)
+            print("\tPath not valid: ", path)
 
     return path
 
@@ -341,7 +361,7 @@ def getGccIncludePath(gccExePath):
     '''
     Get path to '...\include' folder from 'gccExePath', where standard libs and headers. Needed for VS Code Intellisense.
 
-    If ARM GCC folder structure remains the same as official, .exe is located in \bin folder.
+    If ARM GCC folder structure remains the same as official, the executable is located in \bin folder.
     Other headers can be found in '\lib\gcc\arm-none-eabi\***\include' folder, which is found by searching for
     <stdint.h>.
     '''
@@ -359,30 +379,88 @@ def getGccIncludePath(gccExePath):
     errorMsg += searchPath
     printAndQuit(errorMsg)
 
-
-def getSTLinkPath(openOCDTargetPath):
+def getPython3Path():
     '''
-    Get path to '.../scripts/interface/stlink.cfg' file from 'openOCDTargetPath'
+    Uses detectOs() to determine the correct python command to use for python related tasks
+    '''
+    osIs = detectOS()
+
+    if osIs == "unix" or osIs == "wsl": # detected unix based system
+        pythonPath = "python3"
+    else: # windows or other system
+        pythonPath = "python"
+
+    if not pathExists(pythonPath):
+        msg = "\n\tPython version 3 or later installation not detected, please install or enter custom path below."
+        print(msg)
+        pythonPath = getUserPath(pythonPath)
+
+    return pythonPath
+
+
+def getOpenOcdConfig(openOcdPath):
+    '''
+    Get openOCD configuration from user, eg. '-f interface/stlink.cfg -f target/stm32f0x.cfg'
+    Returns the absolute path to these config files.
 
     Default (official) folder structure:
-    .../openOCD/
-        - /scripts/
-            - /target/  ('openOCDTargetPath' specified with user input)
-            - /interface/stlink.cfg
+    /bin/
+        -/openocd (executable)
+    /share/
+        -/openocd/
+            - /scripts/
+                - /target/ (stm32f0x.cfg)
+                - /interface/ (stlink.cfg)
+                - etc
     '''
-    fileName = 'stlink.cfg'
+    openOcdExePath = os.path.dirname(openOcdPath) # ../bin
+    openOcdRootPath = os.path.dirname(openOcdExePath) # ../
+    openOcdScriptsPath = os.path.join(openOcdRootPath, "share", "openocd", "scripts") # ../share/openocd/scripts
 
-    targetFolderPath = os.path.dirname(openOCDTargetPath)
-    scriptsFolderPath = os.path.dirname(targetFolderPath)
-    interfaceFolderPath = os.path.join(scriptsFolderPath, 'interface')
+    while(True):
+        msg = "\n\tEnter OpenOCD configuration files (eg: '-f interface/stlink.cfg -f target/stm32f0x.cfg):\n\tconfig files: "
+        config = input(msg)
+        config = pathWithForwardSlashes(config)
 
-    stLinkPath = os.path.join(interfaceFolderPath, fileName)
-    stLinkPath = pathWithForwardSlashes(stLinkPath)
-    if not fileFolderExists(stLinkPath):
-        errorMsg = "Unable to find path to openOCD stlink.cfg configuration file on path:\n\t" + str(stLinkPath)
-        printAndQuit(errorMsg)
+        # split config into list, seperating the arguments
+        config = config.split()
+        configPaths = list()
+        for arg in config:
+            if pathExists(openOcdScriptsPath + "/" + arg):
+                msg = "\tConfiguration file '" + arg + "' detected successfully"
+                print(msg)
+                configPaths.append(openOcdScriptsPath + "/" + arg)
+            elif arg.startswith("-"):
+                continue
+            else:
+                msg = "\tConfiguration invalid: '" + arg + "' not found in " + openOcdScriptsPath
+                print(msg)
+                break
+        else:
+            break # break loop if config detected successfully
+        continue # continue if unsuccessful
 
-    return stLinkPath
+    return configPaths
+
+
+def getStm32SvdFile(stm32SvdPath):
+    '''
+    Get stm32SvdFile from user, eg. 'STM32F042x.svd'
+    Validates that file exists
+    '''
+    while True:
+        msg = "\n\tEnter SVD File name (eg: 'STM32F042x.svd'), or 'ls' to list available SVD files.\n\tSVD file name: "
+        fileName = input(msg)
+        if fileName == "ls":
+            print(os.listdir(stm32SvdPath))
+            continue
+        if pathExists(stm32SvdPath + "/" + fileName):
+            break
+        else:
+            print("\tSVD File '" + fileName + "' not found")
+            continue
+
+    return fileName
 
 
 def getBuildElfFilePath(buildDirPath, projectName):

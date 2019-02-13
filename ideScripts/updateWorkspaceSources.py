@@ -47,7 +47,7 @@ class CProperties():
         Check if 'c_cpp_properties.json' file exists. If it does, check if it is a valid JSON file.
         If it doesn't exist, create new according to template.
         '''
-        if utils.fileFolderExists(utils.cPropertiesPath):
+        if utils.pathExists(utils.cPropertiesPath):
             # file exists, check if it loads OK
             try:
                 with open(utils.cPropertiesPath, 'r') as cPropertiesFile:

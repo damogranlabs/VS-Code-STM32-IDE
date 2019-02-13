@@ -10,6 +10,9 @@ This script runs all other updateXxx.py scripts. It should be called once CubeMX
 
 import sys
 
+if sys.version_info[0] < 3:
+    raise Exception("Python 3 or later is required")
+
 import utilities as utils
 
 import updatePaths as pth

@@ -30,7 +30,7 @@ class Tasks():
         Check if 'tasks.json' file exists. If it does, check if it is a valid JSON file.
         If it doesn't exist, create new according to template.
         '''
-        if utils.fileFolderExists(utils.tasksPath):
+        if utils.pathExists(utils.tasksPath):
             # file exists, check if it loads OK
             try:
                 with open(utils.tasksPath, 'r') as tasksFile:
@@ -343,12 +343,9 @@ class Tasks():
 
         buildData = build.BuildData().getBuildData()
         jsonTaskData["label"] = tmpStr.taskName_CPU_downloadRun
-        jsonTaskData["command"] = buildData[self.bStr.openOCDPath]
+        jsonTaskData["command"] = buildData[self.bStr.openOcdPath]
         jsonTaskData["args"] = []
-        jsonTaskData["args"].append("-f")
-        jsonTaskData["args"].append(buildData[self.bStr.openOCDInterfacePath])
-        jsonTaskData["args"].append("-f")
-        jsonTaskData["args"].append(buildData[self.bStr.openOCDTargetPath])
+        jsonTaskData["args"].append(self.bStr.openOcdConfig)
 
         # -c program filename [verify] [reset] [exit] [offset] ([] are optional arguments)
         # Note: due problems with VS Code OpenOCD Tasks in case of workspace path containing spaces, target executable is passed
@@ -380,12 +377,9 @@ class Tasks():
 
         buildData = build.BuildData().getBuildData()
         jsonTaskData["label"] = tmpStr.taskName_CPU_resetRun
-        jsonTaskData["command"] = buildData[self.bStr.openOCDPath]
+        jsonTaskData["command"] = buildData[self.bStr.openOcdPath]
         jsonTaskData["args"] = []
-        jsonTaskData["args"].append("-f")
-        jsonTaskData["args"].append(buildData[self.bStr.openOCDInterfacePath])
-        jsonTaskData["args"].append("-f")
-        jsonTaskData["args"].append(buildData[self.bStr.openOCDTargetPath])
+        jsonTaskData["args"].append(buildData[self.bStr.openOcdConfig])
 
         jsonTaskData["args"].append("-c init")  # init must be executed before other commands!
         jsonTaskData["args"].append("-c reset")
@@ -410,12 +404,9 @@ class Tasks():
 
         buildData = build.BuildData().getBuildData()
         jsonTaskData["label"] = tmpStr.taskName_CPU_halt
-        jsonTaskData["command"] = buildData[self.bStr.openOCDPath]
+        jsonTaskData["command"] = buildData[self.bStr.openOcdPath]
         jsonTaskData["args"] = []
-        jsonTaskData["args"].append("-f")
-        jsonTaskData["args"].append(buildData[self.bStr.openOCDInterfacePath])
-        jsonTaskData["args"].append("-f")
-        jsonTaskData["args"].append(buildData[self.bStr.openOCDTargetPath])
+        jsonTaskData["args"].append(buildData[self.bStr.openOcdConfig])
 
         jsonTaskData["args"].append("-c init")  # init must be executed before other commands!
         jsonTaskData["args"].append("-c halt")
@@ -440,15 +431,12 @@ class Tasks():
 
         buildData = build.BuildData().getBuildData()
         jsonTaskData["label"] = tmpStr.taskName_CPU_run
-        jsonTaskData["command"] = buildData[self.bStr.openOCDPath]
+        jsonTaskData["command"] = buildData[self.bStr.openOcdPath]
         jsonTaskData["args"] = []
-        jsonTaskData["args"].append("-f")
-        jsonTaskData["args"].append(buildData[self.bStr.openOCDInterfacePath])
-        jsonTaskData["args"].append("-f")
-        jsonTaskData["args"].append(buildData[self.bStr.openOCDTargetPath])
+        jsonTaskData["args"].append(buildData[self.bStr.openOcdConfig])
 
         jsonTaskData["args"].append("-c init")  # init must be executed before other commands!
-        jsonTaskData["args"].append("-c resume  ")
+        jsonTaskData["args"].append("-c resume")
         jsonTaskData["args"].append("-c exit")
 
         return jsonTaskData
@@ -464,7 +452,7 @@ class Tasks():
         {
             "label": "will be replaced with templateStrings string",
             "type": "shell",
-            "command": "python",
+            "command": "specified below",
             "args": [
                 "${file}"
             ],
@@ -474,11 +462,14 @@ class Tasks():
             "problemMatcher": []
         }
         """
+        buildData = build.BuildData().getBuildData()
         jsonTaskData = json.loads(taskData)
         jsonTaskData["label"] = tmpStr.taskName_Python
+        jsonTaskData["command"] = buildData[self.bStr.pythonPath]
 
         return jsonTaskData
 
+    # TODO make this compatible with unix
     def getOpenCubeMXTask(self):
         '''
         Create Open CubeMX project task. Starts with default program.
@@ -510,7 +501,7 @@ class Tasks():
         {
             "label": "will be replaced with templateStrings string",
             "type": "shell",
-            "command": "python",
+            "command": "specified below",
             "args": [
                 "${workspaceFolder}/ideScripts/update.py"
             ],
@@ -520,8 +511,10 @@ class Tasks():
             "problemMatcher": []
         }
         """
+        buildData = build.BuildData().getBuildData()
         jsonTaskData = json.loads(taskData)
         jsonTaskData["label"] = tmpStr.taskName_updateWorkspace
+        jsonTaskData["command"] = buildData[self.bStr.pythonPath]
 
         return jsonTaskData
 
