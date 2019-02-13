@@ -47,13 +47,13 @@ At the end, folder structure should look like this:
 ![Folder structure](https://github.com/damogranlabs/VS-Code-STM32-IDE/blob/master/_images/folderStructure.PNG)
 
 ## Linux specific steps
-Note: the following steps were performed on Ubuntu and may need modification on other distributions.
+Note: the following steps were performed on Ubuntu.
 
 First, ensure you are up-to-date:  
 `sudo apt update && sudo apt upgrade`
 
 **Install build-essential**
-The build-essential package contains development tools like `make`,`g++` and `gcc` which we will need for compiling our projects.  
+The build-essential package contains development tools like `make`, `g++` and `gcc` which we will need for compiling our projects:  
 `sudo apt install build-essential`
 
 **Install arm-gcc**  
