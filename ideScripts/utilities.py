@@ -225,7 +225,7 @@ def getCubeMXProjectFiles():
 
 def createBuildFolder(folderName='build'):
     '''
-    Create (if not already created) build folder with specified name where objects are stored when 'make' is executed. 
+    Create (if not already created) build folder with specified name where objects are stored when 'make' is executed.
     '''
     buildFolderPath = os.path.join(workspacePath, folderName)
     if not pathExists(buildFolderPath):

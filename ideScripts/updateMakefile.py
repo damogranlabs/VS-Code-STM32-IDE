@@ -48,7 +48,7 @@ class Makefile():
     def restoreOriginalMakefile(self):
         '''
         Check wether current 'Makefile' has print capabilities. If it has, this means it was already altered by this script.
-        If it was, replace it with backup copy: 'Makefile.backup'. 
+        If it was, replace it with backup copy: 'Makefile.backup'.
         If it does not have prin capabilities, is is assumed 'Makefile' was regenerated with CubeMX tool - print function is added and backup file is overwritten with this new 'Makefile'.
         At the end, add 'print-variable' capabilities
         '''
@@ -321,7 +321,7 @@ class Makefile():
         Syntax with absolute paths:
             "path to make.exe with spaces" GCC_PATH="path to gccsomething.exe with spaces" print-VARIABLE
 
-        With 
+        With
         '''
         # change directory to the same folder as Makefile
         cwd = os.getcwd()

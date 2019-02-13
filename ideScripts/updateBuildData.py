@@ -127,7 +127,7 @@ class BuildData():
 
     def createUserToolsFile(self, buildData):
         '''
-        Create 'toolsPaths.json' file with current tools absolute paths. 
+        Create 'toolsPaths.json' file with current tools absolute paths.
         '''
         data = {}
         try:
@@ -156,7 +156,7 @@ class BuildData():
 
     def createBuildDataFile(self):
         '''
-        Create fresh 'buildData.json' file. 
+        Create fresh 'buildData.json' file.
         '''
         try:
             data = json.loads(tmpStr.buildDataTemplate)
