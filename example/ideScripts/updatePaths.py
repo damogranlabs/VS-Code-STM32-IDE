@@ -70,20 +70,19 @@ class UpdatePaths():
                     stm32SvdPath = buildData[self.bStr.stm32SvdPath]
                     buildData[self.bStr.stm32SvdFile] = utils.getStm32SvdFile(stm32SvdPath)
 
-            # get python3 path
-            buildData[self.bStr.pythonPath] = utils.getPython3Path()
+            # get python3 executable
+            buildData[self.bStr.pythonExec] = utils.getPython3Executable()
 
         return buildData
 
 
     def updatePath(self, path, pathName, default):
         '''
-        This function is called when there are no valid paths found in existing 'buildData.json' file.
-
         This function is called when a path is detected as invalid or the user requests to update paths.
         '''
 
         # check if default path is command
+        pathDefault = None
         if utils.commandExists(default):
             pathDefault = shutil.which(default)
         # if not a command, check if it's a path

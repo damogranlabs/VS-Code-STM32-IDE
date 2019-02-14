@@ -37,7 +37,7 @@ class BuildDataStrings():
     buildToolsPath = 'buildToolsPath'
     targetExecutablePath = 'targetExecutablePath'
 
-    pythonPath = 'pythonPath'
+    pythonExec = 'pythonExec'
 
     openOcdPath = 'openOcdPath'
     openOcdConfig = 'openOcdConfig'
@@ -136,11 +136,9 @@ class BuildData():
             data[self.bStr.gccExePath] = buildData[self.bStr.gccExePath]
             data[self.bStr.gccInludePath] = buildData[self.bStr.gccInludePath]
             data[self.bStr.buildToolsPath] = buildData[self.bStr.buildToolsPath]
-            data[self.bStr.pythonPath] = buildData[self.bStr.pythonPath]
+            data[self.bStr.pythonExec] = buildData[self.bStr.pythonExec]
             data[self.bStr.openOcdPath] = buildData[self.bStr.openOcdPath]
-            data[self.bStr.openOcdConfig] = buildData[self.bStr.openOcdConfig]
             data[self.bStr.stm32SvdPath] = buildData[self.bStr.stm32SvdPath]
-            data[self.bStr.stm32SvdFile] = buildData[self.bStr.stm32SvdFile]
 
             # dataToWrite = json.dump(data, indent=4, sort_keys=False) # TODO HERE
 
@@ -201,7 +199,7 @@ class BuildData():
         buildData[self.bStr.gccExePath] = toolsPathsData[self.bStr.gccExePath]
         buildData[self.bStr.gccInludePath] = toolsPathsData[self.bStr.gccInludePath]
         buildData[self.bStr.buildToolsPath] = toolsPathsData[self.bStr.buildToolsPath]
-        buildData[self.bStr.pythonPath] = toolsPathsData[self.bStr.pythonPath]
+        buildData[self.bStr.pythonExec] = toolsPathsData[self.bStr.pythonExec]
         buildData[self.bStr.openOcdPath] = toolsPathsData[self.bStr.openOcdPath]
         buildData[self.bStr.openOcdConfig] = toolsPathsData[self.bStr.openOcdConfig]
         buildData[self.bStr.stm32SvdPath] = toolsPathsData[self.bStr.stm32SvdPath]

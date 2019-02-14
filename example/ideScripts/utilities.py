@@ -7,6 +7,7 @@ paths.
 
 import os
 import shutil
+import shlex
 import subprocess
 import sys
 import traceback
@@ -347,8 +348,7 @@ def getUserPath(pathName):
     while True:
         msg = "\n\tEnter path or command for '" + pathName + "':\n\tPaste here and press Enter: "
         path = input(msg)
-        path = path.replace('\"', '')  # remove " "
-        path = path.replace('\'', '')  # remove ' '
+        path = pathWithoutQuotes(path)
         path = pathWithForwardSlashes(path)
 
         if pathExists(path):
@@ -358,6 +358,12 @@ def getUserPath(pathName):
         else:
             print("\tPath/command not valid: ", path)
 
+    return path
+
+
+def pathWithoutQuotes(path):
+    path = path.replace('\"', '')  # remove " "
+    path = path.replace('\'', '')  # remove ' '
     return path
 
 
@@ -428,21 +434,26 @@ def getOpenOcdConfig(openOcdPath):
         openOcdScriptsPath = os.path.dirname(openOcdScriptsInterfacePath)
 
     while(True):
-        msg = "\n\tEnter OpenOCD configuration files (eg: '-f interface/stlink.cfg -f target/stm32f0x.cfg):\n\tconfig files: "
+        msg = "\n\tEnter OpenOCD configuration files (eg: 'interface/stlink.cfg target/stm32f0x.cfg'):\n\tConfig files: "
         config = input(msg)
 
         # split config input into list, seperating the arguments
-        config = config.split()
+        config = shlex.split(config)
         configPaths = list()
         for arg in config:
-            argPath = os.path.join(openOcdScriptsPath, arg)
-            argPath = pathWithForwardSlashes(argPath)
+            arg = pathWithoutQuotes(arg)
+            arg = pathWithForwardSlashes(arg)
+
+            if pathExists(arg): # arg is an absolute path
+                argPath = arg
+            else: # arg is a relative path
+                argPath = os.path.join(openOcdScriptsPath, arg)
+                argPath = pathWithForwardSlashes(argPath)
+
             if pathExists(argPath):
                 msg = "\tConfiguration file '" + arg + "' detected successfully"
                 print(msg)
                 configPaths.append(argPath)
-            elif arg.startswith("-"):
-                continue
             else:
                 msg = "\tConfiguration invalid: '" + arg + "' not found in " + openOcdScriptsPath
                 print(msg)
@@ -462,10 +473,15 @@ def getStm32SvdFile(stm32SvdPath):
     while True:
         msg = "\n\tEnter SVD File name (eg: 'STM32F042x.svd'), or 'ls' to list available SVD files.\n\tSVD file name: "
         fileName = input(msg)
+
         if fileName == "ls":
             print(os.listdir(stm32SvdPath))
             continue
-        if pathExists(stm32SvdPath + "/" + fileName):
+
+        stm32SvdFilePath = os.path.join(stm32SvdPath, fileName)
+        stm32SvdFilePath = pathWithForwardSlashes(stm32SvdFilePath)
+
+        if pathExists(stm32SvdFilePath):
             break
         else:
             print("\tSVD File '" + fileName + "' not found")

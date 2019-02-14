@@ -473,7 +473,7 @@ class Tasks():
         buildData = build.BuildData().getBuildData()
         jsonTaskData = json.loads(taskData)
         jsonTaskData["label"] = tmpStr.taskName_Python
-        jsonTaskData["command"] = buildData[self.bStr.pythonPath]
+        jsonTaskData["command"] = buildData[self.bStr.pythonExec]
 
         return jsonTaskData
 
@@ -531,7 +531,7 @@ class Tasks():
         buildData = build.BuildData().getBuildData()
         jsonTaskData = json.loads(taskData)
         jsonTaskData["label"] = tmpStr.taskName_updateWorkspace
-        jsonTaskData["command"] = buildData[self.bStr.pythonPath]
+        jsonTaskData["command"] = buildData[self.bStr.pythonExec]
 
         return jsonTaskData
 
