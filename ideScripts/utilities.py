@@ -428,21 +428,23 @@ def getOpenOcdConfig(openOcdPath):
         openOcdScriptsPath = os.path.dirname(openOcdScriptsInterfacePath)
 
     while(True):
-        msg = "\n\tEnter OpenOCD configuration files (eg: '-f interface/stlink.cfg -f target/stm32f0x.cfg):\n\tconfig files: "
+        msg = "\n\tEnter OpenOCD configuration files (eg: 'interface/stlink.cfg target/stm32f0x.cfg):\n\tConfig files: "
         config = input(msg)
 
         # split config input into list, seperating the arguments
         config = config.split()
         configPaths = list()
         for arg in config:
-            argPath = os.path.join(openOcdScriptsPath, arg)
-            argPath = pathWithForwardSlashes(argPath)
+            if pathExists(arg): # arg is an absolute path
+                argPath = arg
+            else: # arg is a relative path
+                argPath = os.path.join(openOcdScriptsPath, arg)
+                argPath = pathWithForwardSlashes(argPath)
+
             if pathExists(argPath):
                 msg = "\tConfiguration file '" + arg + "' detected successfully"
                 print(msg)
                 configPaths.append(argPath)
-            elif arg.startswith("-"):
-                continue
             else:
                 msg = "\tConfiguration invalid: '" + arg + "' not found in " + openOcdScriptsPath
                 print(msg)
