@@ -7,6 +7,7 @@ paths.
 
 import os
 import shutil
+import shlex
 import subprocess
 import sys
 import traceback
@@ -437,7 +438,7 @@ def getOpenOcdConfig(openOcdPath):
         config = input(msg)
 
         # split config input into list, seperating the arguments
-        config = config.split()
+        config = shlex.split(config)
         configPaths = list()
         for arg in config:
             arg = pathWithoutQuotes(arg)
