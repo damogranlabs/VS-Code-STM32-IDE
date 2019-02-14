@@ -51,13 +51,21 @@ def printAndQuit(msg):
 
 
 def pathExists(path):
+    '''
+    Checks if a path exists.
+    '''
     if path is not None:
-        if os.path.exists(path):
-            return True
-        elif shutil.which(path): # This adds support for commands on PATH
-            return True
-        else:
-            return False
+        return os.path.exists(path)
+    else:
+        return False
+
+
+def commandExists(command):
+    '''
+    Checks if a command exists.
+    '''
+    if shutil.which(command):
+        return True
     else:
         return False
 
@@ -333,11 +341,11 @@ def getYesNoAnswer(msg):
 
 def getUserPath(pathName):
     '''
-    Get absolute path from user (by entering path in terminal window).
-    Repeated as long as user does not enter a valid path to file/folder.
+    Get path or command from user (by entering path in terminal window).
+    Repeated as long as user does not enter a valid path or command to file/folder/executable.
     '''
     while True:
-        msg = "\n\tEnter path to '" + pathName + "':\n\tPaste here and press Enter: "
+        msg = "\n\tEnter path or command for '" + pathName + "':\n\tPaste here and press Enter: "
         path = input(msg)
         path = path.replace('\"', '')  # remove " "
         path = path.replace('\'', '')  # remove ' '
@@ -345,8 +353,10 @@ def getUserPath(pathName):
 
         if pathExists(path):
             break
+        elif commandExists(path):
+            break
         else:
-            print("\tPath not valid: ", path)
+            print("\tPath/command not valid: ", path)
 
     return path
 
@@ -378,23 +388,23 @@ def getGccIncludePath(gccExePath):
 
     return folderPath
 
-def getPython3Path():
+def getPython3Executable():
     '''
     Uses detectOs() to determine the correct python command to use for python related tasks
     '''
     osIs = detectOs()
 
     if osIs == "unix" or osIs == "wsl": # detected unix based system
-        pythonPath = "python3"
+        pythonExec = "python3"
     else: # windows or other system
-        pythonPath = "python"
+        pythonExec = "python"
 
-    if not pathExists(pythonPath):
-        msg = "\n\tPython version 3 or later installation not detected, please install or enter custom path below."
+    if not commandExists(pythonExec):
+        msg = "\n\tPython version 3 or later installation not detected, please install or enter custom path/command below."
         print(msg)
-        pythonPath = getUserPath(pythonPath)
+        pythonExec = getUserPath(pythonExec)
 
-    return pythonPath
+    return pythonExec
 
 
 def getOpenOcdConfig(openOcdPath):

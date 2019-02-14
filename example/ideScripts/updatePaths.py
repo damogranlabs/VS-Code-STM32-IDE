@@ -39,9 +39,11 @@ class UpdatePaths():
             try:
                 pathToCheck = buildData[path]
                 if not utils.pathExists(pathToCheck):
-                    # path not valid, update path
-                    buildData[path] = self.updatePath(path, pathName, default)
-                    updated = True
+                    # path not valid, check if command
+                    if not utils.commandExists(pathToCheck):
+                        # path invalid
+                        buildData[path] = self.updatePath(path, pathName, default)
+                        updated = True
                 else:
                     # path valid
                     if request: # if the user made the path verification request
@@ -81,11 +83,14 @@ class UpdatePaths():
         This function is called when a path is detected as invalid or the user requests to update paths.
         '''
 
-        # check if default path works
-        if  utils.pathExists(default):
-            pathDefault = shutil.which(default) # call which to store path instead of command (returns None if command not recognised)
-            if pathDefault is None: # command not recognised
-                pathDefault = default # therefore default is a path
+        # check if default path is command
+        if utils.commandExists(default):
+            pathDefault = shutil.which(default)
+        # if not a command, check if it's a path
+        elif utils.pathExists(default):
+            pathDefault = default
+
+        if pathDefault is not None:
             msg = "\n\tDefault path to '" + pathName + "' detected at '" + pathDefault + "'\n\tUse this path? [y/n]: "
             if utils.getYesNoAnswer(msg):
                 return pathDefault

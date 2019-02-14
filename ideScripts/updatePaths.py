@@ -39,9 +39,11 @@ class UpdatePaths():
             try:
                 pathToCheck = buildData[path]
                 if not utils.pathExists(pathToCheck):
-                    # path not valid, update path
-                    buildData[path] = self.updatePath(path, pathName, default)
-                    updated = True
+                    # path not valid, check if command
+                    if not utils.commandExists(pathToCheck):
+                        # path invalid
+                        buildData[path] = self.updatePath(path, pathName, default)
+                        updated = True
                 else:
                     # path valid
                     if request: # if the user made the path verification request
@@ -68,24 +70,26 @@ class UpdatePaths():
                     stm32SvdPath = buildData[self.bStr.stm32SvdPath]
                     buildData[self.bStr.stm32SvdFile] = utils.getStm32SvdFile(stm32SvdPath)
 
-            # get python3 path
-            buildData[self.bStr.pythonPath] = utils.getPython3Path()
+            # get python3 executable
+            buildData[self.bStr.pythonExec] = utils.getPython3Executable()
 
         return buildData
 
 
     def updatePath(self, path, pathName, default):
         '''
-        This function is called when there are no valid paths found in existing 'buildData.json' file.
-
         This function is called when a path is detected as invalid or the user requests to update paths.
         '''
 
-        # check if default path works
-        if  utils.pathExists(default):
-            pathDefault = shutil.which(default) # call which to store path instead of command (returns None if command not recognised)
-            if pathDefault is None: # command not recognised
-                pathDefault = default # therefore default is a path
+        # check if default path is command
+        pathDefault = None
+        if utils.commandExists(default):
+            pathDefault = shutil.which(default)
+        # if not a command, check if it's a path
+        elif utils.pathExists(default):
+            pathDefault = default
+
+        if pathDefault is not None:
             msg = "\n\tDefault path to '" + pathName + "' detected at '" + pathDefault + "'\n\tUse this path? [y/n]: "
             if utils.getYesNoAnswer(msg):
                 return pathDefault
