@@ -138,9 +138,7 @@ class BuildData():
             data[self.bStr.buildToolsPath] = buildData[self.bStr.buildToolsPath]
             data[self.bStr.pythonExec] = buildData[self.bStr.pythonExec]
             data[self.bStr.openOcdPath] = buildData[self.bStr.openOcdPath]
-            data[self.bStr.openOcdConfig] = buildData[self.bStr.openOcdConfig]
             data[self.bStr.stm32SvdPath] = buildData[self.bStr.stm32SvdPath]
-            data[self.bStr.stm32SvdFile] = buildData[self.bStr.stm32SvdFile]
 
             # dataToWrite = json.dump(data, indent=4, sort_keys=False) # TODO HERE
 
