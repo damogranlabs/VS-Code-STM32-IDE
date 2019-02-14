@@ -347,8 +347,7 @@ def getUserPath(pathName):
     while True:
         msg = "\n\tEnter path or command for '" + pathName + "':\n\tPaste here and press Enter: "
         path = input(msg)
-        path = path.replace('\"', '')  # remove " "
-        path = path.replace('\'', '')  # remove ' '
+        path = pathWithoutQuotes(path)
         path = pathWithForwardSlashes(path)
 
         if pathExists(path):
@@ -358,6 +357,12 @@ def getUserPath(pathName):
         else:
             print("\tPath/command not valid: ", path)
 
+    return path
+
+
+def pathWithoutQuotes(path):
+    path = path.replace('\"', '')  # remove " "
+    path = path.replace('\'', '')  # remove ' '
     return path
 
 
@@ -428,13 +433,16 @@ def getOpenOcdConfig(openOcdPath):
         openOcdScriptsPath = os.path.dirname(openOcdScriptsInterfacePath)
 
     while(True):
-        msg = "\n\tEnter OpenOCD configuration files (eg: 'interface/stlink.cfg target/stm32f0x.cfg):\n\tConfig files: "
+        msg = "\n\tEnter OpenOCD configuration files (eg: 'interface/stlink.cfg target/stm32f0x.cfg'):\n\tConfig files: "
         config = input(msg)
 
         # split config input into list, seperating the arguments
         config = config.split()
         configPaths = list()
         for arg in config:
+            arg = pathWithoutQuotes(arg)
+            arg = pathWithForwardSlashes(arg)
+
             if pathExists(arg): # arg is an absolute path
                 argPath = arg
             else: # arg is a relative path
