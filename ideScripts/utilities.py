@@ -462,10 +462,15 @@ def getStm32SvdFile(stm32SvdPath):
     while True:
         msg = "\n\tEnter SVD File name (eg: 'STM32F042x.svd'), or 'ls' to list available SVD files.\n\tSVD file name: "
         fileName = input(msg)
+
         if fileName == "ls":
             print(os.listdir(stm32SvdPath))
             continue
-        if pathExists(stm32SvdPath + "/" + fileName):
+
+        stm32SvdFilePath = os.path.join(stm32SvdPath, fileName)
+        stm32SvdFilePath = pathWithForwardSlashes(stm32SvdFilePath)
+
+        if pathExists(stm32SvdFilePath):
             break
         else:
             print("\tSVD File '" + fileName + "' not found")

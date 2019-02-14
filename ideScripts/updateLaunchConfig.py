@@ -1,6 +1,7 @@
 '''
 Update/generate 'launch.json' file in .vscode subfolder.
 '''
+import os
 import json
 
 import utilities as utils
@@ -150,9 +151,12 @@ class LaunchConfigurations():
 
         buildData = build.BuildData().getBuildData()
 
+        stm32SvdFilePath = os.path.join(buildData[self.bStr.stm32SvdPath], buildData[self.bStr.stm32SvdFile])
+        stm32SvdFilePath = utils.pathWithForwardSlashes(stm32SvdFilePath)
+
         jsonConfigurationData["name"] = tmpStr.launchName_Debug
         jsonConfigurationData["executable"] = buildData[self.bStr.targetExecutablePath]
-        jsonConfigurationData["svdFile"] = buildData[self.bStr.stm32SvdPath] + "/" + buildData[self.bStr.stm32SvdFile]
+        jsonConfigurationData["svdFile"] = stm32SvdFilePath
         jsonConfigurationData["configFiles"] = buildData[self.bStr.openOcdConfig]
         jsonConfigurationData["preLaunchTask"] = tmpStr.taskName_build
 
