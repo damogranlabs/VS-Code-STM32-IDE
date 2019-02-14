@@ -415,7 +415,7 @@ def getPython3Executable():
 
 def getOpenOcdConfig(openOcdPath):
     '''
-    Get openOCD configuration from user, eg. '-f interface/stlink.cfg -f target/stm32f0x.cfg'
+    Get openOCD configuration from user, eg. 'interface/stlink.cfg target/stm32f0x.cfg'
     Returns the absolute path to these config files.
 
     Searches openOcdRootPath for stlink.cfg to get the location of the scripts folder - which differs across systems.
