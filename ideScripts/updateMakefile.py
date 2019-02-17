@@ -40,7 +40,7 @@ class Makefile():
         '''
         Check if 'Makefile' file exists. If it doesn't, report as error.
         '''
-        if not utils.fileFolderExists(utils.makefilePath):
+        if not utils.pathExists(utils.makefilePath):
             errorMsg = "Makefile does not exist! Did CubeMX generated Makefile?\n"
             errorMsg += "File name must be 'Makefile'."
             utils.printAndQuit(errorMsg)
@@ -48,11 +48,11 @@ class Makefile():
     def restoreOriginalMakefile(self):
         '''
         Check wether current 'Makefile' has print capabilities. If it has, this means it was already altered by this script.
-        If it was, replace it with backup copy: 'Makefile.backup'. 
+        If it was, replace it with backup copy: 'Makefile.backup'.
         If it does not have prin capabilities, is is assumed 'Makefile' was regenerated with CubeMX tool - print function is added and backup file is overwritten with this new 'Makefile'.
         At the end, add 'print-variable' capabilities
         '''
-        if utils.fileFolderExists(utils.makefileBackupPath):
+        if utils.pathExists(utils.makefileBackupPath):
             # Makefile.backup exists, check if it is original (no print capabilities)
             if self.hasPrintCapabilities(pathToMakefile=utils.makefileBackupPath):
                 errorMsg = "Makefile.backup exist, but looks like it was already modified!\n"
@@ -321,7 +321,7 @@ class Makefile():
         Syntax with absolute paths:
             "path to make.exe with spaces" GCC_PATH="path to gccsomething.exe with spaces" print-VARIABLE
 
-        With 
+        With
         '''
         # change directory to the same folder as Makefile
         cwd = os.getcwd()

@@ -4,6 +4,7 @@ Script verify and add data to 'buildData.json' file.
 '''
 
 import sys
+import shutil
 
 import utilities as utils
 
@@ -20,83 +21,82 @@ class UpdatePaths():
         self.bStr = build.BuildDataStrings()
 
         self.toolsList = [
-            (self.bStr.gccExePath, "arm-none-eabi-gcc.exe"),
-            (self.bStr.buildToolsPath, "make.exe"),
-            (self.bStr.openOCDPath, "openocd.exe"),
-            (self.bStr.openOCDTargetPath, "STM target '*.cfg' file (example: ...scripts/target/stm32f0x.cfg)"),
-            (self.bStr.stm32svdPath, "STM target '*.svd' file (example: .../Keil*/CMSIS/SVD/STM32F0x8.svd)")
+            #(path, name, default, updated?)
+            (self.bStr.gccExePath, "arm-none-eabi-gcc", "arm-none-eabi-gcc", False),
+            (self.bStr.buildToolsPath, "make", "make", False),
+            (self.bStr.openOcdPath, "openocd", "openocd", False),
+            (self.bStr.stm32SvdPath, "STM target '*.svd' folder (example: .../Keil*/CMSIS/SVD)", utils.workspacePath+"SVD", False)
         ]
 
-    def forceUpdatePaths(self, buildData):
+    def verifyExistingPaths(self, buildData, request=False):
         '''
-        This function is called when there are no valid paths found in existing 'buildData.json' file.
-        '''
-        for path, pathName in self.toolsList:
-            while True:
-                newPath = utils.getUserPath(pathName)
-                if utils.fileFolderExists(newPath):
-                    buildData[path] = newPath
-
-                    msg = "\tPath to '" + pathName + "' updated."
-                    print(msg)
-                    break  # out of while loop
-                else:
-                    msg = "\tPath to '" + pathName + "' not valid:\n\t" + str(newPath)
-                    print(msg)
-
-        print("Tools paths updated.\n")
-        return buildData
-
-    def askToUpdate(self, buildData):
-        '''
-        Ask/force user to update tools paths. 
-        If there is no valid path, user is forced to update path.
-        If there is a valid path, user is asked if he wish to update path.
-        Returns updated paths (buildData).
-        '''
-        for path, pathName in self.toolsList:
-            if buildData[path] != '':
-                if not utils.fileFolderExists(buildData[path]):
-                    # buildData path is not empty, but path is not valid. Force update.
-                    buildData[path] = utils.getUserPath(pathName)
-                else:
-                    # valid path, ask user for update
-                    if utils.askUserForPathUpdate(pathName, currentPath=buildData[path]):
-                        buildData[path] = utils.getUserPath(pathName)
-            else:
-                # no path currently available specified, force update.
-                buildData[path] = utils.getUserPath(pathName)
-
-        print("Chosen paths updated.\n")
-        return buildData
-
-    def verifyExistingPaths(self, buildData):
-        '''
-        This function checks if paths specified in 'self.toolsList' exists in 'buildData.json'. 
-        If any path is not valid, user is asked for update.
+        This function checks if paths specified in 'self.toolsList' exist in 'buildData.json'.
+        If any path is not valid, user is asked for update via updatePath.
 
         Returns updated valid paths.
         '''
-        for path, pathName in self.toolsList:
+        for path, pathName, default, updated in self.toolsList:
             try:
                 pathToCheck = buildData[path]
-                if not utils.fileFolderExists(pathToCheck):
-                    # path not valid
-                    buildData[path] = utils.getUserPath(pathName)
+                if not utils.pathExists(pathToCheck):
+                    # path not valid, check if command
+                    if not utils.commandExists(pathToCheck):
+                        # path invalid
+                        buildData[path] = self.updatePath(path, pathName, default)
+                        updated = True
                 else:
-                    # a valid path exists, ask user if he wish to update
-                    continue
+                    # path valid
+                    if request: # if the user made the path verification request
+                        msg = "\n\nValid path to '" + pathName + "' detected at '" + pathToCheck + "'\n\tUpdate existing path? [y/n]: "
+                        if utils.getYesNoAnswer(msg):
+                            buildData[path] = self.updatePath(path, pathName, default)
+                            updated = True
             except:
-                buildData = self.forceUpdatePaths(buildData)
+                buildData[path] = self.updatePath(path, pathName, default)
+                updated = True
 
-        gccExePath = buildData[self.bStr.gccExePath]
-        buildData[self.bStr.gccInludePath] = utils.getGccIncludePath(gccExePath)
+            # validate derivative paths
+            if updated is True:
+                if path == self.bStr.gccExePath:
+                    # get gccIncludePath
+                    gccExePath = buildData[self.bStr.gccExePath]
+                    buildData[self.bStr.gccInludePath] = utils.getGccIncludePath(gccExePath)
+                elif path == self.bStr.openOcdPath:
+                    # get openOcdConfig
+                    openOcdPath = buildData[self.bStr.openOcdPath]
+                    buildData[self.bStr.openOcdConfig] = utils.getOpenOcdConfig(openOcdPath)
+                elif path == self.bStr.stm32SvdPath:
+                    # get stm32SvdFile
+                    stm32SvdPath = buildData[self.bStr.stm32SvdPath]
+                    buildData[self.bStr.stm32SvdFile] = utils.getStm32SvdFile(stm32SvdPath)
 
-        openOCDTargetPath = buildData[self.bStr.openOCDTargetPath]
-        buildData[self.bStr.openOCDInterfacePath] = utils.getSTLinkPath(openOCDTargetPath)
+            # get python3 executable
+            buildData[self.bStr.pythonExec] = utils.getPython3Executable()
 
         return buildData
 
+
+    def updatePath(self, path, pathName, default):
+        '''
+        This function is called when a path is detected as invalid or the user requests to update paths.
+        '''
+
+        # check if default path is command
+        pathDefault = None
+        if utils.commandExists(default):
+            pathDefault = shutil.which(default)
+        # if not a command, check if it's a path
+        elif utils.pathExists(default):
+            pathDefault = default
+
+        if pathDefault is not None:
+            msg = "\n\tDefault path to '" + pathName + "' detected at '" + pathDefault + "'\n\tUse this path? [y/n]: "
+            if utils.getYesNoAnswer(msg):
+                return pathDefault
+
+        # default not detected or user wants custom path/command
+        newPath = utils.getUserPath(pathName)
+        return newPath
 
 ########################################################################################################################
 if __name__ == "__main__":
@@ -106,7 +106,7 @@ if __name__ == "__main__":
     bData = build.BuildData()
 
     buildData = bData.prepareBuildData()
-    paths.askToUpdate(buildData)
+    buildData = paths.verifyExistingPaths(buildData, request=True)
 
     bData.overwriteBuildDataFile(buildData)
     bData.createUserToolsFile(buildData)

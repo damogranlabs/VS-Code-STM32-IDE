@@ -155,10 +155,11 @@ buildDataTemplate = """{
     "gccInludePath": "",
     "gccExePath": "",
     "buildToolsPath": "",
-    "openOCDPath": "",
-    "openOCDInterfacePath":"",
-    "openOCDTargetPath": "",
-    "stm32svdPath": ""
+    "pythonExec": "",
+    "openOcdPath": "",
+    "openOcdConfig":"",
+    "stm32SvdPath": "",
+    "stm32SvdFile": ""
 }
 """
 

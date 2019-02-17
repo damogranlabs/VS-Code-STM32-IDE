@@ -37,11 +37,13 @@ class BuildDataStrings():
     buildToolsPath = 'buildToolsPath'
     targetExecutablePath = 'targetExecutablePath'
 
-    openOCDPath = 'openOCDPath'
-    openOCDTargetPath = 'openOCDTargetPath'
-    openOCDInterfacePath = 'openOCDInterfacePath'
+    pythonExec = 'pythonExec'
 
-    stm32svdPath = 'stm32svdPath'
+    openOcdPath = 'openOcdPath'
+    openOcdConfig = 'openOcdConfig'
+
+    stm32SvdPath = 'stm32SvdPath'
+    stm32SvdFile = 'stm32SvdFile'
 
     cubeMxProjectPath = 'cubeMxProjectPath'
 
@@ -75,7 +77,7 @@ class BuildData():
         Check if 'buildData.json' file exists. If it does, check if it is a valid JSON file.
         If it doesn't exist, create new according to template.
         '''
-        if utils.fileFolderExists(utils.buildDataPath):
+        if utils.pathExists(utils.buildDataPath):
             # file exists, check if it loads OK
             try:
                 with open(utils.buildDataPath, 'r') as buildDataFile:
@@ -99,7 +101,7 @@ class BuildData():
         Returns True if 'toolsPaths.json' file exists and is a valid JSON file.
         If it doesn't exist, delete it and return False.
         '''
-        if utils.fileFolderExists(utils.toolsPaths):
+        if utils.pathExists(utils.toolsPaths):
             # file exists, check if it loads OK
             try:
                 with open(utils.toolsPaths, 'r') as toolsFileHandler:
@@ -125,7 +127,7 @@ class BuildData():
 
     def createUserToolsFile(self, buildData):
         '''
-        Create 'toolsPaths.json' file with current tools absolute paths. 
+        Create 'toolsPaths.json' file with current tools absolute paths.
         '''
         data = {}
         try:
@@ -134,8 +136,9 @@ class BuildData():
             data[self.bStr.gccExePath] = buildData[self.bStr.gccExePath]
             data[self.bStr.gccInludePath] = buildData[self.bStr.gccInludePath]
             data[self.bStr.buildToolsPath] = buildData[self.bStr.buildToolsPath]
-            data[self.bStr.openOCDInterfacePath] = buildData[self.bStr.openOCDInterfacePath]
-            data[self.bStr.openOCDPath] = buildData[self.bStr.openOCDPath]
+            data[self.bStr.pythonExec] = buildData[self.bStr.pythonExec]
+            data[self.bStr.openOcdPath] = buildData[self.bStr.openOcdPath]
+            data[self.bStr.stm32SvdPath] = buildData[self.bStr.stm32SvdPath]
 
             # dataToWrite = json.dump(data, indent=4, sort_keys=False) # TODO HERE
 
@@ -151,7 +154,7 @@ class BuildData():
 
     def createBuildDataFile(self):
         '''
-        Create fresh 'buildData.json' file. 
+        Create fresh 'buildData.json' file.
         '''
         try:
             data = json.loads(tmpStr.buildDataTemplate)
@@ -196,8 +199,11 @@ class BuildData():
         buildData[self.bStr.gccExePath] = toolsPathsData[self.bStr.gccExePath]
         buildData[self.bStr.gccInludePath] = toolsPathsData[self.bStr.gccInludePath]
         buildData[self.bStr.buildToolsPath] = toolsPathsData[self.bStr.buildToolsPath]
-        buildData[self.bStr.openOCDInterfacePath] = toolsPathsData[self.bStr.openOCDInterfacePath]
-        buildData[self.bStr.openOCDPath] = toolsPathsData[self.bStr.openOCDPath]
+        buildData[self.bStr.pythonExec] = toolsPathsData[self.bStr.pythonExec]
+        buildData[self.bStr.openOcdPath] = toolsPathsData[self.bStr.openOcdPath]
+        buildData[self.bStr.openOcdConfig] = toolsPathsData[self.bStr.openOcdConfig]
+        buildData[self.bStr.stm32SvdPath] = toolsPathsData[self.bStr.stm32SvdPath]
+        buildData[self.bStr.stm32SvdFile] = toolsPathsData[self.bStr.stm32SvdFile]
 
         return buildData
 
