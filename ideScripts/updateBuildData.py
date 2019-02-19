@@ -17,6 +17,7 @@ __version__ = utils.__version__
 
 
 class BuildDataStrings():
+    # project sources, includes, defines, ....
     cSources = 'cSources'
     asmSources = 'asmSources'
 
@@ -31,21 +32,35 @@ class BuildDataStrings():
 
     buildDirPath = 'buildDir'
 
-    gccInludePath = 'gccInludePath'
-    gccExePath = 'gccExePath'
+    # build/interface tools paths, configuration files
+    gccInludePath = 'gccInludePath'  # GCC standard libraries root folder path
+    gccExePath = 'gccExePath'  # path to 'gcc.exe'
 
-    buildToolsPath = 'buildToolsPath'
-    targetExecutablePath = 'targetExecutablePath'
+    buildToolsPath = 'buildToolsPath'  # path to 'make.exe'
+    targetExecutablePath = 'targetExecutablePath'  # path to downloadable '*.elf' file
 
     pythonExec = 'pythonExec'
 
-    openOcdPath = 'openOcdPath'
-    openOcdConfig = 'openOcdConfig'
+    openOcdPath = 'openOcdPath'  # path to 'openocd.exe'
+    openOcdInterfacePath = "openOcdInterfacePath"  # path to OpenOCD interface cofniguration file (currently 'stlink.cfg')
+    openOcdConfig = 'openOcdConfig'  # path to target '*.cfg' file
 
-    stm32SvdPath = 'stm32SvdPath'
-    stm32SvdFile = 'stm32SvdFile'
+    stm32SvdPath = 'stm32SvdPath'  # path to target '*.svd' file
 
     cubeMxProjectPath = 'cubeMxProjectPath'
+
+    # list of mandatory paths that must exist in 'buildData.json' to update workspace.
+    # Note: order is important!
+    configurationPaths = [gccExePath,
+                          buildToolsPath,
+                          pythonExec,
+                          openOcdPath, openOcdInterfacePath, openOcdConfig,
+                          stm32SvdPath]
+    # list of paths that can be cached in 'toolsPaths.json'
+    toolsPaths = [gccExePath,
+                  buildToolsPath,
+                  pythonExec,
+                  openOcdPath, openOcdInterfacePath]
 
 
 class BuildData():
@@ -56,9 +71,8 @@ class BuildData():
 
     def prepareBuildData(self):
         '''
-        This function is used in all 'update*.py' scripts and makes sure, that buildData with
-        a valid tools paths exist. It also updates 'toolsPaths.json' file.
-
+        This function is used in all 'update*.py' scripts and makes sure, that buildData with a valid tools paths exist.
+        Invalid paths are updated (requested from the user).
         Returns available, valid build data.
         '''
         paths = pth.UpdatePaths()
@@ -68,7 +82,6 @@ class BuildData():
         if self.checkToolsPathFile():  # toolsPaths.json exists
             buildData = self.addToolsPathsData(buildData)
         buildData = paths.verifyExistingPaths(buildData)
-        self.createUserToolsFile(buildData)
 
         return buildData
 
@@ -133,18 +146,12 @@ class BuildData():
         try:
             data["ABOUT1"] = "Common tools paths that are automatically filled in buildData.json."
             data["ABOUT2"] = "Delete/correct this file if paths change on system."
-            data[self.bStr.gccExePath] = buildData[self.bStr.gccExePath]
-            data[self.bStr.gccInludePath] = buildData[self.bStr.gccInludePath]
-            data[self.bStr.buildToolsPath] = buildData[self.bStr.buildToolsPath]
-            data[self.bStr.pythonExec] = buildData[self.bStr.pythonExec]
-            data[self.bStr.openOcdPath] = buildData[self.bStr.openOcdPath]
-            data[self.bStr.stm32SvdPath] = buildData[self.bStr.stm32SvdPath]
+            for path in self.bStr.toolsPaths:
+                data[path] = buildData[path]
 
-            # dataToWrite = json.dump(data, indent=4, sort_keys=False) # TODO HERE
-
+            data = json.dumps(data, indent=4, sort_keys=False)
             with open(utils.toolsPaths, 'w+') as toolsPathsFile:
-                json.dump(data, toolsPathsFile, indent=4, sort_keys=False)
-
+                toolsPathsFile.write(data)
             print("'toolsPaths.json' file updated!")
 
         except Exception as err:
@@ -196,14 +203,13 @@ class BuildData():
         Returns new data.
         '''
         toolsPathsData = self.getToolsPathsData()
-        buildData[self.bStr.gccExePath] = toolsPathsData[self.bStr.gccExePath]
-        buildData[self.bStr.gccInludePath] = toolsPathsData[self.bStr.gccInludePath]
-        buildData[self.bStr.buildToolsPath] = toolsPathsData[self.bStr.buildToolsPath]
-        buildData[self.bStr.pythonExec] = toolsPathsData[self.bStr.pythonExec]
-        buildData[self.bStr.openOcdPath] = toolsPathsData[self.bStr.openOcdPath]
-        buildData[self.bStr.openOcdConfig] = toolsPathsData[self.bStr.openOcdConfig]
-        buildData[self.bStr.stm32SvdPath] = toolsPathsData[self.bStr.stm32SvdPath]
-        buildData[self.bStr.stm32SvdFile] = toolsPathsData[self.bStr.stm32SvdFile]
+
+        for path in self.bStr.toolsPaths:
+            try:
+                buildData[path] = toolsPathsData[path]
+            except Exception as err:
+                # missing item in toolsPaths.json
+                pass
 
         return buildData
 
@@ -306,3 +312,4 @@ if __name__ == "__main__":
     buildData = bData.addMakefileDataToBuildDataFile(buildData, makefileData)
 
     bData.overwriteBuildDataFile(buildData)
+    bData.createUserToolsFile(buildData)

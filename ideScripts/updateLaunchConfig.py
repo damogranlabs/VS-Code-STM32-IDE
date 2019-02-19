@@ -151,13 +151,11 @@ class LaunchConfigurations():
 
         buildData = build.BuildData().getBuildData()
 
-        stm32SvdFilePath = os.path.join(buildData[self.bStr.stm32SvdPath], buildData[self.bStr.stm32SvdFile])
-        stm32SvdFilePath = utils.pathWithForwardSlashes(stm32SvdFilePath)
-
         jsonConfigurationData["name"] = tmpStr.launchName_Debug
         jsonConfigurationData["executable"] = buildData[self.bStr.targetExecutablePath]
-        jsonConfigurationData["svdFile"] = stm32SvdFilePath
-        jsonConfigurationData["configFiles"] = buildData[self.bStr.openOcdConfig]
+        jsonConfigurationData["svdFile"] = buildData[self.bStr.stm32SvdPath]
+        jsonConfigurationData["configFiles"] = [buildData[self.bStr.openOcdInterfacePath]]
+        jsonConfigurationData["configFiles"].extend(buildData[self.bStr.openOcdConfig])
         jsonConfigurationData["preLaunchTask"] = tmpStr.taskName_build
 
         return jsonConfigurationData
@@ -191,6 +189,7 @@ if __name__ == "__main__":
 
     # build data (update tools paths if neccessary)
     buildData = bData.prepareBuildData()
+    bData.createUserToolsFile(buildData)
 
     # create taks file
     launch.checkLaunchFile()

@@ -4,7 +4,7 @@ Update/generate 'tasks.json' file in .vscode subfolder.
 'tasks.json' fields description:
 https://code.visualstudio.com/docs/editor/tasks
 '''
-
+import copy
 import os
 import json
 
@@ -345,6 +345,8 @@ class Tasks():
         jsonTaskData["label"] = tmpStr.taskName_CPU_downloadRun
         jsonTaskData["command"] = buildData[self.bStr.openOcdPath]
         jsonTaskData["args"] = []
+        jsonTaskData["args"].append("-f")
+        jsonTaskData["args"].append(buildData[self.bStr.openOcdInterfacePath])
         for arg in buildData[self.bStr.openOcdConfig]:
             jsonTaskData["args"].append("-f")
             jsonTaskData["args"].append(arg)
@@ -381,10 +383,11 @@ class Tasks():
         jsonTaskData["label"] = tmpStr.taskName_CPU_resetRun
         jsonTaskData["command"] = buildData[self.bStr.openOcdPath]
         jsonTaskData["args"] = []
+        jsonTaskData["args"].append("-f")
+        jsonTaskData["args"].append(buildData[self.bStr.openOcdInterfacePath])
         for arg in buildData[self.bStr.openOcdConfig]:
             jsonTaskData["args"].append("-f")
             jsonTaskData["args"].append(arg)
-
         jsonTaskData["args"].append("-c init")  # init must be executed before other commands!
         jsonTaskData["args"].append("-c reset")
         jsonTaskData["args"].append("-c exit")
@@ -410,6 +413,8 @@ class Tasks():
         jsonTaskData["label"] = tmpStr.taskName_CPU_halt
         jsonTaskData["command"] = buildData[self.bStr.openOcdPath]
         jsonTaskData["args"] = []
+        jsonTaskData["args"].append("-f")
+        jsonTaskData["args"].append(buildData[self.bStr.openOcdInterfacePath])
         for arg in buildData[self.bStr.openOcdConfig]:
             jsonTaskData["args"].append("-f")
             jsonTaskData["args"].append(arg)
@@ -439,6 +444,8 @@ class Tasks():
         jsonTaskData["label"] = tmpStr.taskName_CPU_run
         jsonTaskData["command"] = buildData[self.bStr.openOcdPath]
         jsonTaskData["args"] = []
+        jsonTaskData["args"].append("-f")
+        jsonTaskData["args"].append(buildData[self.bStr.openOcdInterfacePath])
         for arg in buildData[self.bStr.openOcdConfig]:
             jsonTaskData["args"].append("-f")
             jsonTaskData["args"].append(arg)
@@ -548,6 +555,7 @@ if __name__ == "__main__":
 
     # build data (update tools paths if neccessary)
     buildData = bData.prepareBuildData()
+    bData.createUserToolsFile(buildData)
 
     # create taks file
     tasks.checkTasksFile()

@@ -194,3 +194,5 @@ if __name__ == "__main__":
     # create build folder if it does not exist jet
     buildFolderName = makefileData[mkf.MakefileStrings.buildDir]
     utils.createBuildFolder(buildFolderName)
+
+    bData.createUserToolsFile(buildData)

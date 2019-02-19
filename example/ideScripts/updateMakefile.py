@@ -465,6 +465,7 @@ if __name__ == "__main__":
 
     # build data (update tools paths if neccessary)
     buildData = bData.prepareBuildData()
+    bData.createUserToolsFile(buildData)
 
     # get data from 'c_cpp_properties.json' and create new Makefile
     cP.checkCPropertiesFile()

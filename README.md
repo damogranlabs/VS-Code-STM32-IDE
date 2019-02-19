@@ -1,7 +1,7 @@
 # VS Code STM32 IDE
 Source: [Damogran Labs: https://damogranlabs.com/](https://damogranlabs.com/2018/10/vs-code-stm32-ide/)  
-Date: 13.1.2019  
-Version: 1.3  
+Date: 19.2.2019  
+Version: 1.5  
 
 ## About
 This project transform VS Code to a great IDE that can be used with STM32CubeMX tool to create a projects without any limitations and code size restrictions, without any bloatware and fast user setup (once all prerequisites are installed). Project is based on python scripts and is therefore fully customizable. OpenOCD tool and Cortex-Debug VS Code plugin is used for debug purposes.  
@@ -9,7 +9,8 @@ This project transform VS Code to a great IDE that can be used with STM32CubeMX 
 Debug capabilities are somehow limited, but can be good enough for most simple projects - see below.  
 **Keil project import** script available. [See README_KEIL_IMPORTER.](https://github.com/damogranlabs/VS-Code-STM32-IDE/blob/master/README_KEIL_IMPORTER.md)  
 
-[![VS Code as STM32 IDE](https://github.com/damogranlabs/VS-Code-STM32-IDE/blob/master/_images/videoThumbnail.PNG)](https://www.youtube.com/watch?v=rWjb43kLHdQ)
+[![VS Code as STM32 IDE](https://github.com/damogranlabs/VS-Code-STM32-IDE/blob/master/_images/videoThumbnail.PNG)](https://www.youtube.com/watch?v=rWjb43kLHdQ)  
+*Video is now slightly outdated - now setup and workflow is even beter.*
 
 ## How does it work?
 Scripts generate all necessary VS Code workspace files ('c_cpp_properties.json', 'tasks.json' and 'launch.json') that IDE needs for autocomplete and compile/build/debug/download actions. New 'Makefile' is generated from CubeMX and user data on each update. All user settings are stored and can be changed in one file: 'c_cpp_properties.json'.  
@@ -68,11 +69,11 @@ Or get the latest release from [The Official OpenOCD Github mirror.](https://git
 
 
 # First steps
-Once all prerequisites are installed, work flow is very simple.
+Once all prerequisites are installed, workflow is very simple.
 * Create CubeMX project and select 'Makefile' as output file.
-* Open generated folder with VS Code and save it as workspace.
+* Open generated folder with VS Code and save it as a workspace.
 * Copy 'ideScripts' folder inside this workspace folder.
-* Run update.py script with python.
+* Run update.py script with python. Follow simple instructions in terminal.
 * Code, compile, build, ...
 * Debug, download, reset, run, stop, ...
   
@@ -80,7 +81,8 @@ Need to re-generate CubeMX project? Do it, than run 'Update workspace' task and 
 Need to add user specific files/folders? Edit 'c_cpp_properties.json' file and update again.
   
 Note: on first 'update.py' script run, user must specify absolute paths to few files (tool paths). This are than stored in 'buildData.json' and update is not necessary as long as the same 'buildData.json' file exists and paths are valid. Common tools paths (like GCC and OpenOCD) paths are also cached in 'toolsPaths.json' in VS Code user appdata, so there is less work when creating new workspaces.  
-Alternatively paths can be updated by running 'updatePaths.py' script.
+Alternatively paths can be updated by running 'updatePaths.py' script.  
+*With the latest updates, some backward compatibility was broken. Still, find your old valid paths in backup files inside .vscode folder.*
 
 ![Example folder structure](https://github.com/damogranlabs/VS-Code-STM32-IDE/blob/master/_images/exampleFolderStructure.PNG)
  
@@ -125,3 +127,10 @@ Anyway, any non-beginner shouldn't have much problems with this limitations.
 ## Even more?
 Need to know more details (and FAQ)? see [README_DETAILS.md](https://github.com/damogranlabs/VS-Code-STM32-IDE/blob/master/README_DETAILS.md).  
 Suggestions, details, ideas, bugs? Use [Issues tab](https://github.com/damogranlabs/VS-Code-STM32-IDE/issues).  
+
+
+--------
+## Contributors
+Special thanks go to:  
+* [@poshcoe](https://github.com/poshcoe)
+* [@ali80 ](https://github.com/ali80)

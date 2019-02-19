@@ -105,8 +105,7 @@ This file imports existing Keil uVision project. [See readme here](https://githu
 
 --------
 ## How it actually works?
-First, all scripts check if file/folder structure is as expected ('\*.ioc' file in the same folder as '\*.code-workspace' file). Existing tools paths are checked and updated, and 'buildData.json' is created with this data.  
+First, all scripts check if file/folder structure is as expected ('\*.ioc' file in the same folder as '\*.code-workspace' file). Existing tools paths are checked and updated, and 'buildData.json' is created with this data. Once all common configuration paths are valid, these are storred in 'toolsPaths.json', so user does not need to enter them when creating new workspace.  
 'Makefile' is checked to see if it was already altered with previous 'update' actions. If this is not the original 'Makefile', original is restored from 'Makefile.backup' file. 'print-variable' function is added to enable fetching internal 'Makefile' variables (sources and compiler flags) and 'c_cpp_properties.json' file is created/merged with existing one. Data in 'c_cpp_properties.json' from 'Makefile' is stored in 'cubemx_*' fields and is needed for *compile* task later on.  
 On update, new 'Makefile' is generated with merged data from old 'Makefile' and *user_* fields from 'c_cpp_properties.json'. 'buildData.json' is updated with new 'Makefile' variables.  
-Tasks and Launch configurations are generated with paths and data from existing 'buildData.json'. 
-At the end, 'cortex-debug' settings are applied to '\*.code-workspace' file.
+Tasks and Launch configurations are generated with paths and data from existing 'buildData.json'. At the end, 'cortex-debug' settings are applied to '\*.code-workspace' file. 

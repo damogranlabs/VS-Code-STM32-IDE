@@ -152,14 +152,14 @@ buildDataTemplate = """{
     "cFlags" : [],
     "asmFlags" : [],
     "buildDir": "",
-    "gccInludePath": "",
     "gccExePath": "",
+    "gccInludePath": "",
     "buildToolsPath": "",
     "pythonExec": "",
     "openOcdPath": "",
+    "openOcdInterfacePath": "",
     "openOcdConfig":"",
-    "stm32SvdPath": "",
-    "stm32SvdFile": ""
+    "stm32SvdPath": ""
 }
 """
 

@@ -15,7 +15,7 @@ import platform
 
 import templateStrings as tmpStr
 
-__version__ = '1.4'  # this is inherited by all 'update*.py' scripts
+__version__ = '1.5'  # this is inherited by all 'update*.py' scripts
 
 ########################################################################################################################
 # Global utilities and paths
@@ -65,10 +65,11 @@ def commandExists(command):
     '''
     Checks if a command exists.
     '''
-    if shutil.which(command):
-        return True
-    else:
-        return False
+    if command is not None:
+        if shutil.which(command):
+            return True
+
+    return False
 
 
 def detectOs():
@@ -80,9 +81,9 @@ def detectOs():
     elif os.name == "java":
         osIs = "java"
     elif os.name == "posix":
-        release = platform.release() #get system release
+        release = platform.release()  # get system release
         release = release.lower()
-        if release.endswith("microsoft"): # Detect windows subsystem for linux (wsl)
+        if release.endswith("microsoft"):  # Detect windows subsystem for linux (wsl)
             osIs = "wsl"
         else:
             osIs = "unix"
@@ -207,15 +208,13 @@ def printWorkspacePaths():
 
     print("\n'c_cpp_properties.json':", cPropertiesPath)
     print("'c_cpp_properties.json.backup':", cPropertiesBackupPath)
+    print("\n'tasks.json':", tasksPath)
+    print("'tasks.json.backup':", tasksBackupPath)
+    print("\n'launch.json':", launchPath)
+    print("'launch.json.backup':", launchBackupPath)
 
     print("\n'buildData.json':", buildDataPath)
     print("'toolsPaths.json':", toolsPaths)
-
-    print("\n'tasks.json':", tasksPath)
-    print("'tasks.json.backup':", tasksBackupPath)
-
-    print("\n'launch.json':", launchPath)
-    print("'launch.json.backup':", launchBackupPath)
     print()
 
 
@@ -364,6 +363,8 @@ def getUserPath(pathName):
 def pathWithoutQuotes(path):
     path = path.replace('\"', '')  # remove " "
     path = path.replace('\'', '')  # remove ' '
+    path = path.strip()  # remove any redundant spaces
+
     return path
 
 
@@ -386,7 +387,8 @@ def getGccIncludePath(gccExePath):
     searchPath = os.path.join(gccFolderPath, "lib", "gcc", "arm-none-eabi")
 
     fileName = "stdint.h"
-    folderPath = findFileInFolderTree(searchPath, fileName)
+    filePath = findFileInFolderTree(searchPath, fileName)
+    folderPath = os.path.dirname(filePath)
     if folderPath is None:
         errorMsg = "Unable to find 'include' subfolder with " + fileName + " file on path:\n\t"
         errorMsg += searchPath
@@ -394,15 +396,16 @@ def getGccIncludePath(gccExePath):
 
     return folderPath
 
+
 def getPython3Executable():
     '''
     Uses detectOs() to determine the correct python command to use for python related tasks
     '''
     osIs = detectOs()
 
-    if osIs == "unix" or osIs == "wsl": # detected unix based system
+    if osIs == "unix" or osIs == "wsl":  # detected unix based system
         pythonExec = "python3"
-    else: # windows or other system
+    else:  # windows or other system
         pythonExec = "python"
 
     if not commandExists(pythonExec):
@@ -413,60 +416,72 @@ def getPython3Executable():
     return pythonExec
 
 
-def getOpenOcdConfig(openOcdPath):
+def getOpenOcdInterface(openOcdPath):
     '''
-    Get openOCD configuration from user, eg. 'interface/stlink.cfg target/stm32f0x.cfg'
-    Returns the absolute path to these config files.
-
-    Searches openOcdRootPath for stlink.cfg to get the location of the scripts folder - which differs across systems.
+    Try to get OpenOCD interface file (TODO: currently hard-coded 'stlink.cfg') from 'openocd.exe' (openOcdPath) path.
+    If such path can't be found ask user for update.
+    Returns absolute path to 'stlink.cfg' file.
     '''
-    openOcdExePath = os.path.dirname(openOcdPath) # ../bin
-    openOcdRootPath = os.path.dirname(openOcdExePath) # ../
+    openOcdExeFolderPath = os.path.dirname(openOcdPath)  # ../bin
+    openOcdRootPath = os.path.dirname(openOcdExeFolderPath)  # ../
+    # interfaceFolderPath = os.path.join(openOcdRootPath, 'scripts', 'interface') # only on windwos, linux has different structure
 
-    # get OpenOcdScriptsPath from
+    # get openOcdInterfacePath from
+    # TODO here of once anything other than stlink will be supported
     fileName = "stlink.cfg"
-    openOcdScriptsInterfacePath = findFileInFolderTree(openOcdRootPath, fileName)
-    if openOcdScriptsInterfacePath is None:
-        errorMsg = "Unable to find 'scripts' subfolder with" + fileName + " file on path:\n\t"
-        errorMsg += openOcdRootPath
-        printAndQuit(errorMsg)
-    else:
-        openOcdScriptsPath = os.path.dirname(openOcdScriptsInterfacePath)
+    openOcdInterfacePath = findFileInFolderTree(openOcdRootPath, fileName)
+    if openOcdInterfacePath is None:
+        openOcdInterfacePath = getUserPath("stlink.cfg interface")
+
+    return openOcdInterfacePath
+
+
+def getOpenOcdConfig(openOcdInterfacePath):
+    '''
+    Get openOCD configuration files from user, eg. 'interface/stlink.cfg, target/stm32f0x.cfg'
+    Paths can be passed in absolute or relative form, separated by comma. Optionally enclosed in " or '.
+    Returns the absolute paths to these config files.
+    '''
+    openOcdScriptsPath = os.path.dirname(os.path.dirname(openOcdInterfacePath))
 
     while(True):
-        msg = "\n\tEnter OpenOCD configuration files (eg: 'interface/stlink.cfg target/stm32f0x.cfg'):\n\tConfig files: "
-        config = input(msg)
+        msg = "\n\tEnter path(s) to OpenOCD configuration file(s):\n\t\t"
+        msg += "Example: 'target/stm32f0x.cfg'. Absolute or relative to OpenOCD /scripts/ folder.\n\t\t"
+        msg += "If more than one file is needed, separate with comma.\n\t\t"
+        msg += "Paste here and press Enter: "
+        configFilesStr = input(msg)
 
-        # split config input into list, seperating the arguments
-        config = shlex.split(config)
-        configPaths = list()
-        for arg in config:
-            arg = pathWithoutQuotes(arg)
-            arg = pathWithForwardSlashes(arg)
+        allConfigFiles = []
+        configFiles = configFilesStr.split(',')
+        for theFile in configFiles:
+            # ex.: " C:/asd/foo bar/fail.cfg " , ' C:/asd/bar foo/fail.cfg' ,
+            theFile = theFile.strip()
+            theFile = theFile.strip('\'')
+            theFile = theFile.strip('\"')
+            theFile = theFile.strip()
+            theFile = pathWithForwardSlashes(theFile)
 
-            if pathExists(arg): # arg is an absolute path
-                argPath = arg
-            else: # arg is a relative path
-                argPath = os.path.join(openOcdScriptsPath, arg)
-                argPath = pathWithForwardSlashes(argPath)
-
-            if pathExists(argPath):
-                msg = "\tConfiguration file '" + arg + "' detected successfully"
-                print(msg)
-                configPaths.append(argPath)
+            if pathExists(theFile):  # file is an absolute path
+                allConfigFiles.append(theFile)
             else:
-                msg = "\tConfiguration invalid: '" + arg + "' not found in " + openOcdScriptsPath
-                print(msg)
-                break
+                # arg is a relative path. Must be relative to OpenOCD 'scripts' folder
+                theFileAbs = os.path.join(openOcdScriptsPath, theFile)
+                theFileAbs = pathWithForwardSlashes(theFileAbs)
+                if pathExists(theFileAbs):
+                    allConfigFiles.append(theFileAbs)
+                else:
+                    msg = "\tConfiguration invalid (file not found): \'" + theFileAbs + "\'"
+                    print(msg)
+                    break
         else:
-            break # break loop if config detected successfully
-        continue # continue if unsuccessful
+            break  # break loop if config detected successfully
+        continue  # continue if unsuccessful
 
-    return configPaths
+    return allConfigFiles
 
 
 def getStm32SvdFile(stm32SvdPath):
-    '''
+    ''' # TODO HERE - deprecated? no use cases?
     Get stm32SvdFile from user, eg. 'STM32F042x.svd'
     Validates that file exists
     '''
@@ -515,18 +530,21 @@ def getAllFilesInFolderTree(pathToFolder):
 
     return allFiles
 
+
 def findFileInFolderTree(searchPath, fileName):
     '''
-    Find a file in a folder or subfolders, and return the full file path if successful
+    Find a file in a folder or subfolders, and return absolute path to the file.
     Returns None if unsuccessful.
     '''
 
     for root, dirs, files in os.walk(searchPath, topdown=False):
         if fileName in files:
-            filePath = pathWithForwardSlashes(root)
+            filePath = os.path.join(root, fileName)
+            filePath = pathWithForwardSlashes(filePath)
             return filePath
 
     return None
+
 
 def findExecutablePath(extension, raiseException=False):
     '''

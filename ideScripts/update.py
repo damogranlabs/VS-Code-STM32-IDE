@@ -1,3 +1,11 @@
+import updateWorkspaceFile as workspaceFile
+import updateLaunchConfig as launch
+import updateTasks as tasks
+import updateBuildData as build
+import updateMakefile as mkf
+import updateWorkspaceSources as wks
+import updatePaths as pth
+import utilities as utils
 '''
 This script runs all other updateXxx.py scripts. It should be called once CubeMX project was generated/re-generated or user settings were modified.
 
@@ -12,16 +20,6 @@ import sys
 
 if sys.version_info[0] < 3:
     raise Exception("Python 3 or later is required")
-
-import utilities as utils
-
-import updatePaths as pth
-import updateWorkspaceSources as wks
-import updateMakefile as mkf
-import updateBuildData as build
-import updateTasks as tasks
-import updateLaunchConfig as launch
-import updateWorkspaceFile as workspaceFile
 
 
 __version__ = utils.__version__
@@ -65,6 +63,7 @@ if __name__ == "__main__":
     buildData = bData.addMakefileDataToBuildDataFile(buildData, makefileData)
     buildData = bData.addCubeMxProjectPathToBuildData(buildData)
     bData.overwriteBuildDataFile(buildData)
+    bData.createUserToolsFile(buildData)
 
     # create build folder
     buildFolderName = makefileData[mkf.MakefileStrings.buildDir]

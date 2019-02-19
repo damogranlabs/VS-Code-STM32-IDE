@@ -159,7 +159,7 @@
                 "-f",
                 "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/OpenOCD/0.10.0-8-20180512-1921/scripts/target/stm32f0x.cfg",
                 "-c init",
-                "-c resume  ",
+                "-c resume",
                 "-c exit"
             ],
             "problemMatcher": []

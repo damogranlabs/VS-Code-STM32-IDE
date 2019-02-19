@@ -2,8 +2,8 @@
     "ABOUT1": "This file holds combined user and CubeMX generated Makefile workspace dependecies.",
     "ABOUT2": "User should not edit this fields, instead it should edit 'c_cpp_properties.json'",
     "ABOUT3": "This file is regenerated on 'Update workspace' task.",
-    "VERSION": "1.4",
-    "LAST_RUN": "2019-01-19 12:34:22.239494",
+    "VERSION": "1.5",
+    "LAST_RUN": "2019-02-19 18:55:40.239694",
     "cSources": [
         "Src/main.c",
         "Src/gpio.c",
@@ -75,13 +75,16 @@
         "-ffunction-sections"
     ],
     "buildDir": "build",
-    "gccInludePath": "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/ARM Embedded GCC/7.3.1-1.1-20180724-0637/lib/gcc/arm-none-eabi/7.3.1/include",
     "gccExePath": "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/ARM Embedded GCC/7.3.1-1.1-20180724-0637/bin/arm-none-eabi-gcc.exe",
+    "openOcdInterfacePath": "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/OpenOCD/0.10.0-8-20180512-1921/scripts/interface/stlink.cfg",
     "buildToolsPath": "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/Build Tools/2.11-20180428-1604/bin/make.exe",
-    "openOCDPath": "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/OpenOCD/0.10.0-8-20180512-1921/bin/openocd.exe",
-    "openOCDInterfacePath": "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/OpenOCD/0.10.0-8-20180512-1921/scripts/interface/stlink.cfg",
-    "openOCDTargetPath": "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/OpenOCD/0.10.0-8-20180512-1921/scripts/target/stm32f0x.cfg",
-    "stm32svdPath": "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/Keil.STM32F0xx_DFP.2.0.0/CMSIS/SVD/STM32F0x1.svd",
-    "cubeMxProjectPath": "D:/Stromarija/GIT/VS_Code_STM32_IDE/example/example.ioc",
-    "targetExecutablePath": "D:/Stromarija/GIT/VS_Code_STM32_IDE/example/build/example.elf"
+    "openOcdPath": "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/OpenOCD/0.10.0-8-20180512-1921/bin/openocd.exe",
+    "openOcdConfig": [
+        "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/OpenOCD/0.10.0-8-20180512-1921/scripts/target/stm32f0x.cfg"
+    ],
+    "stm32SvdPath": "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/Keil.STM32F0xx_DFP.2.0.0/CMSIS/SVD/STM32F0x1.svd",
+    "gccInludePath": "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/ARM Embedded GCC/7.3.1-1.1-20180724-0637/lib/gcc/arm-none-eabi/7.3.1/include",
+    "pythonExec": "python",
+    "targetExecutablePath": "D:/Stromarija/GIT/VS_Code_STM32_IDE/example/build/example.elf",
+    "cubeMxProjectPath": "D:/Stromarija/GIT/VS_Code_STM32_IDE/example/example.ioc"
 }
