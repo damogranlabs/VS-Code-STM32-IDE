@@ -29,12 +29,15 @@ c_cpp_template = """{
         "____________________USER_FIELDS_CAN_BE_MODIFIED____________________": "",
         "user_cSources": [],
         "user_asmSources": [],
+        "user_ldSources": [],
         "user_cIncludes": [],
         "user_asmIncludes": [],
+        "user_ldIncludes": [],
         "user_cDefines": ["AVOID_EMPTY_DEFINE_FIELD_C"],
         "user_asmDefines": ["AVOID_EMPTY_DEFINE_FIELD_ASM"],
-        "user_cFlags" : [],
-        "user_asmFlags" : [],
+        "user_cFlags": [],
+        "user_asmFlags": [],
+        "user_ldFlags": [],
 
         "____________________DO_NOT_MODIFY_FIELDS_BELOW____________________": "",
         "cubemx_sourceFiles": [],
@@ -52,7 +55,8 @@ c_cpp_template = """{
                 "${cubemx_includes}",
                 "${gccIncludePath}",
                 "${user_cIncludes}",
-                "${user_asmIncludes}"
+                "${user_asmIncludes}",
+                "${user_ldIncludes}"
             ],
             "browse": {
                 "path": [
@@ -60,7 +64,8 @@ c_cpp_template = """{
                     "${cubemx_includes}",
                     "${gccIncludePath}",
                     "${user_cIncludes}",
-                    "${user_asmIncludes}"
+                    "${user_asmIncludes}",
+                    "${user_ldIncludes}"
                 ],
                 "limitSymbolsToIncludedHeaders": true
             },
@@ -145,12 +150,15 @@ buildDataTemplate = """{
     "LAST_RUN": "",
     "cSources": [],
     "asmSources": [],
+    "ldSources": [],
     "cIncludes": [],
     "asmIncludes": [],
+    "ldIncludes": [],
     "cDefines": [],
     "asmDefines": [],
     "cFlags" : [],
     "asmFlags" : [],
+    "ldFlags" : [],
     "buildDir": "",
     "gccExePath": "",
     "gccInludePath": "",

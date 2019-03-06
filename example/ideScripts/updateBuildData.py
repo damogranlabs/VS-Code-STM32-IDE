@@ -20,15 +20,18 @@ class BuildDataStrings():
     # project sources, includes, defines, ....
     cSources = 'cSources'
     asmSources = 'asmSources'
+    ldSources = 'ldSources'
 
     cIncludes = 'cIncludes'
     asmIncludes = 'asmIncludes'
+    ldIncludes = 'ldIncludes'
 
     cDefines = 'cDefines'
     asmDefines = 'asmDefines'
 
     cFlags = 'cFlags'
     asmFlags = 'asmFlags'
+    ldFlags = 'ldFlags'
 
     buildDirPath = 'buildDir'
 
@@ -94,9 +97,18 @@ class BuildData():
             # file exists, check if it loads OK
             try:
                 with open(utils.buildDataPath, 'r') as buildDataFile:
-                    data = json.load(buildDataFile)
+                    currentData = json.load(buildDataFile)
+                    # this is a valid json file
+                    print("Existing valid 'buildData.json' file found.")
 
-                    print("Existing 'buildData.json' file found.")
+                # merge current 'buildData.json' with its template
+                templateData = json.loads(tmpStr.buildDataTemplate)
+                dataToWrite = utils.mergeCurrentDataWithTemplate(currentData, templateData)
+                dataToWrite = json.dumps(dataToWrite, indent=4, sort_keys=False)
+                with open(utils.buildDataPath, 'w') as buildDataFile:
+                    buildDataFile.write(dataToWrite)
+                    print("\tKeys updated according to the template.")
+                return
 
             except Exception as err:
                 errorMsg = "Invalid 'buildData.json' file. Creating new one. Error:\n"
@@ -223,7 +235,10 @@ class BuildData():
         buildData[self.bStr.cSources] = cSources
 
         asmSources = makefileData[self.mkfStr.asmSources]
-        buildData[self.bStr.asmSources] = asmSources
+        buildData[self.bStr.ldSources] = asmSources
+
+        ldSources = makefileData[self.mkfStr.ldSources]
+        buildData[self.bStr.ldSources] = ldSources
 
         # includes
         cIncludes = makefileData[self.mkfStr.cIncludes]
@@ -231,6 +246,9 @@ class BuildData():
 
         asmIncludes = makefileData[self.mkfStr.asmIncludes]
         buildData[self.bStr.asmIncludes] = asmIncludes
+
+        ldIncludes = makefileData[self.mkfStr.ldIncludes]
+        buildData[self.bStr.ldIncludes] = ldIncludes
 
         # defines
         cDefines = makefileData[self.mkfStr.cDefines]
@@ -245,6 +263,9 @@ class BuildData():
 
         asmFlags = makefileData[self.mkfStr.asmFlags]
         buildData[self.bStr.asmFlags] = asmFlags
+
+        ldFlags = makefileData[self.mkfStr.ldFlags]
+        buildData[self.bStr.ldFlags] = ldFlags
 
         # build folder must be always inside workspace folder
         buildDirPath = makefileData[self.mkfStr.buildDir]

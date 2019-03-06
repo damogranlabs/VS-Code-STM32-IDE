@@ -7,6 +7,7 @@ See details in "README_DETAILS.md'.
 https://github.com/Microsoft/vscode-cpptools/blob/master/Documentation/LanguageServer/c_cpp_properties.json.md
 '''
 
+import copy
 import json
 
 import utilities as utils
@@ -22,12 +23,18 @@ __version__ = utils.__version__
 class CPropertiesStrings():
     user_cSources = 'user_cSources'
     user_asmSources = 'user_asmSources'
+    user_ldSources = 'user_ldSources'
+
     user_cIncludes = 'user_cIncludes'
     user_asmIncludes = 'user_asmIncludes'
+    user_ldIncludes = 'user_ldIncludes'
+
     user_cDefines = 'user_cDefines'
     user_asmDefines = 'user_asmDefines'
+
     user_cFlags = 'user_cFlags'
     user_asmFlags = 'user_asmFlags'
+    user_ldFlags = 'user_ldFlags'
 
     cubemx_sourceFiles = 'cubemx_sourceFiles'
     cubemx_includes = 'cubemx_includes'
@@ -51,9 +58,17 @@ class CProperties():
             # file exists, check if it loads OK
             try:
                 with open(utils.cPropertiesPath, 'r') as cPropertiesFile:
-                    json.load(cPropertiesFile)
+                    currentData = json.load(cPropertiesFile)
+                    # this is a valid json file
+                    print("Existing valid 'c_cpp_properties.json' file found.")
 
-                print("Existing 'c_cpp_properties.json' file found.")
+                # merge current 'c_cpp_properties.json' with its template
+                templateData = json.loads(tmpStr.c_cpp_template)
+                dataToWrite = utils.mergeCurrentDataWithTemplate(currentData, templateData)
+                dataToWrite = json.dumps(dataToWrite, indent=4, sort_keys=False)
+                with open(utils.cPropertiesPath, 'w') as cPropertiesFile:
+                    cPropertiesFile.write(dataToWrite)
+                    print("\tKeys updated according to the template.")
                 return
 
             except Exception as err:
@@ -98,6 +113,19 @@ class CProperties():
             data = json.load(cPropertiesFile)
 
             return data
+
+    def getCPropertiesKeyData(self, cPropertiesData, keyName):
+        '''
+        Try to get data of keyName field from  'c_cpp_properties.json' file.
+        Return list of data or empty list.
+        '''
+        try:
+            cPropEnvData = cPropertiesData['env']
+            return cPropEnvData[keyName]
+        except Exception as err:
+            errorMsg = "Unable to get '" + str(keyName) + "' data from 'c_cpp_properties.json' file."
+            print("WARNING:", errorMsg)
+            return []
 
     def addMakefileDataToCPropertiesFile(self, cPropertiesData, makefileData):
         '''

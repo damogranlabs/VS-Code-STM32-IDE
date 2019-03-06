@@ -15,7 +15,7 @@ import platform
 
 import templateStrings as tmpStr
 
-__version__ = '1.5'  # this is inherited by all 'update*.py' scripts
+__version__ = '1.6'  # this is inherited by all 'update*.py' scripts
 
 ########################################################################################################################
 # Global utilities and paths
@@ -322,6 +322,27 @@ def stringToList(string, separator):
         allItems.append(item)
 
     return allItems
+
+
+def mergeCurrentDataWithTemplate(currentData, templateData):
+    '''
+    Merge all fields from both, currentData and templateData and return merged dict.
+    This is needed for backward compatibility and adding missing default fields.
+    '''
+    def recursiveClone(template, data):
+        for key, value in data.items():
+            if key not in template:
+                template[key] = {}  # create a dict in case it must be copied recursively
+
+            if isinstance(value, dict):
+                template[key] = recursiveClone(template[key], value)
+            else:
+                template[key] = value
+        return template
+
+    mergedData = recursiveClone(templateData, currentData)
+
+    return mergedData
 
 
 def getYesNoAnswer(msg):
