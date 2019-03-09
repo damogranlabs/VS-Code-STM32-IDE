@@ -27,6 +27,8 @@ There are many posts how to install python. This project needs a valid `python` 
 **STM32CubeMX**  
 Download and install STM32CubeMX for your system from [ST's website.](https://www.st.com/content/st_com/en/products/development-tools/software-development-tools/stm32-software-development-tools/stm32-configurators-and-code-generators/stm32cubemx.html) Note that you will need to create an account (it's free) to access the download. Setup is as easy as running the installation executable for your system and following the prompts. Running CubeMX requires java on your system. Enter `java -version`  in your terminal to check it's installed.
 
+**Important:** Latest version of STM32CubeMX has some bugs which (at least some of them) were [already reported](https://community.st.com/s/question/0D50X0000AU1swrSQB/stm32cubemx-makefile-not-properly-generated-for-stm32l1-device). Consider using older version until this issues are fixed
+
 **Install Cortex-Debug and Python plugin from VS Code extension marketplace**  
 This is needed for debug purposes and workspace file generation scripts.
 

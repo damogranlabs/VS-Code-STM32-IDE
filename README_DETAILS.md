@@ -23,8 +23,8 @@ This file answers some of the frequently asked questions and explains inner work
 * **How do I compile specific file?**  
   Run 'Compile' task. Currently only C source files are supported by this task (assembler flags are not added to compile command).
 
-* **Can I add custom compiler flags/switches?**  
-  Yes. 'user_cFlags' and 'user_asmFlags' fields in 'c_cpp_properties.json' fields are meant for this purpose and are added to new 'Makefile' once *Update workspace* task is executed.
+* **Can I add custom compiler/linker flags/switches?**  
+  Yes. 'user_cFlags', 'user_asmFlags', 'user_ldFlags' and fields in 'c_cpp_properties.json' fields are meant for this purpose and are added to new 'Makefile' once *Update workspace* task is executed.
 
 * **What and why is '-j' switch in 'Build' task?**  
   This switch manages number of 'make' parallel jobs, which could speed up build time. It was added upon [#FeatureRequest](https://github.com/damogranlabs/VS-Code-STM32-IDE/issues/5) and is calculated: NUMBER OF CORES * 1.5, as it is advised on many forums.
@@ -59,7 +59,7 @@ File adds 'print-variable' function to 'Makefile', while creating a backup 'Make
 This file adds "cortex-debug" keys to '*.code-workspace' file. It is needed for Cortex-Debug extension and should not be modified by user. Instead, this fields are fetched from 'buildData.json' file.
 
 ## updateMakefile.py
-This script generate new 'Makefile' from old 'Makefile' and user data. User data specified in 'c_cpp_properties.json' is merged with existing data from 'Makefile' and stored into 'buildData.json'. New 'Makefile' is created by making a copy and appending specific strings (c/asm sources, includes and defines) with proper multi-line escaping ( '\\' ).
+This script generate new 'Makefile' from old 'Makefile' and user data. User data specified in 'c_cpp_properties.json' is merged with existing data from 'Makefile' and stored into 'buildData.json'. New 'Makefile' is created by making a copy and appending specific strings (c/asm/ld sources, includes and defines) with proper multi-line escaping ( '\\' ).
 
 ## updateTasks.py
 This script (re)generate 'tasks.json' file in '.vscode' workspace subfolder. Tasks could be separated to:  
@@ -106,6 +106,6 @@ This file imports existing Keil uVision project. [See readme here](https://githu
 --------
 ## How it actually works?
 First, all scripts check if file/folder structure is as expected ('\*.ioc' file in the same folder as '\*.code-workspace' file). Existing tools paths are checked and updated, and 'buildData.json' is created with this data. Once all common configuration paths are valid, these are storred in 'toolsPaths.json', so user does not need to enter them when creating new workspace.  
-'Makefile' is checked to see if it was already altered with previous 'update' actions. If this is not the original 'Makefile', original is restored from 'Makefile.backup' file. 'print-variable' function is added to enable fetching internal 'Makefile' variables (sources and compiler flags) and 'c_cpp_properties.json' file is created/merged with existing one. Data in 'c_cpp_properties.json' from 'Makefile' is stored in 'cubemx_*' fields and is needed for *compile* task later on.  
+'Makefile' is checked to see if it was already altered with previous 'update' actions. If this is not the original 'Makefile', original is restored from 'Makefile.backup' file. 'print-variable' function is added to enable fetching internal 'Makefile' variables (sources and compiler/linker flags) and 'c_cpp_properties.json' file is created/merged with existing one. Data in 'c_cpp_properties.json' from 'Makefile' is stored in 'cubemx_*' fields and is needed for *compile* task later on.  
 On update, new 'Makefile' is generated with merged data from old 'Makefile' and *user_* fields from 'c_cpp_properties.json'. 'buildData.json' is updated with new 'Makefile' variables.  
 Tasks and Launch configurations are generated with paths and data from existing 'buildData.json'. At the end, 'cortex-debug' settings are applied to '\*.code-workspace' file. 
