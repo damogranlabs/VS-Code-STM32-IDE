@@ -11,12 +11,8 @@
         "user_ldIncludes": [
             "Libs"
         ],
-        "user_cDefines": [
-            "AVOID_EMPTY_DEFINE_FIELD_C"
-        ],
-        "user_asmDefines": [
-            "AVOID_EMPTY_DEFINE_FIELD_ASM"
-        ],
+        "user_cDefines": [],
+        "user_asmDefines": [],
         "user_cFlags": [],
         "user_asmFlags": [],
         "user_ldFlags": [],

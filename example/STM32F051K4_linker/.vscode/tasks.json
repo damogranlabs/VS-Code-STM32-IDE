@@ -34,7 +34,6 @@
             "args": [
                 "-c",
                 "-DAVOID_EMPTY_DEFINE_FIELD_C",
-                "-DAVOID_EMPTY_DEFINE_FIELD_C",
                 "-DUSE_HAL_DRIVER",
                 "-DSTM32F051x8",
                 "-ICore/Inc",
@@ -44,7 +43,6 @@
                 "-IDrivers/CMSIS/Include",
                 "-mcpu=cortex-m0",
                 "-mthumb",
-                "-DAVOID_EMPTY_DEFINE_FIELD_C",
                 "-DAVOID_EMPTY_DEFINE_FIELD_C",
                 "-DUSE_HAL_DRIVER",
                 "-DSTM32F051x8",

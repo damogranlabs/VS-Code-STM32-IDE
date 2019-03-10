@@ -33,7 +33,6 @@
             "command": "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/ARM Embedded GCC/7.3.1-1.1-20180724-0637/bin/arm-none-eabi-gcc.exe",
             "args": [
                 "-c",
-                "-DAVOID_EMPTY_DEFINE_FIELD_C",
                 "-DUSE_HAL_DRIVER",
                 "-DSTM32F051x8",
                 "-ICore/Inc",
@@ -43,7 +42,6 @@
                 "-IDrivers/CMSIS/Include",
                 "-mcpu=cortex-m0",
                 "-mthumb",
-                "-DAVOID_EMPTY_DEFINE_FIELD_C",
                 "-DUSE_HAL_DRIVER",
                 "-DSTM32F051x8",
                 "-ICore/Inc",
