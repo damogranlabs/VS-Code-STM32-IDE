@@ -236,6 +236,7 @@ def createBuildFolder(folderName='build'):
     Create (if not already created) build folder with specified name where objects are stored when 'make' is executed.
     '''
     buildFolderPath = os.path.join(workspacePath, folderName)
+    buildFolderPath = pathWithForwardSlashes(buildFolderPath)
     if not pathExists(buildFolderPath):
         os.mkdir(buildFolderPath)
         print("Build folder created: " + buildFolderPath)
