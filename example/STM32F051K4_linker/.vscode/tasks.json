@@ -179,19 +179,6 @@
             "problemMatcher": []
         },
         {
-            "label": "Open CubeMX project",
-            "type": "shell",
-            "command": "start",
-            "args": [
-                "",
-                "D:/Stromarija/GIT/VS_Code_STM32_IDE/example/STM32F051K4/STM32F051K4.ioc"
-            ],
-            "presentation": {
-                "focus": false
-            },
-            "problemMatcher": []
-        },
-        {
             "label": "Update workspace",
             "type": "shell",
             "command": "python",

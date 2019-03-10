@@ -512,8 +512,7 @@ class Tasks():
         jsonTaskData = json.loads(taskData)
         jsonTaskData["label"] = tmpStr.taskName_OpenCubeMX
         jsonTaskData["command"] = openCubeCommand
-        jsonTaskData["args"] = [""]  # name
-        jsonTaskData["args"].append(utils.cubeMxProjectFilePath)  # opens with default program
+        jsonTaskData["args"] = [utils.cubeMxProjectFilePath]  # opens with default program
 
         return jsonTaskData
 

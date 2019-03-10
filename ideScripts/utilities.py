@@ -244,23 +244,6 @@ def createBuildFolder(folderName='build'):
         print("Build folder already exist: '" + buildFolderPath + "'")
 
 
-def getCubeWorkspaces():
-    '''
-    Search workspacePath for files that ends with '.ioc' (STM32CubeMX projects).
-    Returns list of all available STM32CubeMX workspace paths.
-
-    Only root directory is searched.
-    '''
-    iocFiles = []
-
-    for theFile in os.listdir(workspacePath):
-        if theFile.endswith(".ioc"):
-            theFilePath = os.path.join(workspacePath, theFile)
-            iocFiles.append(pathWithForwardSlashes(theFile))
-
-    return iocFiles
-
-
 def getCodeWorkspaces():
     '''
     Search workspacePath for files that ends with '.code-workspace' (VS Code workspaces).
