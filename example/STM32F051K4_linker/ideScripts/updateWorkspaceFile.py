@@ -61,6 +61,9 @@ class UpdateWorkspaceFile():
         armToolchainPath = os.path.dirname(buildData[self.bStr.gccExePath])
         armToolchainPath = utils.pathWithForwardSlashes(armToolchainPath)
 
+        if 'settings' not in workspaceData:
+            workspaceData["settings"] = {}
+
         workspaceData["settings"]["cortex-debug.armToolchainPath"] = armToolchainPath
         workspaceData["settings"]["cortex-debug.openocdPath"] = buildData[self.bStr.openOcdPath]
 
