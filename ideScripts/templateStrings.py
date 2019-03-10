@@ -5,6 +5,7 @@ Template scripts for generating workspace files:
     - makefile strings/functions
     - buildData.json
 """
+import os
 
 launchName_Debug = "Cortex debug"
 launchName_Python = "Debug current Python file"
@@ -182,3 +183,7 @@ launchFileTemplate = """{
 #########################################################################################################
 cubeMxTmpFolderName = '_tmpCubeMx'
 cubeMxTmpFileName = 'tmpCubeMx.txt'
+
+#########################################################################################################
+defaultVsCodeSettingsFolder_WIN = os.path.expandvars("%APPDATA%/Code/User/")
+defaultVsCodeSettingsFolder_UNIX = os.path.expandvars("$HOME/.config/Code/User/")

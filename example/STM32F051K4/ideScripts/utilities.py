@@ -171,12 +171,11 @@ def verifyFolderStructure():
     buildDataPath = pathWithForwardSlashes(buildDataPath)
     # does not have backup file, always regenerated
 
-    # TODO make this not hard-coded
     osIs = detectOs()
     if osIs == "windows":
-        vsCodeSettingsFolderPath = os.path.expandvars("%APPDATA%\\Code\\User\\")
+        vsCodeSettingsFolderPath = tmpStr.defaultVsCodeSettingsFolder_WIN
     elif osIs == "unix":
-        vsCodeSettingsFolderPath = os.path.expandvars("$HOME/.config/Code/User/")
+        vsCodeSettingsFolderPath = tmpStr.defaultVsCodeSettingsFolder_UNIX
     toolsPaths = os.path.join(vsCodeSettingsFolderPath, 'toolsPaths.json')
     toolsPaths = pathWithForwardSlashes(toolsPaths)
 
