@@ -392,12 +392,12 @@ def getGccIncludePath(gccExePath):
 
     fileName = "stdint.h"
     filePath = findFileInFolderTree(searchPath, fileName)
-    folderPath = os.path.dirname(filePath)
-    if folderPath is None:
-        errorMsg = "Unable to find 'include' subfolder with " + fileName + " file on path:\n\t"
-        errorMsg += searchPath
+    if filePath is None:
+        errorMsg = "Unable to find " + fileName + " file on path: " + searchPath
+        errorMsg += "\nOfficial GCC folder structure must remain intact!"
         printAndQuit(errorMsg)
 
+    folderPath = os.path.dirname(filePath)
     return folderPath
 
 
