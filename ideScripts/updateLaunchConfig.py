@@ -189,7 +189,6 @@ if __name__ == "__main__":
 
     # build data (update tools paths if neccessary)
     buildData = bData.prepareBuildData()
-    bData.createUserToolsFile(buildData)
 
     # create taks file
     launch.checkLaunchFile()

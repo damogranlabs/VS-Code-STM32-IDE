@@ -5,7 +5,6 @@ Update existing VS Code workspace file with debug paths in "settings":
 '''
 import os
 import json
-import datetime
 
 import utilities as utils
 import updatePaths as pth
@@ -98,7 +97,6 @@ if __name__ == "__main__":
 
     # build data (update tools paths if neccessary)
     buildData = bData.prepareBuildData()
-    bData.createUserToolsFile(buildData)
 
     wksFile.checkWorkspaceFile()
     wksData = wksFile.getWorkspaceFileData()

@@ -1,3 +1,16 @@
+'''
+This script runs all other updateXxx.py scripts. 
+It should be called once CubeMX project was generated/re-generated or user settings were modified.
+
+- add 'print-variable' capabilities to Makefile
+- update/generate 'c_cpp_properties.json'
+- update/generate 'buildData.json' and 'toolsPaths.json' 
+- update/generate 'tasks.json'
+- update/generate 'launch.json'
+'''
+
+import sys
+
 import updateWorkspaceFile as workspaceFile
 import updateLaunchConfig as launch
 import updateTasks as tasks
@@ -6,23 +19,11 @@ import updateMakefile as mkf
 import updateWorkspaceSources as wks
 import updatePaths as pth
 import utilities as utils
-'''
-This script runs all other updateXxx.py scripts. It should be called once CubeMX project was generated/re-generated or user settings were modified.
 
-- add 'print-variable' capabilities to Makefile
-- update/generate 'c_cpp_properties.json'
-- update/generate buildData.json
-- update/generate tasks.json
-- update/generate launch.json
-'''
-
-import sys
+__version__ = utils.__version__
 
 if sys.version_info[0] < 3:
     raise Exception("Python 3 or later is required")
-
-
-__version__ = utils.__version__
 
 ########################################################################################################################
 if __name__ == "__main__":
@@ -63,7 +64,6 @@ if __name__ == "__main__":
     buildData = bData.addMakefileDataToBuildDataFile(buildData, makefileData)
     buildData = bData.addCubeMxProjectPathToBuildData(buildData)
     bData.overwriteBuildDataFile(buildData)
-    bData.createUserToolsFile(buildData)
 
     # create build folder
     buildFolderName = makefileData[mkf.MakefileStrings.buildDir]

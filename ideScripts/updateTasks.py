@@ -4,7 +4,6 @@ Update/generate 'tasks.json' file in .vscode subfolder.
 'tasks.json' fields description:
 https://code.visualstudio.com/docs/editor/tasks
 '''
-import copy
 import os
 import json
 
@@ -488,8 +487,11 @@ class Tasks():
         '''
         Create Open CubeMX project task. Starts with default program.
 
-        Method of starting CubeMX differs across systems. Note that on linux cubeMX does not associate itself with files by default.
-        Use a program like "Main Menu" for GNOME to add CubeMX to the applications list, and then it can be selected as the default program for .ioc files.
+        Method of starting CubeMX differs across systems:
+            - WIN: use standard 'start' cmd command to start default program for '.ioc' files
+            - LINUX: does not associate itself with files by default. 
+                Use a program like "Main Menu" for GNOME to add CubeMX to the applications list,
+                and then it can be selected as the default program for .ioc files.
         '''
         taskData = """
         {
@@ -554,7 +556,6 @@ if __name__ == "__main__":
 
     # build data (update tools paths if neccessary)
     buildData = bData.prepareBuildData()
-    bData.createUserToolsFile(buildData)
 
     # create taks file
     tasks.checkTasksFile()

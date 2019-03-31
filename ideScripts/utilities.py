@@ -7,7 +7,6 @@ paths.
 
 import os
 import shutil
-import shlex
 import subprocess
 import sys
 import traceback
@@ -15,7 +14,7 @@ import platform
 
 import templateStrings as tmpStr
 
-__version__ = '1.6'  # this is inherited by all 'update*.py' scripts
+__version__ = '1.7'  # this is inherited by all 'update*.py' scripts
 
 ########################################################################################################################
 # Global utilities and paths
@@ -25,6 +24,7 @@ workspacePath = None  # absolute path to workspace folder
 workspaceFilePath = None  # absolute file path to '*.code-workspace' file
 cubeMxProjectFilePath = None  # absolute path to *.ioc STM32CubeMX workspace file
 ideScriptsPath = None  # absolute path to 'ideScripts' folder
+vsCodeFolderPath = None  # absolute path to workspace '.vscode' folder
 
 makefilePath = None
 makefileBackupPath = None
@@ -70,6 +70,26 @@ def commandExists(command):
             return True
 
     return False
+
+
+def getFileName(path, withExtension=False, exception=True):
+    '''
+    Returns file name of a given 'path', with or without extension.
+    If given path is not a file, exception is raised if 'exception' is set to True. Otherwise, None is returned.
+    '''
+    if os.path.isfile(path):
+        _, fileNameExt = os.path.split(path)
+        if withExtension:
+            return fileNameExt
+        else:
+            fileName, _ = os.path.splitext(fileNameExt)
+            return fileName
+    else:
+        if exception:
+            errorMsg = "Cannot get a file name - given path is not a file:\n\t" + path
+            raise Exception(errorMsg)
+        else:
+            return None
 
 
 def detectOs():
@@ -120,6 +140,7 @@ def verifyFolderStructure():
     global workspaceFilePath
     global cubeMxProjectFilePath
     global ideScriptsPath
+    global vsCodeFolderPath
 
     global makefilePath
     global makefileBackupPath
@@ -157,6 +178,7 @@ def verifyFolderStructure():
             printAndQuit(errorMsg)
     else:
         print("Existing '.vscode' folder used.")
+    vsCodeFolderPath = vscodeFolder
 
     # 'ideScripts' folder found in the same folder as '*.code-workspace' file. Structure seems OK.
     cPropertiesPath = os.path.join(workspacePath, '.vscode', 'c_cpp_properties.json')
@@ -266,9 +288,7 @@ def getWorkspaceName():
 
     Return first available file name without extension.
     '''
-    _, fileNameExt = os.path.split(workspaceFilePath)
-    fileName, _ = os.path.splitext(fileNameExt)
-    return fileName
+    return getFileName(workspaceFilePath)
 
 
 def stripStartOfString(dataList, stringToStrip):
@@ -444,7 +464,7 @@ def getOpenOcdConfig(openOcdInterfacePath):
     '''
     Get openOCD configuration files from user, eg. 'interface/stlink.cfg, target/stm32f0x.cfg'
     Paths can be passed in absolute or relative form, separated by comma. Optionally enclosed in " or '.
-    Returns the absolute paths to these config files.
+    Returns the list of absolute paths to these config files.
     '''
     openOcdScriptsPath = os.path.dirname(os.path.dirname(openOcdInterfacePath))
 
