@@ -124,13 +124,13 @@ class BuildData():
     def checkToolsPathFile(self):
         '''
         Returns True if 'toolsPaths.json' file exists and is a valid JSON file.
-        If it doesn't exist, delete it and return False.
+        If it is not a valid JSON, delete it and return False.
         '''
         if utils.pathExists(utils.toolsPaths):
             # file exists, check if it loads OK
             try:
                 with open(utils.toolsPaths, 'r') as toolsFileHandler:
-                    data = json.load(toolsFileHandler)
+                    json.load(toolsFileHandler)
                     print("Valid 'toolsPaths.json' file found.")
                 return True
 
@@ -140,27 +140,31 @@ class BuildData():
 
                 try:
                     os.remove(utils.toolsPaths)
-                    errorMsg = "\tDeleted. New 'toolsPaths.json' will be created on first workspace update."
-                    print(errorMsg)
+                    msg = "\tDeleted. New 'toolsPaths.json' will be created on first workspace update."
+                    print(msg)
                 except Exception as err:
-                    errorMsg = "\tError deleting 'toolsPaths.json'. Error:\n" + str(err)
-                    print(errorMsg)
+                    errorMsg = "Error deleting 'toolsPaths.json'. Error:\n" + str(err)
+                    utils.printAndQuit(errorMsg)
 
         # else: toolsPaths.json does not exist
         return False
 
     def checkBuildDataFile(self):
         '''
-        Returns True if 'buildData.json' file exists and is a valid JSON file.
-        If it doesn't exist, delete it and return False.
+        This function makes sure 'buildData.json' is available. 
+        If existing 'buildData.json' file is a valid JSON, it returns immediately. 
+        If it is not a valid JSON file OR it does not exist, new 'buildData.json' file is created from template.
+
+        Note: There is no backup file for buildData.json, since it is always regenerated on Update task.
         '''
         if utils.pathExists(utils.buildDataPath):
             # file exists, check if it loads OK
             try:
                 with open(utils.buildDataPath, 'r') as buildDataFileHandler:
-                    data = json.load(buildDataFileHandler)
+                    json.load(buildDataFileHandler)
                     print("Valid 'buildData.json' file found.")
-                return True
+
+                return
 
             except Exception as err:
                 errorMsg = "Invalid 'buildData.json' file. Error:\n" + str(err)
@@ -168,15 +172,14 @@ class BuildData():
 
                 try:
                     os.remove(utils.buildDataPath)
-                    errorMsg = "\tDeleted. New 'buildData.json' will be created on first workspace update."
-                    print(errorMsg)
-
+                    msg = "\tDeleted. New 'buildData.json' will be created on first workspace update."
+                    print(msg)
                 except Exception as err:
-                    errorMsg = "\tError deleting 'buildData.json'. Error:\n" + str(err)
-                    print(errorMsg)
+                    errorMsg = "Error deleting 'buildData.json'. Error:\n" + str(err)
+                    utils.printAndQuit(errorMsg)
 
         # else: buildData.json does not exist
-        return False
+        self.createBuildDataFile()
 
     def createUserToolsFile(self, toolsPaths):
         '''
@@ -213,7 +216,7 @@ class BuildData():
                 buildDataFile.truncate()
                 buildDataFile.write(dataToWrite)
 
-            print("New 'buildData.json' file created.")
+            print("New template 'buildData.json' file created.")
         except Exception as err:
             errorMsg = "Exception error creating new 'buildData.json' file:\n"
             errorMsg += str(err)

@@ -179,7 +179,7 @@
             "type": "shell",
             "command": "start",
             "args": [
-                "d:/Stromarija/GIT/VS_Code_STM32_IDE/example/STM32F051K4/STM32F051K4.ioc"
+                "STM32F051K4.ioc"
             ],
             "presentation": {
                 "focus": false
