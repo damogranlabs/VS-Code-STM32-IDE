@@ -247,7 +247,10 @@ class BuildData():
         Get tools paths from 'toolsPaths.json' and add it to buildData
         Returns new data.
         '''
-        for path in self.bStr.toolsPaths:
+        allToolsPaths = []
+        allToolsPaths.extend(self.bStr.toolsPaths)
+        allToolsPaths.extend(self.bStr.derivedPaths)
+        for path in allToolsPaths:
             try:
                 buildData[path] = toolsPaths[path]
             except Exception as err:
