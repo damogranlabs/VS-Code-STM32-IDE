@@ -2,8 +2,8 @@
     "ABOUT1": "This file holds combined user and CubeMX generated Makefile workspace dependecies.",
     "ABOUT2": "User should not edit this fields, instead it should edit 'c_cpp_properties.json'",
     "ABOUT3": "This file is regenerated on 'Update workspace' task.",
-    "VERSION": "1.6",
-    "LAST_RUN": "2019-03-09 21:33:48.320587",
+    "VERSION": "1.7",
+    "LAST_RUN": "2019-03-31 22:36:22.916804",
     "cSources": [
         "Core/Src/main.c",
         "Core/Src/gpio.c",
@@ -41,17 +41,13 @@
     "asmIncludes": [],
     "ldIncludes": [],
     "cDefines": [
-        "AVOID_EMPTY_DEFINE_FIELD_C",
         "USE_HAL_DRIVER",
         "STM32F051x8"
     ],
-    "asmDefines": [
-        "AVOID_EMPTY_DEFINE_FIELD_ASM"
-    ],
+    "asmDefines": [],
     "cFlags": [
         "-mcpu=cortex-m0",
         "-mthumb",
-        "-DAVOID_EMPTY_DEFINE_FIELD_C",
         "-DUSE_HAL_DRIVER",
         "-DSTM32F051x8",
         "-ICore/Inc",
@@ -72,7 +68,6 @@
     "asmFlags": [
         "-mcpu=cortex-m0",
         "-mthumb",
-        "-DAVOID_EMPTY_DEFINE_FIELD_ASM",
         "-Og",
         "-Wall",
         "-fdata-sections",
@@ -97,9 +92,9 @@
     "openOcdPath": "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/OpenOCD/0.10.0-8-20180512-1921/bin/openocd.exe",
     "openOcdInterfacePath": "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/OpenOCD/0.10.0-8-20180512-1921/scripts/interface/stlink.cfg",
     "openOcdConfig": [
-        "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/OpenOCD/0.10.0-8-20180512-1921/scripts/target/stm32f0x.cfg"
+        ".vscode/stm32f0x.cfg"
     ],
-    "stm32SvdPath": "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/Keil.STM32F0xx_DFP.2.0.0/CMSIS/SVD/STM32F0x1.svd",
+    "stm32SvdPath": ".vscode/STM32F0x1.svd",
     "targetExecutablePath": "D:/Stromarija/GIT/VS_Code_STM32_IDE/example/STM32F051K4/build/STM32F051K4.elf",
     "cubeMxProjectPath": "D:/Stromarija/GIT/VS_Code_STM32_IDE/example/STM32F051K4/STM32F051K4.ioc"
 }

@@ -143,6 +143,8 @@ tasksFileTemplate += """
 """
 
 #########################################################################################################
+# buildData.json has template with all keys listed, since it is needed for sorting purposes. There
+# might be a better way to handle sorting (TODO)
 buildDataTemplate = """{
     "ABOUT1": "This file holds combined user and CubeMX generated Makefile workspace dependecies.",
     "ABOUT2": "User should not edit this fields, instead it should edit 'c_cpp_properties.json'",
@@ -169,6 +171,15 @@ buildDataTemplate = """{
     "openOcdInterfacePath": "",
     "openOcdConfig":"",
     "stm32SvdPath": ""
+}
+"""
+
+#########################################################################################################
+toolsPathsTemplate = """{
+    "ABOUT1": "This file store common tools paths, shared by all VS Code ideScripts-based projects.",
+    "ABOUT2": "Delete/correct this file if paths/folder structure change on system.",
+    "VERSION": "",
+    "LAST_RUN": ""
 }
 """
 

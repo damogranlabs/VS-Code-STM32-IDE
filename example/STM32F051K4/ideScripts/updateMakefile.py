@@ -52,8 +52,10 @@ class Makefile():
         '''
         Check wether current 'Makefile' has print capabilities. If it has, this means it was already altered by this script.
         If it was, replace it with backup copy: 'Makefile.backup'.
-        If it does not have prin capabilities, is is assumed 'Makefile' was regenerated with CubeMX tool - print function is added and backup file is overwritten with this new 'Makefile'.
-        At the end, add 'print-variable' capabilities
+        If it does not have print capabilities, it is assumed 'Makefile' was regenerated with CubeMX
+        tool - print function is added and backup file is overwritten with this new 'Makefile'.
+
+        At the end, fresh 'Makefile' with print function should be available.
         '''
         if utils.pathExists(utils.makefileBackupPath):
             # Makefile.backup exists, check if it is original (no print capabilities)
@@ -260,7 +262,7 @@ class Makefile():
 
                 if line.find("\\") == NOT_FOUND:
                     # one-liner, no '\' sign at the end of the line
-                    if type(appendData) is list:  # if this is list
+                    if isinstance(appendData, list):  # if this is list
                         if appendData:  # and it is not empty
                             if len(appendData) == 1:  # this list has only one item, add it without '\'
                                 if line[-1] != ' ':  # avoid double spaces
@@ -289,7 +291,7 @@ class Makefile():
 
                     return data
                 else:  # already a multi-liner, append at the beginning, but in new line
-                    if type(appendData) is list:
+                    if isinstance(appendData, list):
                         for itemIndex, item in enumerate(appendData):
                             stringToInsert = item + " \\\n"
                             data.insert(lineIndex + itemIndex + 1, stringToInsert)
@@ -505,8 +507,6 @@ if __name__ == "__main__":
     gccExePath = buildData[bData.bStr.gccExePath]
     makefileData = makefile.getMakefileData(makeExePath, gccExePath)
     buildData = bData.addMakefileDataToBuildDataFile(buildData, makefileData)
-
-    bData.createUserToolsFile(buildData)
 
     # get data from 'c_cpp_properties.json' and create new Makefile
     cP.checkCPropertiesFile()

@@ -1,5 +1,6 @@
 '''
 Update/generate 'buildData.json' file in '.vscode' subfolder from new Makefile.
+This file also handles 'toolsPaths.json' file.
 New Makefile is not updated by this script - it is updated with 'updateMakefile.py' or 'updateWorkspaceSources.py'
 '''
 import os
@@ -46,24 +47,32 @@ class BuildDataStrings():
 
     openOcdPath = 'openOcdPath'  # path to 'openocd.exe'
     openOcdInterfacePath = "openOcdInterfacePath"  # path to OpenOCD interface cofniguration file (currently 'stlink.cfg')
-    openOcdConfig = 'openOcdConfig'  # path to target '*.cfg' file
 
+    openOcdConfig = 'openOcdConfig'  # path to target '*.cfg' file
     stm32SvdPath = 'stm32SvdPath'  # path to target '*.svd' file
 
     cubeMxProjectPath = 'cubeMxProjectPath'
 
-    # list of mandatory paths that must exist in 'buildData.json' to update workspace.
-    # Note: order is important!
-    configurationPaths = [gccExePath,
-                          buildToolsPath,
-                          pythonExec,
-                          openOcdPath, openOcdInterfacePath, openOcdConfig,
-                          stm32SvdPath]
+    # list of paths that are automatically built (default, system or once their 'parent' paths are valid)
+    derivedPaths = [
+        pythonExec,
+        gccInludePath
+    ]
+
+    # list of target-specific configuration paths that must exist in 'buildData.json'
+    targetConfigurationPaths = [
+        openOcdConfig,
+        stm32SvdPath
+    ]
+
     # list of paths that can be cached in 'toolsPaths.json'
-    toolsPaths = [gccExePath,
-                  buildToolsPath,
-                  pythonExec,
-                  openOcdPath, openOcdInterfacePath]
+    toolsPaths = [
+        gccExePath,
+        buildToolsPath,
+        pythonExec,
+        openOcdPath,
+        openOcdInterfacePath
+    ]
 
 
 class BuildData():
@@ -72,54 +81,45 @@ class BuildData():
         self.cPStr = wks.CPropertiesStrings()
         self.bStr = BuildDataStrings()
 
-    def prepareBuildData(self):
+    def prepareBuildData(self, request=False):
         '''
-        This function is used in all 'update*.py' scripts and makes sure, that buildData with a valid tools paths exist.
-        Invalid paths are updated (requested from the user).
+        This function is used in all 'update*.py' scripts and makes sure, that 'toolsPaths.json' and 'buildData.json' with a 
+        valid tools/target cofniguration paths exist. Invalid paths are updated (requested from the user).
         Returns available, valid build data.
+
+        Note: tools paths listed in 'BuildDataStrings.toolsPaths' are stored in system local 'toolsPaths.json' file, and are 
+        copied (overwritten) to 'buildData.json' on first 'Update' task run. This makes it possible for multiple code contributors.
         '''
         paths = pth.UpdatePaths()
 
         self.checkBuildDataFile()
         buildData = self.getBuildData()
-        if self.checkToolsPathFile():  # toolsPaths.json exists
-            buildData = self.addToolsPathsData(buildData)
-        buildData = paths.verifyExistingPaths(buildData)
+
+        if self.checkToolsPathFile():  # a valid toolsPaths.json exists
+            toolsPathsData = self.getToolsPathsData()
+
+        else:
+            # no valid data from 'toolsPaths.json' file
+            # try to get data from current 'buildData.json' - backward compatibility for paths that already exist in 'buildData.json'
+            toolsPathsData = json.loads(tmpStr.toolsPathsTemplate)
+            for path in self.bStr.toolsPaths:
+                if path in buildData:
+                    if utils.pathExists(buildData[path]):
+                        toolsPathsData[path] = buildData[path]
+
+        # update/overwrite tools paths file. Don't mind if paths are already valid.
+        toolsPathsData = paths.verifyToolsPaths(toolsPathsData, request)
+        self.createUserToolsFile(toolsPathsData)
+
+        buildData = self.addToolsPathsToBuildData(buildData, toolsPathsData)
+
+        templateBuildData = json.loads(tmpStr.buildDataTemplate)
+        buildData = utils.mergeCurrentDataWithTemplate(buildData, templateBuildData)
+
+        buildData = paths.verifyTargetConfigurationPaths(buildData, request)
+        buildData = paths.copyTargetConfigurationFiles(buildData)
 
         return buildData
-
-    def checkBuildDataFile(self):
-        '''
-        Check if 'buildData.json' file exists. If it does, check if it is a valid JSON file.
-        If it doesn't exist, create new according to template.
-        '''
-        if utils.pathExists(utils.buildDataPath):
-            # file exists, check if it loads OK
-            try:
-                with open(utils.buildDataPath, 'r') as buildDataFile:
-                    currentData = json.load(buildDataFile)
-                    # this is a valid json file
-                    print("Existing valid 'buildData.json' file found.")
-
-                # merge current 'buildData.json' with its template
-                templateData = json.loads(tmpStr.buildDataTemplate)
-                dataToWrite = utils.mergeCurrentDataWithTemplate(currentData, templateData)
-                dataToWrite = json.dumps(dataToWrite, indent=4, sort_keys=False)
-                with open(utils.buildDataPath, 'w') as buildDataFile:
-                    buildDataFile.write(dataToWrite)
-                    print("\tKeys updated according to the template.")
-                return
-
-            except Exception as err:
-                errorMsg = "Invalid 'buildData.json' file. Creating new one. Error:\n"
-                errorMsg += "Possible cause: invalid json format or comments (not supported by this scripts). Error:\n"
-                errorMsg += str(err)
-                print(errorMsg)
-
-                self.createBuildDataFile()
-
-        else:  # 'buildData.json' file does not exist jet, create it according to template string
-            self.createBuildDataFile()
 
     def checkToolsPathFile(self):
         '''
@@ -140,26 +140,56 @@ class BuildData():
 
                 try:
                     os.remove(utils.toolsPaths)
-                    errorMsg = "\tDeleted. New 'toolsPaths.json' will be created on first valid user paths update."
+                    errorMsg = "\tDeleted. New 'toolsPaths.json' will be created on first workspace update."
                     print(errorMsg)
                 except Exception as err:
                     errorMsg = "\tError deleting 'toolsPaths.json'. Error:\n" + str(err)
                     print(errorMsg)
-                return False
 
-        else:  # toolsPaths.json does not exist
-            return False
+        # else: toolsPaths.json does not exist
+        return False
 
-    def createUserToolsFile(self, buildData):
+    def checkBuildDataFile(self):
         '''
-        Create 'toolsPaths.json' file with current tools absolute paths.
+        Returns True if 'buildData.json' file exists and is a valid JSON file.
+        If it doesn't exist, delete it and return False.
         '''
-        data = {}
+        if utils.pathExists(utils.buildDataPath):
+            # file exists, check if it loads OK
+            try:
+                with open(utils.buildDataPath, 'r') as buildDataFileHandler:
+                    data = json.load(buildDataFileHandler)
+                    print("Valid 'buildData.json' file found.")
+                return True
+
+            except Exception as err:
+                errorMsg = "Invalid 'buildData.json' file. Error:\n" + str(err)
+                print(errorMsg)
+
+                try:
+                    os.remove(utils.buildDataPath)
+                    errorMsg = "\tDeleted. New 'buildData.json' will be created on first workspace update."
+                    print(errorMsg)
+
+                except Exception as err:
+                    errorMsg = "\tError deleting 'buildData.json'. Error:\n" + str(err)
+                    print(errorMsg)
+
+        # else: buildData.json does not exist
+        return False
+
+    def createUserToolsFile(self, toolsPaths):
+        '''
+        Create 'toolsPaths.json' file with current tools paths.
+        This pats are absolute and not project-specific.
+        '''
+        data = json.loads(tmpStr.toolsPathsTemplate)
         try:
-            data["ABOUT1"] = "Common tools paths that are automatically filled in buildData.json."
-            data["ABOUT2"] = "Delete/correct this file if paths change on system."
+            data["VERSION"] = __version__
+            data["LAST_RUN"] = str(datetime.datetime.now())
+
             for path in self.bStr.toolsPaths:
-                data[path] = buildData[path]
+                data[path] = toolsPaths[path]
 
             data = json.dumps(data, indent=4, sort_keys=False)
             with open(utils.toolsPaths, 'w+') as toolsPathsFile:
@@ -209,19 +239,17 @@ class BuildData():
 
         return data
 
-    def addToolsPathsData(self, buildData):
+    def addToolsPathsToBuildData(self, buildData, toolsPaths):
         '''
-        If available, add data from 'toolsPaths.json' to buildData
+        Get tools paths from 'toolsPaths.json' and add it to buildData
         Returns new data.
         '''
-        toolsPathsData = self.getToolsPathsData()
-
         for path in self.bStr.toolsPaths:
             try:
-                buildData[path] = toolsPathsData[path]
+                buildData[path] = toolsPaths[path]
             except Exception as err:
-                # missing item in toolsPaths.json
-                pass
+                errorMsg = "Missing '" + path + "' key in tools paths data:\n" + str(toolsPaths)
+                print("Warning:", errorMsg)
 
         return buildData
 
@@ -333,4 +361,3 @@ if __name__ == "__main__":
     buildData = bData.addMakefileDataToBuildDataFile(buildData, makefileData)
 
     bData.overwriteBuildDataFile(buildData)
-    bData.createUserToolsFile(buildData)

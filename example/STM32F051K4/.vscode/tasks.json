@@ -96,7 +96,7 @@
                 "-f",
                 "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/OpenOCD/0.10.0-8-20180512-1921/scripts/interface/stlink.cfg",
                 "-f",
-                "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/OpenOCD/0.10.0-8-20180512-1921/scripts/target/stm32f0x.cfg",
+                ".vscode/stm32f0x.cfg",
                 "-c",
                 "program build/STM32F051K4.elf verify reset exit"
             ],
@@ -111,7 +111,7 @@
                 "-f",
                 "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/OpenOCD/0.10.0-8-20180512-1921/scripts/interface/stlink.cfg",
                 "-f",
-                "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/OpenOCD/0.10.0-8-20180512-1921/scripts/target/stm32f0x.cfg",
+                ".vscode/stm32f0x.cfg",
                 "-c",
                 "program build/STM32F051K4.elf verify reset exit"
             ],
@@ -125,7 +125,7 @@
                 "-f",
                 "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/OpenOCD/0.10.0-8-20180512-1921/scripts/interface/stlink.cfg",
                 "-f",
-                "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/OpenOCD/0.10.0-8-20180512-1921/scripts/target/stm32f0x.cfg",
+                ".vscode/stm32f0x.cfg",
                 "-c init",
                 "-c reset",
                 "-c exit"
@@ -140,7 +140,7 @@
                 "-f",
                 "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/OpenOCD/0.10.0-8-20180512-1921/scripts/interface/stlink.cfg",
                 "-f",
-                "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/OpenOCD/0.10.0-8-20180512-1921/scripts/target/stm32f0x.cfg",
+                ".vscode/stm32f0x.cfg",
                 "-c init",
                 "-c halt",
                 "-c exit"
@@ -155,7 +155,7 @@
                 "-f",
                 "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/OpenOCD/0.10.0-8-20180512-1921/scripts/interface/stlink.cfg",
                 "-f",
-                "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/OpenOCD/0.10.0-8-20180512-1921/scripts/target/stm32f0x.cfg",
+                ".vscode/stm32f0x.cfg",
                 "-c init",
                 "-c resume",
                 "-c exit"
@@ -179,7 +179,7 @@
             "type": "shell",
             "command": "start",
             "args": [
-                "D:/Stromarija/GIT/VS_Code_STM32_IDE/example/STM32F051K4/STM32F051K4.ioc"
+                "d:/Stromarija/GIT/VS_Code_STM32_IDE/example/STM32F051K4/STM32F051K4.ioc"
             ],
             "presentation": {
                 "focus": false
