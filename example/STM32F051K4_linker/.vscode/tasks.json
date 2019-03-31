@@ -33,7 +33,6 @@
             "command": "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/ARM Embedded GCC/7.3.1-1.1-20180724-0637/bin/arm-none-eabi-gcc.exe",
             "args": [
                 "-c",
-                "-DAVOID_EMPTY_DEFINE_FIELD_C",
                 "-DUSE_HAL_DRIVER",
                 "-DSTM32F051x8",
                 "-ICore/Inc",
@@ -43,7 +42,6 @@
                 "-IDrivers/CMSIS/Include",
                 "-mcpu=cortex-m0",
                 "-mthumb",
-                "-DAVOID_EMPTY_DEFINE_FIELD_C",
                 "-DUSE_HAL_DRIVER",
                 "-DSTM32F051x8",
                 "-ICore/Inc",
@@ -98,7 +96,7 @@
                 "-f",
                 "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/OpenOCD/0.10.0-8-20180512-1921/scripts/interface/stlink.cfg",
                 "-f",
-                "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/OpenOCD/0.10.0-8-20180512-1921/scripts/target/stm32f0x.cfg",
+                ".vscode/stm32f0x.cfg",
                 "-c",
                 "program build/STM32F051K4.elf verify reset exit"
             ],
@@ -113,7 +111,7 @@
                 "-f",
                 "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/OpenOCD/0.10.0-8-20180512-1921/scripts/interface/stlink.cfg",
                 "-f",
-                "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/OpenOCD/0.10.0-8-20180512-1921/scripts/target/stm32f0x.cfg",
+                ".vscode/stm32f0x.cfg",
                 "-c",
                 "program build/STM32F051K4.elf verify reset exit"
             ],
@@ -127,7 +125,7 @@
                 "-f",
                 "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/OpenOCD/0.10.0-8-20180512-1921/scripts/interface/stlink.cfg",
                 "-f",
-                "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/OpenOCD/0.10.0-8-20180512-1921/scripts/target/stm32f0x.cfg",
+                ".vscode/stm32f0x.cfg",
                 "-c init",
                 "-c reset",
                 "-c exit"
@@ -142,7 +140,7 @@
                 "-f",
                 "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/OpenOCD/0.10.0-8-20180512-1921/scripts/interface/stlink.cfg",
                 "-f",
-                "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/OpenOCD/0.10.0-8-20180512-1921/scripts/target/stm32f0x.cfg",
+                ".vscode/stm32f0x.cfg",
                 "-c init",
                 "-c halt",
                 "-c exit"
@@ -157,7 +155,7 @@
                 "-f",
                 "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/OpenOCD/0.10.0-8-20180512-1921/scripts/interface/stlink.cfg",
                 "-f",
-                "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/OpenOCD/0.10.0-8-20180512-1921/scripts/target/stm32f0x.cfg",
+                ".vscode/stm32f0x.cfg",
                 "-c init",
                 "-c resume",
                 "-c exit"

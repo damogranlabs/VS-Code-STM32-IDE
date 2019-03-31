@@ -2,16 +2,11 @@
 This script can be run to update paths to gcc, openOCD and other tools/files/folders.
 Script verify and add data to 'buildData.json' file.
 '''
-
-import sys
+import os
 import shutil
 
 import utilities as utils
-
-import updateWorkspaceSources as wks
-import updateMakefile as mkf
 import updateBuildData as build
-import updateTasks as tasks
 
 __version__ = utils.__version__
 
@@ -21,7 +16,8 @@ class UpdatePaths():
         self.bStr = build.BuildDataStrings()
 
         # list of paths with explanatory names and (optionally) default path
-        self.toolsList = {
+        # keys must match with 'self.bStr.toolsPaths' list
+        self.pathsDescriptionsData = {
             self.bStr.gccExePath: {
                 "name": "arm-none-eabi-gcc executable (arm-none-eabi-gcc.exe)",
                 "defaultPath": "arm-none-eabi-gcc"},
@@ -31,77 +27,177 @@ class UpdatePaths():
             self.bStr.openOcdPath: {
                 "name": "OpenOCD executable (openocd.exe)",
                 "defaultPath": "openocd"},
+            self.bStr.openOcdInterfacePath: {
+                "name": "OpenOCD ST Link interface path ('stlink.cfg')",
+                "defaultPath": "./scripts/interface/stlink.cfg"},
             self.bStr.stm32SvdPath: {
                 "name": "STM target '*.svd' file (.../Keil*/CMSIS/SVD/STM32F0x1.svd)",
-                "defaultPath": utils.workspacePath+"SVD"}
+                "defaultPath": None}
         }
 
-    def verifyExistingPaths(self, buildData, request=False):
+    def verifyToolsPaths(self, toolsPaths, request=False):
         '''
-        This function checks if configuration paths (not workspace sources) from 'buildData.json' are valid paths.
-        Common configuration paths are previoulsy fetched from 'toolsPaths.json'.
+        This function checks if paths in 'toolsPaths.json' are a valid paths.
         If any path is not valid/missing, user is asked for update via updatePath().
+        If 'request' is set to True, user is asked to update path even if it is a valid path.
 
-        Returns updated valid paths.
+        Returns updated valid tools paths.
         '''
-        for pathName in self.bStr.configurationPaths:
-            mustBeUpdated = False
+        for pathName in self.bStr.toolsPaths:
             try:
-                isPathValid = False
-                if pathName in buildData:
-                    pathToCheck = buildData[pathName]
-                    if isinstance(pathToCheck, list):
-                        for path in pathToCheck:
-                            if not utils.pathExists(path):
-                                break
-                        else:
-                            isPathValid = True
-                    else:  # not a list, a single path expected
-                        if utils.pathExists(pathToCheck):
-                            isPathValid = True
-                        else:
-                            # path not valid, check if command
-                            if utils.commandExists(pathToCheck):
-                                isPathValid = True
-
-                if isPathValid:
-                    if request:  # if the user made the path verification request
-                        msg = "\n\nValid paths for " + pathName + " detected: '" + str(pathToCheck) + "'.\n\tUpdate? [y/n]: "
-                        if utils.getYesNoAnswer(msg):
+                mustBeUpdated = False
+                if pathName in toolsPaths:
+                    # 'toolsPaths.json' keys are not lists. Always a plain path (string)
+                    if not utils.pathExists(toolsPaths[pathName]):
+                        # path not valid, check if command
+                        if not utils.commandExists(toolsPaths[pathName]):
                             mustBeUpdated = True
-                else:
-                    # non-valid path, must be updated
+
+                    if mustBeUpdated:
+                        msg = "\n\nInvalid path detected in '" + pathName + "' key."
+                        print(msg)
+                    else:
+                        if request:
+                            msg = "\n\nValid path(s) for " + pathName + " detected: '" + toolsPaths[pathName] + "'."
+                            msg += "\n\tUpdate? [y/n]: "
+                            if utils.getYesNoAnswer(msg):
+                                mustBeUpdated = True
+
+                else:  # this key is missing in toolsPaths.json!
                     mustBeUpdated = True
 
                 if mustBeUpdated:
-                    if pathName in [self.bStr.pythonExec, self.bStr.gccInludePath]:
-                        # derived paths, build later
+                    if pathName in self.bStr.derivedPaths:
                         continue
 
-                    elif pathName in self.toolsList:
-                        name = self.toolsList[pathName]["name"]
-                        defaultPath = self.toolsList[pathName]["defaultPath"]
-                        buildData[pathName] = self.updatePath(name, defaultPath)
-
-                    # handle special paths cases - custom get() handlers
-                    elif pathName == self.bStr.openOcdInterfacePath:
-                        buildData[pathName] = utils.getOpenOcdInterface(buildData[self.bStr.openOcdPath])
-
                     elif pathName == self.bStr.openOcdConfig:
-                        # get openOcdConfig
-                        buildData[self.bStr.openOcdConfig] = utils.getOpenOcdConfig(buildData[self.bStr.openOcdInterfacePath])
+                        # get openOcdConfig - special handler
+                        toolsPaths[pathName] = utils.getOpenOcdConfig(toolsPaths[self.bStr.openOcdPath])
 
-                    # basic path question, default name
+                    elif pathName in self.pathsDescriptionsData:
+                        name = self.pathsDescriptionsData[pathName]['name']
+                        defaultPath = self.pathsDescriptionsData[pathName]['defaultPath']
+                        toolsPaths[pathName] = self.updatePath(name, defaultPath)
+
                     else:
-                        buildData[pathName] = self.updatePath(pathName, None)
+                        toolsPaths[pathName] = self.updatePath(pathName, None)
 
             except Exception as err:
-                buildData[pathName] = self.updatePath(pathName, None)
+                toolsPaths[pathName] = self.updatePath(pathName, None)
 
-        # get gccIncludePath
-        buildData[self.bStr.gccInludePath] = utils.getGccIncludePath(buildData[self.bStr.gccExePath])
-        # get python3 executable
-        buildData[self.bStr.pythonExec] = utils.getPython3Executable()
+        for pathName in self.bStr.derivedPaths:
+            if pathName == self.bStr.pythonExec:
+                toolsPaths[self.bStr.pythonExec] = utils.getPython3Executable()
+
+            elif pathName == self.bStr.gccInludePath:
+                toolsPaths[self.bStr.gccInludePath] = utils.getGccIncludePath(toolsPaths[self.bStr.gccExePath])
+
+            else:
+                errorMsg = "ideScripts design error: pathName '" + pathName + "' is in 'self.bStr.derivedPaths' list, "
+                errorMsg += "but no 'get()' handler is specified."
+                utils.printAndQuit(errorMsg)
+
+        return toolsPaths
+
+    def verifyTargetConfigurationPaths(self, buildData, request=False):
+        '''
+        This function checks if 'buildData.json' contains targetConfiguration paths.
+        If any path is not valid/missing, user is asked for update via updatePath().
+        If 'request' is set to True, user is asked to update path even if it is a valid path.
+
+        Returns buildData with a valid, updated tools paths.
+        '''
+        for pathName in self.bStr.targetConfigurationPaths:
+            mustBeUpdated = False
+
+            if pathName in self.bStr.derivedPaths:
+                # derived paths, build later
+                continue
+
+            if pathName not in buildData:
+                mustBeUpdated = True
+
+            else:
+                if isinstance(buildData[pathName], list):
+                    if not buildData[pathName]:
+                        mustBeUpdated = True
+                    else:
+                        for path in buildData[pathName]:
+                            if not utils.pathExists(path):
+                                mustBeUpdated = True
+                                break
+
+                else:  # not a list, a single path expected
+                    if not utils.pathExists(buildData[pathName]):
+                        mustBeUpdated = True
+                    else:
+                        # path not valid, check if command
+                        if not utils.commandExists(buildData[pathName]):
+                            mustBeUpdated = True
+
+            if mustBeUpdated:
+                msg = "\n\nInvalid path detected in 'buildData.json' '" + pathName + "' key."
+                print(msg)
+            else:
+                if request:
+                    msg = "\n\nValid path(s) for " + pathName + " detected: '" + buildData[pathName] + "'."
+                    msg += "\n\tUpdate? [y/n]: "
+                    if utils.getYesNoAnswer(msg):
+                        mustBeUpdated = True
+
+            if mustBeUpdated:
+                if pathName == self.bStr.openOcdConfig:
+                    # get openOcdConfig - special handler
+                    buildData[pathName] = utils.getOpenOcdConfig(buildData[self.bStr.openOcdPath])
+
+                elif pathName in self.bStr.derivedPaths:
+                    name = self.bStr.derivedPaths[pathName]['name']
+                    defaultPath = self.bStr.derivedPaths[pathName]['defaultPath']
+                    buildData[pathName] = self.updatePath(name, defaultPath)
+
+                else:
+                    buildData[pathName] = self.updatePath(pathName, None)
+
+        return buildData
+
+    def copyTargetConfigurationFiles(self, buildData):
+        '''
+        This function checks if paths to target configuration files listed in 'BuildDataStrings.targetConfigurationPaths'
+        are available, stored inside this workspace '.vscode' subfolder. Once this files are copied, paths are updated and
+        new buildData is returned.
+
+        Paths are previously checked/updated in 'verifyTargetConfigurationPaths()'
+        '''
+        for pathName in self.bStr.targetConfigurationPaths:
+            currentPaths = buildData[pathName]
+
+            if isinstance(currentPaths, list):
+                isList = True
+            else:
+                isList = False
+                currentPaths = [currentPaths]
+
+            newPaths = []
+            for currentPath in currentPaths:
+                fileName = utils.getFileName(currentPath, withExtension=True)
+                fileInVsCodeFolder = os.path.join(utils.vsCodeFolderPath, fileName)
+
+                if not utils.pathExists(fileInVsCodeFolder):
+                    # file does not exist in '.vscode' folder
+                    try:
+                        newPath = shutil.copy(currentPath, utils.vsCodeFolderPath)
+                    except Exception as err:
+                        errorMsg = "Unable to copy file '" + fileName + "' to '.vscode' folder. Exception:\n" + str(err)
+                        utils.printAndQuit(errorMsg)
+
+                newPath = os.path.relpath(fileInVsCodeFolder)
+                newPath = utils.pathWithForwardSlashes(newPath)
+                newPaths.append(newPath)
+
+            if isList:
+                buildData[pathName] = newPaths
+            else:
+                buildData[pathName] = newPaths[0]
 
         return buildData
 
@@ -134,8 +230,6 @@ if __name__ == "__main__":
     paths = UpdatePaths()
     bData = build.BuildData()
 
-    buildData = bData.prepareBuildData()
-    buildData = paths.verifyExistingPaths(buildData, request=True)
+    buildData = bData.prepareBuildData(request=True)
 
     bData.overwriteBuildDataFile(buildData)
-    bData.createUserToolsFile(buildData)

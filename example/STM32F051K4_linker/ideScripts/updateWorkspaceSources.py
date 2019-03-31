@@ -6,8 +6,6 @@ See details in "README_DETAILS.md'.
 'c_cpp_properties.json' fields description:
 https://github.com/Microsoft/vscode-cpptools/blob/master/Documentation/LanguageServer/c_cpp_properties.json.md
 '''
-
-import copy
 import json
 
 import utilities as utils
@@ -222,5 +220,3 @@ if __name__ == "__main__":
     # create build folder if it does not exist jet
     buildFolderName = makefileData[mkf.MakefileStrings.buildDir]
     utils.createBuildFolder(buildFolderName)
-
-    bData.createUserToolsFile(buildData)

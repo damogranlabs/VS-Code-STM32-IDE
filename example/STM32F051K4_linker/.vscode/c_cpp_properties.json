@@ -46,7 +46,6 @@
             "Drivers/CMSIS/Include"
         ],
         "cubemx_defines": [
-            "AVOID_EMPTY_DEFINE_FIELD_C",
             "USE_HAL_DRIVER",
             "STM32F051x8"
         ],
