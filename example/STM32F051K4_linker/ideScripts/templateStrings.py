@@ -163,14 +163,17 @@ buildDataTemplate = """{
     "asmFlags" : [],
     "ldFlags" : [],
     "buildDir": "",
+    "targetExecutablePath": "",
+    "cubeMxProjectPath": "",
+    "openOcdConfig": [],
+    "stm32SvdPath": "",
+    "ABOUT4": "---- Paths below are fetched from user-specific 'toolsPaths.json'. ----",
     "gccExePath": "",
     "gccInludePath": "",
     "buildToolsPath": "",
     "pythonExec": "",
     "openOcdPath": "",
-    "openOcdInterfacePath": "",
-    "openOcdConfig":"",
-    "stm32SvdPath": ""
+    "openOcdInterfacePath": ""
 }
 """
 
