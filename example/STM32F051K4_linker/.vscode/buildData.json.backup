@@ -3,7 +3,7 @@
     "ABOUT2": "User should not edit this fields, instead it should edit 'c_cpp_properties.json'",
     "ABOUT3": "This file is regenerated on 'Update workspace' task.",
     "VERSION": "1.7",
-    "LAST_RUN": "2019-03-31 23:07:32.079735",
+    "LAST_RUN": "2019-03-31 23:50:29.521643",
     "cSources": [
         "Core/Src/gpio.c",
         "Core/Src/stm32f0xx_it.c",
@@ -89,8 +89,7 @@
         "-Wl,--gc-sections"
     ],
     "buildDir": "build",
-    "targetExecutablePath": "D:/Stromarija/GIT/VS_Code_STM32_IDE/example/STM32F051K4_linker/build/STM32F051K4.elf",
-    "cubeMxProjectPath": "D:/Stromarija/GIT/VS_Code_STM32_IDE/example/STM32F051K4/STM32F051K4.ioc",
+    "targetExecutablePath": "build/STM32F051K4.elf",
     "openOcdConfig": [
         ".vscode/stm32f0x.cfg"
     ],

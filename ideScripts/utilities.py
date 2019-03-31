@@ -242,12 +242,12 @@ def printWorkspacePaths():
 def getCubeMXProjectFiles():
     '''
     Returns list of all STM32CubeMX '.ioc' files in root directory.
+    Since only root directory is searched, all files (paths) are relative to root dir.
     '''
     iocFiles = []
     for theFile in os.listdir(workspacePath):
         if theFile.endswith('.ioc'):
-            filePath = pathWithForwardSlashes(os.path.join(workspacePath, theFile))
-            iocFiles.append(filePath)
+            iocFiles.append(theFile)
 
     return iocFiles
 
@@ -534,7 +534,7 @@ def getBuildElfFilePath(buildDirPath, projectName):
     Returns .elf file path.
     '''
     elfFile = projectName + ".elf"
-    buildFileName = os.path.join(workspacePath, buildDirPath, elfFile)
+    buildFileName = os.path.join(buildDirPath, elfFile)
     buildFileName = pathWithForwardSlashes(buildFileName)
 
     return buildFileName

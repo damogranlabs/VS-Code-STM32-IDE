@@ -54,8 +54,10 @@ class UpdatePaths():
                             mustBeUpdated = True
 
                     if mustBeUpdated:
-                        msg = "\n\nInvalid path detected in '" + pathName + "' key."
-                        print(msg)
+                        if toolsPaths[pathName] != '':
+                            # avoid reporting invalid file path, if there is an empty string
+                            msg = "\n\nInvalid path detected in '" + pathName + "' key."
+                            print(msg)
                     else:
                         if request:
                             msg = "\n\nValid path(s) for " + pathName + " detected: '" + toolsPaths[pathName] + "'."
@@ -136,8 +138,18 @@ class UpdatePaths():
                             mustBeUpdated = True
 
             if mustBeUpdated:
-                msg = "\n\nInvalid path detected in 'buildData.json' '" + pathName + "' key."
-                print(msg)
+                notify = True
+                # avoid reporting invalid file path, if there is an empty string/list
+                if isinstance(buildData[pathName], list):
+                    if not buildData[pathName]:
+                        notify = False
+                else:
+                    if buildData[pathName] == '':
+                        notify = False
+
+                if notify:
+                    msg = "\n\nInvalid path detected in 'buildData.json' '" + pathName + "' key."
+                    print(msg)
             else:
                 if request:
                     msg = "\n\nValid path(s) for " + pathName + " detected: '" + buildData[pathName] + "'."

@@ -315,6 +315,8 @@ class BuildData():
         '''
         if utils.cubeMxProjectFilePath is not None:
             buildData[self.bStr.cubeMxProjectPath] = utils.cubeMxProjectFilePath
+        else:
+            buildData.pop(self.bStr.cubeMxProjectPath)
         return buildData
 
     def overwriteBuildDataFile(self, data):

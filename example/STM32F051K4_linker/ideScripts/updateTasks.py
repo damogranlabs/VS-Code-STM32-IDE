@@ -352,13 +352,10 @@ class Tasks():
 
         # -c program filename [verify] [reset] [exit] [offset] ([] are optional arguments)
         # Note: due problems with VS Code OpenOCD Tasks in case of workspace path containing spaces, target executable is passed
-        # as relative path. Not a problem since VS Code shell is started from workspace folder.
+        # as relative path.
         workspacePath = utils.workspacePath
-        targetExecutablePath = buildData[self.bStr.targetExecutablePath]
-        relativeTargetExecutablePath = os.path.relpath(targetExecutablePath, workspacePath)
-        relativeTargetExecutablePath = utils.pathWithForwardSlashes(relativeTargetExecutablePath)
         jsonTaskData["args"].append("-c")
-        programString = "program " + relativeTargetExecutablePath + " verify reset exit"
+        programString = "program " + buildData[self.bStr.targetExecutablePath] + " verify reset exit"
         jsonTaskData["args"].append(programString)
 
         return jsonTaskData

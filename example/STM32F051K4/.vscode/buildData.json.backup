@@ -3,7 +3,7 @@
     "ABOUT2": "User should not edit this fields, instead it should edit 'c_cpp_properties.json'",
     "ABOUT3": "This file is regenerated on 'Update workspace' task.",
     "VERSION": "1.7",
-    "LAST_RUN": "2019-03-31 23:40:48.835689",
+    "LAST_RUN": "2019-03-31 23:52:57.567145",
     "cSources": [
         "Core/Src/main.c",
         "Core/Src/gpio.c",
