@@ -1,7 +1,7 @@
 # VS Code STM32 IDE
 Source: [Damogran Labs: https://damogranlabs.com/](https://damogranlabs.com/2018/10/vs-code-stm32-ide/)  
-Date: 19.2.2019  
-Version: 1.5  
+Date: 1.4.2019  
+Version: 1.7  
 
 ## About
 This project transform VS Code to a great IDE that can be used with STM32CubeMX tool to create a projects without any limitations and code size restrictions, without any bloatware and fast user setup (once all prerequisites are installed). Project is based on python scripts and is therefore fully customizable. OpenOCD tool and Cortex-Debug VS Code plugin is used for debug purposes.  
@@ -15,7 +15,7 @@ Debug capabilities are somehow limited, but can be good enough for most simple p
 ## How does it work?
 Scripts generate all necessary VS Code workspace files ('c_cpp_properties.json', 'tasks.json' and 'launch.json') that IDE needs for autocomplete and compile/build/debug/download actions. New 'Makefile' is generated from CubeMX and user data on each update. All user settings are stored and can be changed in one file: 'c_cpp_properties.json'.  
   
-Additionally, 'buildData.json' file is created for user inspection of all paths/settings (this file is also used by all 'update*.py' scripts and should not be modified directly).
+Additionally, 'buildData.json' and 'toolsPaths.json' file is created for user inspection of all paths/settings (this file is also used by all 'update*.py' scripts and should not be modified directly).
 
 # Setup
 Install procedure is simple since all needed files can be downloaded online and setup shouldn't take no more than 5 minutes.
@@ -83,9 +83,9 @@ Once all prerequisites are installed, workflow is very simple.
 Need to re-generate CubeMX project? Do it, than run 'Update workspace' task and continue with work. User settings will remain intact as long as the are in a valid json format. Anyway, backup files are created in case of mistake/error.  
 Need to add user specific files/folders? Edit 'c_cpp_properties.json' file and update again.
   
-Note: on first 'update.py' script run, user must specify absolute paths to few files (tool paths). This are than stored in 'buildData.json' and update is not necessary as long as the same 'buildData.json' file exists and paths are valid. Common tools paths (like GCC and OpenOCD) paths are also cached in 'toolsPaths.json' in VS Code user appdata, so there is less work when creating new workspaces.  
+Note: on first 'update.py' script run, user must specify paths to a few files (tool paths and target configuration files). This are than stored in 'buildData.json/toolsPaths.json' and update is not necessary as long as this files exists and paths are valid. Common tools paths (like GCC and OpenOCD) paths are cached in 'toolsPaths.json' in VS Code user APPDATA, so there is less work when creating new workspaces.  
 Alternatively paths can be updated by running 'updatePaths.py' script.  
-*With the latest updates, some backward compatibility was broken. Still, find your old valid paths in backup files inside .vscode folder.*
+*From time to time, some backward compatibility is broken - new stuff and improvements are implementing all the time. Anyway, find your old paths in backup files inside .vscode folder.*
 
 ![Example folder structure](https://github.com/damogranlabs/VS-Code-STM32-IDE/blob/master/_images/exampleFolderStructure.PNG)
  
@@ -117,6 +117,7 @@ This debug features are currently supported:
 * step
 * set/delete breakpoints (only in STOP state)
 * restart (reset)  
+* SFR/register view, write to SFR
   
 Debug capabilities are currently slightly limited (*Cortex-Debug* extension), but it might be improved soon:
 * breakpoints can be set on non-valid places
