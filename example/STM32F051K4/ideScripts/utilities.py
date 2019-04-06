@@ -110,16 +110,17 @@ def detectOs():
     return osIs
 
 
-def copyAndRename(filePath, newName):
+def copyAndRename(filePath, newPath):
+    '''
+    Copy file from 'filePath' to a new 'newPath'. 
+    '''
     if not pathExists(filePath):
-        errorMsg = "Can't copy and rename file " + str(filePath) + ", does not exist or other error."
+        errorMsg = "Can't copy non-existing file: " + str(filePath)
         printAndQuit(errorMsg)
 
-    fileFolderPath = os.path.dirname(filePath)
-    copyFilePath = os.path.join(fileFolderPath, newName)
-    shutil.copyfile(filePath, copyFilePath)
-
-    msg = "Copy of file (new name: " + newName + "):\n\t" + str(filePath)
+    shutil.copyfile(filePath, newPath)
+    newFileName = getFileName(newPath)
+    msg = "Copy of file (new name: " + newFileName + "): " + str(filePath)
     print(msg)
 
 

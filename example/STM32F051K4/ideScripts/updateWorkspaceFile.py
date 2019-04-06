@@ -32,10 +32,10 @@ class UpdateWorkspaceFile():
                     with open(utils.workspaceFilePath, 'r') as workspaceFile:
                         workspaceFileData = json.load(workspaceFile)
 
-                        print("Existing " + workspaceFileName + " file found.")
+                        print("Existing " + fileName + " file found.")
 
                 except Exception as err:
-                    errorMsg = "Invalid " + workspaceFileName + " file.\n"
+                    errorMsg = "Invalid " + fileName + " file.\n"
                     errorMsg += "Possible cause: invalid json format or comments (not supported by this scripts). Error:\n"
                     errorMsg += str(err)
                     print(errorMsg)

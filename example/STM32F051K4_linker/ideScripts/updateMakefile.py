@@ -66,6 +66,7 @@ class Makefile():
                 utils.printAndQuit(errorMsg)
 
             else:  # OK - seems like original Makefile, replace Makefile with Makefile.backup, add print capabilities
+                print("Existing 'Makefile' file found (restored from '.backup').")
                 utils.copyAndRename(utils.makefileBackupPath, utils.makefilePath)
 
         else:  # Makefile.backup does not exist, check if current Makefile has print capabilities.
@@ -76,6 +77,7 @@ class Makefile():
                 utils.printAndQuit(errorMsg)
 
             else:  # Makefile looks like an original one. Create a backup copy and add print capabilities
+                print("Existing 'Makefile' file found (original).")
                 utils.copyAndRename(utils.makefilePath, utils.makefileBackupPath)
 
         self.addMakefileCustomFunctions(pathToMakefile=utils.makefilePath)
@@ -185,8 +187,6 @@ class Makefile():
         '''
         Merge existing Makefile data and user fields from existing 'c_cpp_properties.json.'
         '''
-        print("\nCreating new Makefile... ")
-
         cP = wks.CProperties()
         cPropertiesData = cP.getCPropertiesData()
 
@@ -476,7 +476,7 @@ class Makefile():
             line = line + "\n"
             makefileDataLines.append(line)
 
-        print("Makefile 'print-variable' function OK.")
+        print("Makefile 'print-variable' function added.")
         return makefileDataLines
 
 
@@ -494,18 +494,11 @@ if __name__ == "__main__":
 
     buildData = bData.prepareBuildData()
 
-    makeExePath = buildData[bData.bStr.buildToolsPath]
-    gccExePath = buildData[bData.bStr.gccExePath]
-    makefileData = makefile.getMakefileData(makeExePath, gccExePath)
-
     makefile.restoreOriginalMakefile()
-
-    # build data (update tools paths if neccessary)
-    buildData = bData.prepareBuildData()
-
     makeExePath = buildData[bData.bStr.buildToolsPath]
     gccExePath = buildData[bData.bStr.gccExePath]
     makefileData = makefile.getMakefileData(makeExePath, gccExePath)
+
     buildData = bData.addMakefileDataToBuildDataFile(buildData, makefileData)
 
     # get data from 'c_cpp_properties.json' and create new Makefile

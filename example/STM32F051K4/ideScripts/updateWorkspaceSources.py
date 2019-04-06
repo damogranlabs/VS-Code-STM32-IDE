@@ -58,7 +58,7 @@ class CProperties():
                 with open(utils.cPropertiesPath, 'r') as cPropertiesFile:
                     currentData = json.load(cPropertiesFile)
                     # this is a valid json file
-                    print("Existing valid 'c_cpp_properties.json' file found.")
+                    print("Existing 'c_cpp_properties.json' file found.")
 
                 # merge current 'c_cpp_properties.json' with its template
                 templateData = json.loads(tmpStr.c_cpp_template)
