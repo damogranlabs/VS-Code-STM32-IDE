@@ -1,6 +1,5 @@
 # Readme (Keil Importer script)
 Source: [Damogran Labs: https://damogranlabs.com/2019/01/vs-code-stm32-ide-keil-project/](https://damogranlabs.com/2019/01/vs-code-stm32-ide-keil-project/)  
-Date: 13.1.2019  
 Version: 1.0  
 
 

@@ -505,6 +505,8 @@ class Tasks():
         osIs = utils.detectOs()
         if osIs == "unix":
             openCubeCommand = "xdg-open"
+        elif osIs == "osx":
+            openCubeCommand = "/Applications/STMicroelectronics/STM32CubeMX.app/Contents/MacOs/STM32CubeMX"
         else:
             openCubeCommand = "start"
 

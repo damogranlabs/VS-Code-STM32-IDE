@@ -1,6 +1,5 @@
 # VS Code STM32 IDE
 Source: [Damogran Labs: https://damogranlabs.com/](https://damogranlabs.com/2018/10/vs-code-stm32-ide/)  
-Date: 1.4.2019  
 Version: 1.7  
 
 ## About
@@ -137,4 +136,5 @@ Suggestions, details, ideas, bugs? Use [Issues tab](https://github.com/damogranl
 ## Contributors
 Special thanks go to:  
 * [@poshcoe](https://github.com/poshcoe)
-* [@ali80 ](https://github.com/ali80)
+* [@ali80](https://github.com/ali80)
+* [@om2kw](https://github.com/om2kw)
