@@ -201,3 +201,4 @@ cubeMxTmpFileName = 'tmpCubeMx.txt'
 #########################################################################################################
 defaultVsCodeSettingsFolder_WIN = os.path.expandvars("%APPDATA%/Code/User/")
 defaultVsCodeSettingsFolder_UNIX = os.path.expandvars("$HOME/.config/Code/User/")
+defaultVsCodeSettingsFolder_OSX = os.path.expandvars("$HOME/Library/Application Support/Code/User/")

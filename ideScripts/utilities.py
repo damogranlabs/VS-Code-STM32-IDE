@@ -96,7 +96,9 @@ def detectOs():
     '''
     This function detects the operating system that python is running in. We use this for OS specific operations
     '''
-    if os.name == "nt":
+    if platform.system() == "Darwin":
+        osIs = "osx"
+    elif os.name == "nt":
         osIs = "windows"
     elif os.name == "java":
         osIs = "java"
@@ -199,6 +201,8 @@ def verifyFolderStructure():
         vsCodeSettingsFolderPath = tmpStr.defaultVsCodeSettingsFolder_WIN
     elif osIs == "unix":
         vsCodeSettingsFolderPath = tmpStr.defaultVsCodeSettingsFolder_UNIX
+    elif osIs == "osx":
+        vsCodeSettingsFolderPath = tmpStr.defaultVsCodeSettingsFolder_OSX
     toolsPaths = os.path.join(vsCodeSettingsFolderPath, 'toolsPaths.json')
     toolsPaths = pathWithForwardSlashes(toolsPaths)
 
@@ -428,7 +432,7 @@ def getPython3Executable():
     '''
     osIs = detectOs()
 
-    if osIs == "unix" or osIs == "wsl":  # detected unix based system
+    if osIs == "unix" or osIs == "wsl" or osIs=="osx":  # detected unix based system
         pythonExec = "python3"
     else:  # windows or other system
         pythonExec = "python"
