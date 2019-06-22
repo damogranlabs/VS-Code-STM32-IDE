@@ -23,7 +23,7 @@ class UpdatePaths():
                 "defaultPath": "arm-none-eabi-gcc"},
             self.bStr.buildToolsPath: {
                 "name": "make executable (make.exe)",
-                "defaultPath":  "make"},
+                "defaultPath": "make"},
             self.bStr.openOcdPath: {
                 "name": "OpenOCD executable (openocd.exe)",
                 "defaultPath": "openocd"},
@@ -152,7 +152,7 @@ class UpdatePaths():
                     print(msg)
             else:
                 if request:
-                    msg = "\n\nValid path(s) for " + pathName + " detected: '" + buildData[pathName] + "'."
+                    msg = "\n\nValid path(s) for " + pathName + " detected: '" + str(buildData[pathName]) + "'."
                     msg += "\n\tUpdate? [y/n]: "
                     if utils.getYesNoAnswer(msg):
                         mustBeUpdated = True
