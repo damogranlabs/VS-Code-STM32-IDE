@@ -131,8 +131,6 @@ class UpdatePaths():
 
                 else:  # not a list, a single path expected
                     if not utils.pathExists(buildData[pathName]):
-                        mustBeUpdated = True
-                    else:
                         # path not valid, check if command
                         if not utils.commandExists(buildData[pathName]):
                             mustBeUpdated = True
