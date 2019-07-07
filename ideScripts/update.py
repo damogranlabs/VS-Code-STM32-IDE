@@ -10,6 +10,7 @@ It should be called once CubeMX project was generated/re-generated or user setti
 '''
 import sys
 import time
+import traceback
 
 import updateWorkspaceFile as workspaceFile
 import updateLaunchConfig as launch
@@ -95,7 +96,7 @@ if __name__ == "__main__":
 
     except Exception as err:
         status = "ERROR"
-        errorMsg = "Unexpected error occured during 'Update' procedure. Exception:\n" + str(err)
+        errorMsg = "Unexpected error occured during 'Update' procedure. Exception:\n" + traceback.format_exc()
 
     overallTime = int(time.time() - startTime)
     msg = "\n" + status + " (" + str(overallTime) + " seconds).\n" + errorMsg
