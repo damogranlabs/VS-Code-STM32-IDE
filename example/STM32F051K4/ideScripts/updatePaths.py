@@ -49,9 +49,10 @@ class UpdatePaths():
                 if pathName in toolsPaths:
                     # 'toolsPaths.json' keys are not lists. Always a plain path (string)
                     if not utils.pathExists(toolsPaths[pathName]):
+                        mustBeUpdated = True
                         # path not valid, check if command
-                        if not utils.commandExists(toolsPaths[pathName]):
-                            mustBeUpdated = True
+                        if utils.commandExists(toolsPaths[pathName]):
+                            mustBeUpdated = False
 
                     if mustBeUpdated:
                         if toolsPaths[pathName] != '':
@@ -132,10 +133,9 @@ class UpdatePaths():
                 else:  # not a list, a single path expected
                     if not utils.pathExists(buildData[pathName]):
                         mustBeUpdated = True
-                    else:
                         # path not valid, check if command
-                        if not utils.commandExists(buildData[pathName]):
-                            mustBeUpdated = True
+                        if utils.commandExists(buildData[pathName]):
+                            mustBeUpdated = False
 
             if mustBeUpdated:
                 notify = True
@@ -217,13 +217,15 @@ class UpdatePaths():
         '''
         This function is called when a path is detected as invalid or the user requests to update paths.
         '''
-        # check if default path is command
         pathDefault = None
-        if utils.commandExists(default):
-            pathDefault = shutil.which(default)
-        # if not a command, check if it's a path
-        elif utils.pathExists(default):
+
+        # check if default is a path
+        if utils.pathExists(default):
             pathDefault = default
+
+        # not a path command, check if it's a command
+        elif utils.commandExists(default):
+            pathDefault = shutil.which(default)
 
         if pathDefault is not None:
             msg = "\n\tDefault path to '" + pathName + "' detected at '" + pathDefault + "'\n\tUse this path? [y/n]: "
