@@ -41,6 +41,7 @@ if __name__ == "__main__":
         makefile = mkf.Makefile()
         tasks = tasks.Tasks()
         launch = launch.LaunchConfigurations()
+        wksFile = workspaceFile.UpdateWorkspaceFile()
 
         # Makefile must exist
         makefile.checkMakefileFile()  # no point in continuing if Makefile does not exist
@@ -88,7 +89,6 @@ if __name__ == "__main__":
         launch.overwriteLaunchFile(launchData)
 
         # update workspace file with "cortex-debug" specifics
-        wksFile = workspaceFile.UpdateWorkspaceFile()
         wksFile.checkWorkspaceFile()
         wksData = wksFile.getWorkspaceFileData()
         wksData = wksFile.addBuildDataToWorkspaceFile(wksData, buildData)

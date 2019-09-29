@@ -7,6 +7,9 @@ import shutil
 
 import utilities as utils
 import updateBuildData as build
+import updateTasks as tasks
+import updateLaunchConfig as launch
+import updateWorkspaceFile as workspaceFile
 
 __version__ = utils.__version__
 
@@ -243,7 +246,28 @@ if __name__ == "__main__":
 
     paths = UpdatePaths()
     bData = build.BuildData()
+    tasks = tasks.Tasks()
+    launch = launch.LaunchConfigurations()
+    wksFile = workspaceFile.UpdateWorkspaceFile()
 
+    # update build data
     buildData = bData.prepareBuildData(request=True)
-
     bData.overwriteBuildDataFile(buildData)
+
+    # update tasks
+    tasks.checkTasksFile()
+    tasksData = tasks.getTasksData()
+    tasksData = tasks.addAllTasks(tasksData)
+    tasks.overwriteTasksFile(tasksData)
+
+    # update launch configurations
+    launch.checkLaunchFile()
+    launchData = launch.getLaunchData()
+    launchData = launch.addAllLaunchConfigurations(launchData)
+    launch.overwriteLaunchFile(launchData)
+
+    # update workspace file with "cortex-debug" specifics
+    wksFile.checkWorkspaceFile()
+    wksData = wksFile.getWorkspaceFileData()
+    wksData = wksFile.addBuildDataToWorkspaceFile(wksData, buildData)
+    wksFile.overwriteWorkspaceFile(wksData)
