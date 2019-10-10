@@ -46,8 +46,8 @@
             "USE_HAL_DRIVER",
             "STM32F051x8"
         ],
-        "gccExePath": "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/ARM Embedded GCC/7.3.1-1.1-20180724-0637/bin/arm-none-eabi-gcc.exe",
-        "gccIncludePath": "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/ARM Embedded GCC/7.3.1-1.1-20180724-0637/lib/gcc/arm-none-eabi/7.3.1/include"
+        "gccExePath": "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/ARM Embedded GCC/8.3.1-1.1/bin/arm-none-eabi-gcc.exe",
+        "gccIncludePath": "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/ARM Embedded GCC/8.3.1-1.1/lib/gcc/arm-none-eabi/8.3.1/include"
     },
     "configurations": [
         {

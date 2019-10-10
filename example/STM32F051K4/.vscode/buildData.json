@@ -3,7 +3,7 @@
     "ABOUT2": "User should not edit this fields, instead it should edit 'c_cpp_properties.json'",
     "ABOUT3": "This file is regenerated on 'Update workspace' task.",
     "VERSION": "1.7",
-    "LAST_RUN": "2019-03-31 23:52:57.567145",
+    "LAST_RUN": "2019-10-10 23:02:37.500539",
     "cSources": [
         "Core/Src/main.c",
         "Core/Src/gpio.c",
@@ -92,10 +92,10 @@
     ],
     "stm32SvdPath": ".vscode/STM32F0x1.svd",
     "ABOUT4": "---- Paths below are fetched from user-specific 'toolsPaths.json'. ----",
-    "gccExePath": "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/ARM Embedded GCC/7.3.1-1.1-20180724-0637/bin/arm-none-eabi-gcc.exe",
-    "gccInludePath": "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/ARM Embedded GCC/7.3.1-1.1-20180724-0637/lib/gcc/arm-none-eabi/7.3.1/include",
-    "buildToolsPath": "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/Build Tools/2.11-20180428-1604/bin/make.exe",
+    "gccExePath": "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/ARM Embedded GCC/8.3.1-1.1/bin/arm-none-eabi-gcc.exe",
+    "gccInludePath": "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/ARM Embedded GCC/8.3.1-1.1/lib/gcc/arm-none-eabi/8.3.1/include",
+    "buildToolsPath": "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/Build Tools/2.12-20190422-1053/bin/make.exe",
     "pythonExec": "python",
-    "openOcdPath": "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/OpenOCD/0.10.0-8-20180512-1921/bin/openocd.exe",
-    "openOcdInterfacePath": "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/OpenOCD/0.10.0-8-20180512-1921/scripts/interface/stlink.cfg"
+    "openOcdPath": "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/OpenOCD/0.10.0-12-20190422-2015/bin/openocd.exe",
+    "openOcdInterfacePath": "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/OpenOCD/0.10.0-12-20190422-2015/scripts/interface/stlink.cfg"
 }

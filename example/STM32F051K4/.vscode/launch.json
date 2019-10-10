@@ -10,7 +10,7 @@
             "executable": "build/STM32F051K4.elf",
             "svdFile": ".vscode/STM32F0x1.svd",
             "configFiles": [
-                "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/OpenOCD/0.10.0-8-20180512-1921/scripts/interface/stlink.cfg",
+                "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/OpenOCD/0.10.0-12-20190422-2015/scripts/interface/stlink.cfg",
                 ".vscode/stm32f0x.cfg"
             ],
             "preLaunchTask": "Build project"

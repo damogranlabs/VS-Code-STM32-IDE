@@ -8,9 +8,9 @@
                 "isDefault": true
             },
             "type": "shell",
-            "command": "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/Build Tools/2.11-20180428-1604/bin/make.exe",
+            "command": "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/Build Tools/2.12-20190422-1053/bin/make.exe",
             "args": [
-                "GCC_PATH=C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/ARM Embedded GCC/7.3.1-1.1-20180724-0637/bin",
+                "GCC_PATH=C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/ARM Embedded GCC/8.3.1-1.1/bin",
                 "-j6"
             ],
             "problemMatcher": {
@@ -30,7 +30,7 @@
         {
             "label": "Compile current file",
             "type": "shell",
-            "command": "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/ARM Embedded GCC/7.3.1-1.1-20180724-0637/bin/arm-none-eabi-gcc.exe",
+            "command": "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/ARM Embedded GCC/8.3.1-1.1/bin/arm-none-eabi-gcc.exe",
             "args": [
                 "-c",
                 "-DUSE_HAL_DRIVER",
@@ -79,7 +79,7 @@
         {
             "label": "Delete build folder",
             "type": "shell",
-            "command": "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/Build Tools/2.11-20180428-1604/bin/make.exe",
+            "command": "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/Build Tools/2.12-20190422-1053/bin/make.exe",
             "args": [
                 "clean"
             ],
@@ -91,10 +91,10 @@
         {
             "label": "CPU: Build, Download and run",
             "type": "shell",
-            "command": "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/OpenOCD/0.10.0-8-20180512-1921/bin/openocd.exe",
+            "command": "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/OpenOCD/0.10.0-12-20190422-2015/bin/openocd.exe",
             "args": [
                 "-f",
-                "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/OpenOCD/0.10.0-8-20180512-1921/scripts/interface/stlink.cfg",
+                "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/OpenOCD/0.10.0-12-20190422-2015/scripts/interface/stlink.cfg",
                 "-f",
                 ".vscode/stm32f0x.cfg",
                 "-c",
@@ -106,10 +106,10 @@
         {
             "label": "CPU: Download and run",
             "type": "shell",
-            "command": "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/OpenOCD/0.10.0-8-20180512-1921/bin/openocd.exe",
+            "command": "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/OpenOCD/0.10.0-12-20190422-2015/bin/openocd.exe",
             "args": [
                 "-f",
-                "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/OpenOCD/0.10.0-8-20180512-1921/scripts/interface/stlink.cfg",
+                "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/OpenOCD/0.10.0-12-20190422-2015/scripts/interface/stlink.cfg",
                 "-f",
                 ".vscode/stm32f0x.cfg",
                 "-c",
@@ -120,10 +120,10 @@
         {
             "label": "CPU: Reset and run",
             "type": "shell",
-            "command": "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/OpenOCD/0.10.0-8-20180512-1921/bin/openocd.exe",
+            "command": "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/OpenOCD/0.10.0-12-20190422-2015/bin/openocd.exe",
             "args": [
                 "-f",
-                "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/OpenOCD/0.10.0-8-20180512-1921/scripts/interface/stlink.cfg",
+                "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/OpenOCD/0.10.0-12-20190422-2015/scripts/interface/stlink.cfg",
                 "-f",
                 ".vscode/stm32f0x.cfg",
                 "-c init",
@@ -135,10 +135,10 @@
         {
             "label": "CPU: Halt",
             "type": "shell",
-            "command": "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/OpenOCD/0.10.0-8-20180512-1921/bin/openocd.exe",
+            "command": "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/OpenOCD/0.10.0-12-20190422-2015/bin/openocd.exe",
             "args": [
                 "-f",
-                "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/OpenOCD/0.10.0-8-20180512-1921/scripts/interface/stlink.cfg",
+                "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/OpenOCD/0.10.0-12-20190422-2015/scripts/interface/stlink.cfg",
                 "-f",
                 ".vscode/stm32f0x.cfg",
                 "-c init",
@@ -150,10 +150,10 @@
         {
             "label": "CPU: Run",
             "type": "shell",
-            "command": "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/OpenOCD/0.10.0-8-20180512-1921/bin/openocd.exe",
+            "command": "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/OpenOCD/0.10.0-12-20190422-2015/bin/openocd.exe",
             "args": [
                 "-f",
-                "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/OpenOCD/0.10.0-8-20180512-1921/scripts/interface/stlink.cfg",
+                "C:/Users/domen/AppData/Roaming/GNU MCU Eclipse/OpenOCD/0.10.0-12-20190422-2015/scripts/interface/stlink.cfg",
                 "-f",
                 ".vscode/stm32f0x.cfg",
                 "-c init",

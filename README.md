@@ -39,10 +39,9 @@ I recommend to unpack it in the same directory as the other tools (eg: *%userpro
 Tools needed: Python, GNU Eclipse ARM Embedded GCC, GNU Eclipse Windows Build Tools, GNU MCU Eclipse OpenOCD and CPU-specific files.  
 
 **Download GNU Eclipse tools:**
-* [GNU Eclipse ARM Embedded GCC](https://github.com/gnu-mcu-eclipse/arm-none-eabi-gcc/releases)  
-Note: due [this error](https://github.com/damogranlabs/VS-Code-STM32-IDE/issues/9#issuecomment-463194218), use [7-2018-q2-update release](https://developer.arm.com/open-source/gnu-toolchain/gnu-rm/downloads/7-2018-q2-update). 
-* [GNU Eclipse Windows Build Tools](https://github.com/gnu-mcu-eclipse/windows-build-tools/releases)
-* [GNU MCU Eclipse OpenOCD](https://github.com/gnu-mcu-eclipse/openocd/releases)  
+* [GNU Eclipse ARM Embedded GCC](https://github.com/xpack-dev-tools/arm-none-eabi-gcc-xpack/releases)  
+* [GNU Eclipse Windows Build Tools](https://github.com/gnu-mcu-eclipse/windows-build-tools/releases/tag/v2.12-20190422/)
+* [GNU MCU Eclipse OpenOCD](https://github.com/ilg-archived/openocd/releases/tag/v0.10.0-12-20190422)  
   
 After download, extract all directories in [recommended](https://gnu-mcu-eclipse.github.io/toolchain/arm/install/#manual-install) path: *%userprofile%\AppData\Roaming\GNU MCU Eclipse*.  
 
