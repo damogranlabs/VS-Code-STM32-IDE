@@ -57,28 +57,44 @@ class Makefile():
 
         At the end, fresh 'Makefile' with print function should be available.
         '''
-        if utils.pathExists(utils.makefileBackupPath):
-            # Makefile.backup exists, check if it is original (no print capabilities)
-            if self.hasPrintCapabilities(pathToMakefile=utils.makefileBackupPath):
-                errorMsg = "Makefile.backup exist, but looks like it was already modified!\n"
-                errorMsg += "Did you manually delete, replace or modify any of Makefiles? "
-                errorMsg += "Delete all Makefiles and regenerate with CubeMX."
-                utils.printAndQuit(errorMsg)
-
-            else:  # OK - seems like original Makefile, replace Makefile with Makefile.backup, add print capabilities
-                print("Existing 'Makefile' file found (restored from '.backup').")
-                utils.copyAndRename(utils.makefileBackupPath, utils.makefilePath)
-
-        else:  # Makefile.backup does not exist, check if current Makefile has print capabilities.
-            if self.hasPrintCapabilities(pathToMakefile=utils.makefilePath):
-                errorMsg = "Looks like Makefile was already modified! Makefile.backup does not exist.\n"
-                errorMsg += "Did you manually delete, replace or modify any of Makefiles? "
-                errorMsg += "Delete all Makefiles and regenerate with CubeMX."
-                utils.printAndQuit(errorMsg)
-
-            else:  # Makefile looks like an original one. Create a backup copy and add print capabilities
+        if utils.pathExists(utils.makefilePath):
+            # Makefile exists, check if it is original (no print capabilities)
+            if self.hasPrintCapabilities(utils.makefilePath):
+                # Makefile exists, already modified
+                if utils.pathExists(utils.makefileBackupPath):
+                    # can original file be restored from backup file?
+                    if self.hasPrintCapabilities(utils.makefileBackupPath):
+                        errorMsg = "Both, 'Makefile' and 'Makefile.backup' exists, but they are both modified!\n"
+                        errorMsg += "Did you manually delete, replace or modify any of Makefiles?\n"
+                        errorMsg += "-> Delete all Makefiles and regenerate with CubeMX."
+                        utils.printAndQuit(errorMsg)
+                    else:
+                        # original will be restored from backup file
+                        print("Existing 'Makefile' file will be restored from 'Makefile.backup'.")
+                        utils.copyAndRename(utils.makefileBackupPath, utils.makefilePath)
+                else:
+                    errorMsg = "'Makefile.backup' does not exist, while 'Makefile' was already modified!\n"
+                    errorMsg += "Did you manually delete, replace or modify any of Makefiles?\n"
+                    errorMsg += "-> Delete all Makefiles and regenerate with CubeMX."
+                    utils.printAndQuit(errorMsg)
+            else:
                 print("Existing 'Makefile' file found (original).")
                 utils.copyAndRename(utils.makefilePath, utils.makefileBackupPath)
+        elif utils.pathExists(utils.makefileBackupPath):
+            # Makefile does not exist, but Makefile.backup does
+            if self.hasPrintCapabilities(utils.makefileBackupPath):
+                errorMsg = "'Makefile.backup' exists, but is already modified!\n"
+                errorMsg += "Did you manually delete, replace or modify any of Makefiles?\n"
+                errorMsg += "-> Delete all Makefiles and regenerate with CubeMX."
+                utils.printAndQuit(errorMsg)
+            else:
+                # original will be restored from backup file
+                print("'Makefile' file will be restored from 'Makefile.backup'.")
+                utils.copyAndRename(utils.makefileBackupPath, utils.makefilePath)
+        else:
+            errorMsg = "No Makefiles available, unable to proceed!\n"
+            errorMsg += "-> Regenerate with CubeMX."
+            utils.printAndQuit(errorMsg)
 
         self.addMakefileCustomFunctions(pathToMakefile=utils.makefilePath)
 
@@ -359,7 +375,7 @@ class Makefile():
 
         printStatement = "print-" + str(variableName)
         gccExeFolderPath = os.path.dirname(gccExePath)
-        #gccPath = "\"\"GCC_PATH=" + gccExeFolderPath
+        # gccPath = "\"\"GCC_PATH=" + gccExeFolderPath
         gccPath = "GCC_PATH=\"" + gccExeFolderPath + "\""
         arguments = [makeExePath, gccPath, printStatement]
 
