@@ -3,7 +3,7 @@ Source: [Damogran Labs: https://damogranlabs.com/](https://damogranlabs.com/2018
 Version: 1.7  
 
 # UPDATE (29.12.2021):
-After a couple of weeks of testing, I can confirm that all he things covered in this project are now replaced (and even better) with (VS Code Makefile tools plugin)[vhttps://marketplace.visualstudio.com/items?itemName=ms-vscode.makefile-tools]. Anyway, 3 years in a such rapid changing SW development world, I consider this project a success, even though closed.  
+After a couple of weeks of testing, I can confirm that all he things covered in this project are now replaced (and even better) with [VS Code Makefile tools plugin](https://marketplace.visualstudio.com/items?itemName=ms-vscode.makefile-tools). Anyway, 3 years in a such rapid changing SW development world, I consider this project a success, even though closed.  
 
 ## About
 This project transform VS Code to a great IDE that can be used with STM32CubeMX tool to create a projects without any limitations and code size restrictions, without any bloatware and fast user setup (once all prerequisites are installed). Project is based on python scripts and is therefore fully customizable. OpenOCD tool and Cortex-Debug VS Code plugin is used for debug purposes.  
